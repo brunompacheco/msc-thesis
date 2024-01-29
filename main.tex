@@ -29,7 +29,7 @@
 \newif\ifadvisor\advisorfalse
 
 % Uncomment the line `\englishtrue` to set the document default language to English
-% \englishtrue
+\englishtrue
 \advisortrue
 
 % https://tex.stackexchange.com/questions/131002/how-to-expand-ifthenelse-so-that-it-can-be-used-in-parshape
@@ -73,56 +73,56 @@ section=TITLE, % Título de seções em caixa alta
 % https://www.overleaf.com/learn/latex/Inserting_Images
 \graphicspath{{pictures/}}
 
-% FIXME: Preencha com seus dados
-\autor{\brazilword{Escreva aqui o Nome completo do Autor ou da Autora}}
-\titulo{\lang{Work Title\protect\\Could be break into two lines}{Título do trabalho\protect\\Pode ser Quebrado em duas linhas}}
+% Preencha com seus dados
+\autor{\brazilword{Bruno Machado Pacheco}}
+\titulo{\lang{Deep-learning-based Primal Heuristics for MILP:\protect\\Supervised Solution Prediction Models}{Título do trabalho\protect\\Pode ser Quebrado em duas linhas}}
 
-% FIXME: Se houver subtítulo, descomente a linha abaixo
-\subtitulo{\lang{Subtitle}{Subtítulo}}
+% Se houver subtítulo, descomente a linha abaixo
+% \subtitulo{\lang{Subtitle}{Subtítulo}}
 
-% FIXME: Siglas para grau de formação Dr./Dra., Me./Ma, Bel. Bela. (inglês: PhD., MSc., Bs.)
-\orientador[\lang{Supervisor}{Orientador(a)}]{\brazilword{Nome completo do Orientador(a)}, \lang{Phd.}{Dr.}}
+% Siglas para grau de formação Dr./Dra., Me./Ma, Bel. Bela. (inglês: PhD., MSc., Bs.)
+\orientador[\lang{Supervisor}{Orientador(a)}]{\brazilword{Eduardo Camponogara}, \lang{PhD.}{Dr.}}
 
-% FIXME: Se houver coorientador, descomente a linha abaixo
-% \coorientador[\lang{Co-supervisor}{Coorientador(a)}]{\brazilword{Nome do coorientador(a)}, \lang{Phd.}{Dr.}}
+% Se houver coorientador, descomente a linha abaixo
+\coorientador[\lang{Co-supervisor}{Coorientador(a)}]{\brazilword{Laio Oriel Seman}, \lang{PhD.}{Dr.}}
 
 % FIXME: Preencher com o nome do Coordenador de TCCs/Teses do seu curso
-\coordenador[\lang{Coordinator}{Coordenador(a)}]{\brazilword{Nome do Coordenador(a)}, \lang{Phd.}{Dr.}}
+    \coordenador[\lang{Coordinator}{Coordenador(a)}]{\brazilword{Nome do Coordenador(a)}, \lang{PhD.}{Dr.}}
 
 % FIXME: Local da sua defesa
 \local{\brazilword{Florianópolis, Santa Catarina} -- \lang{Brazil}{Brasil}}
 
-% FIXME: Ano da sua defesa
-\ano{2019}
+% Ano da sua defesa
+\ano{2024}
 \biblioteca{\lang{University Library}{Biblioteca Universitária}}
 
-% FIXME: Sigla da sua instituição
+% Sigla da sua instituição
 \instituicaosigla{UFSC}
 \instituicao{\brazilword{Universidade Federal de Santa Catarina}}
 
-% FIXME: Preencha com Tese, Dissertação, Monografia ou Trabalho de Conclusão de Curso, Bachelor's Thesis, etc
-\tipotrabalho{\lang{Bachelor\s Thesis}{Trabalho de Conclusão de Curso}}
+% Preencha com Tese, Dissertação, Monografia ou Trabalho de Conclusão de Curso, Bachelor's Thesis, etc
+\tipotrabalho{\lang{Master\s Thesis}{Trabalho de Conclusão de Curso}}
 
 % FIXME: Se houver Área de Concentração, descomente a linha abaixo
 % \area{\lang{Formal Languages}{Linguagens Formais}}
 
 % FIXME: Preencha com Doutor, Bacharel ou Mestrando
 \formacao{\lang
-    {Bachelor of Science degree in Computer Science}
+    {Master\s degree in Systems and Automation Engineering}
     {Bacharel em Ciências da Computação}%
 }
 \programa{\lang
-    {Undergraduate Program in Computer Science}
+    {Graduate Program in Automation and Systems Engineering}
     {Programa de Graduação em Ciências da Computação}%
 }
 
-% FIXME: Preencha com Departamento de XXXXXX, Centro de XXXXXX
+% Preencha com Departamento de XXXXXX, Centro de XXXXXX
 \centro{\lang
-    {INE -- Department of Informatics and Statistics, CTC -- Technological Center}
+    {DAS -- Systems and Automation Department, CTC -- Technological Center}
     {INE -- Departamento de Informática e Estatística, CTC -- Centro Tecnológico}%
 }
 
-% FIXME: Preencha com Campus XXXXXX     ou     Centro de XXXXXX
+% Preencha com Campus XXXXXX     ou     Centro de XXXXXX
 \campus{\brazilword{Campus Reitor João David Ferreira Lima}}
 
 % FIXME: Data da sua defesa
@@ -145,6 +145,7 @@ section=TITLE, % Título de seções em caixa alta
 % https://tex.stackexchange.com/questions/340661/argument-of-languageactivearg-has-an-extra-i-use-includegraphics-and-r
 \useshorthands{~}\defineshorthand{~=}{\hyp{}}
 
+% FIXME: Keywords of the thesis
 \palavraschaveufsc{palavraschaveingles}   {Keyword 1}
 \palavraschaveufsc{palavraschaveportugues}{Palavra~=Chave 1}
 
@@ -171,23 +172,23 @@ section=TITLE, % Título de seções em caixa alta
 % to speed up compilation time: https://en.wikibooks.org/wiki/TeX/includeonly
 \newif\ifforcedinclude\forcedincludefalse
 
-% \addtoincludeonly{beforetext/agradecimentos}
-% \addtoincludeonly{beforetext/epigrafe}
-% \addtoincludeonly{beforetext/fichacatalografica}
-% \addtoincludeonly{beforetext/folhadeaprovacao}
-% \addtoincludeonly{beforetext/resumos}
-% \addtoincludeonly{beforetext/siglas}
-% \addtoincludeonly{beforetext/simbolos}
+\addtoincludeonly{beforetext/agradecimentos}
+\addtoincludeonly{beforetext/epigrafe}
+\addtoincludeonly{beforetext/fichacatalografica}
+\addtoincludeonly{beforetext/folhadeaprovacao}
+\addtoincludeonly{beforetext/resumos}
+\addtoincludeonly{beforetext/siglas}
+\addtoincludeonly{beforetext/simbolos}
 
 % Part 1
-% \addtoincludeonly{chapters/introduction}
-% \addtoincludeonly{chapters/motivation}
-% \addtoincludeonly{chapters/beautifiers}
+\addtoincludeonly{chapters/introduction}
+\addtoincludeonly{chapters/motivation}
+\addtoincludeonly{chapters/beautifiers}
 
 % Part 2
 \addtoincludeonly{chapters/object_beautifier}
-% \addtoincludeonly{chapters/conclusion}
-% \addtoincludeonly{aftertext/aftertext}
+\addtoincludeonly{chapters/conclusion}
+\addtoincludeonly{aftertext/aftertext}
 
 % Control whether the full document will be generated
 % Note: It will also generate severals errors like the following, which can be ignored
@@ -243,31 +244,33 @@ section=TITLE, % Título de seções em caixa alta
     \setlength\afterchapskip{20pt}
 
     % PARTE
-    \ifforcedinclude\else\part{\lang{Research}{Pesquisa}}\fi
+    \ifforcedinclude\else\part{Background}\fi
     \label{primeira_parte}
 
     % Introdução (exemplo de capítulo sem numeração, mas presente no Sumário)
     \include{chapters/intro}
 
-    % Capitulo com exemplos de comandos inseridos de arquivo externo
     \include{chapters/chapter_1}
 
-    % Capitulo de revisão de literatura
     \include{chapters/chapter_2}
 
-    % Primeiro capitulo de Resultados
     \include{chapters/chapter_3}
 
     % PARTE
-    \ifforcedinclude\else\part{\lang{Implementation}{Implementação}}\fi
+    \ifforcedinclude\else\part{Materials and Methods}\fi
     \label{segunda_parte}
 
-    % Segundo capitulo de Resultados
     \include{chapters/chapter_4}
+
+    \include{chapters/chapter_5}
 
     % Finaliza a parte no bookmark do PDF para que se inicie o bookmark na raiz
     % e adiciona espaço de parte no Sumário
     \phantompart
+
+    \ifforcedinclude\else\part{Experiments and Results}\fi
+
+    \include{chapters/chapter_6}
 
     % Conclusão (outro exemplo de capítulo sem numeração e presente no sumário)
     \include{chapters/conclusion}
