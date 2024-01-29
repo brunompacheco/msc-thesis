@@ -44,133 +44,51 @@
 \phantomsection
 
 % https://tex.stackexchange.com/questions/5076/is-it-possible-to-keep-my-translation-together-with-original-text
-\chapter{\lang{Introduction}{Introdução}}
+\chapter{\lang{Introduction}{Introdução}}\label{chap:intro}
 \phantomsection
 
-A Tabela~\ref{tab:a_table_formatacao_de_texto} mostra  informações do modelo de teses da Biblioteca Universitária da UFSC (BU-UFSC).
+In the realm of mathematical optimization, Mixed-Integer Linear Programming (MILP) stands as a powerful tool for addressing a wide array of complex decision-making problems.
+These problems, prevalent in fields ranging from operations research to finance and logistics, often involve the need to make discrete decisions within a linear framework.
+Despite their significance, solving MILP instances efficiently remains a formidable challenge, as the search space expands exponentially with the number of integer variables.
+In other words, the combinatorial nature of MILP implies that algorithms with optimality guarantees have intractable running times.
 
-% What does [t] and [ht] mean?
-% https://tex.stackexchange.com/questions/8652/what-does-t-and-ht-mean
-%
-% How can I get rid of the LaTeX warning: Float too large for page?
-% https://tex.stackexchange.com/questions/36252/how-can-i-get-rid-of-the-latex-warning-float-too-large-for-page
-%
-% "warning: Text page X contains only floats" How to suppress this warning?
-% https://tex.stackexchange.com/questions/223149/warning-text-page-x-contains-only-floats-how-to-suppress-this-warning
-%
-% Make a table span multiple pages
-% https://tex.stackexchange.com/questions/26462/make-a-table-span-multiple-pages
-%
-% How to make the longtable to work with centering & caption on memoir class?
-% https://tex.stackexchange.com/questions/386541/how-to-make-the-longtable-to-work-with-centering-caption-on-memoir-class
-%
-% How to fix this Package array Error: Only one column-spec allowed?
-% https://tex.stackexchange.com/questions/367069/how-to-fix-this-package-array-error-only-one-column-spec-allowed
-%
-% How to auto adjust my last table column width, and why is there Underfull \vbox badness on this table?
-% https://tex.stackexchange.com/questions/387238/how-to-auto-adjust-my-last-table-column-width-and-why-is-there-underfull-vbox/387251
-\setlength\extrarowheight{2pt}
-\begin{tabularx}{\linewidth}{>{\RaggedRight}p{3cm}|>{\arraybackslash}X}
+Primal heuristics, which aim to quickly find high-quality feasible solutions to MILP problems, play a crucial role in enhancing the efficiency of optimization algorithms.
+Traditional primal heuristics are often rule-based and designed to exploit certain structures of an MILP problem.
+As a consequence, they lack adaptability, struggling to generalize across diverse problem instances.
+As the landscape of optimization problems continues to evolve, there is a growing need for intelligent and flexible heuristics that can adapt to the intricacies of different MILP instances.
 
-\caption[Formatação do texto]{Formatação do texto \showfont}
-\label{tab:a_table_formatacao_de_texto} \\
-\hline
-\endfirsthead
+Recently, machine learning techniques have been successfully applied to MILP problems, resulting in effective heuristics.
+In contrast to handcrafted heuristics, which rely on expert knowledge to exploit theoretical structures of problem formulations, machine learning aims to identifying the hidden patterns of problem instances.
+This data-driven approach relies on the assumption that problem instances are drawn from underlying distributions, and, thus, share characteristics not evident in the mathematical formulation.
+Such assumption often holds for practical situations, in which problems must be solved repeatedly and the parameters that define the instances are random variables with unknown distributions.
 
-% How to set font size of footnotes correctly in memoir?
-% https://tex.stackexchange.com/questions/213927/how-to-set-font-size-of-footnotes-correctly-in-memoir
-\multicolumn{2}{p{\dimexpr\textwidth-2\tabcolsep\relax}}{\ufsccaptionsize\tablename~\thetable:
-Formatação do texto (continuação) \showfont} \\
-\hline
-\endhead
-
-% Set multicolumn width to default table width
-% https://tex.stackexchange.com/questions/99326/set-multicolumn-width-to-default-table-width
-\hline
-\multicolumn{2}{p{\dimexpr\textwidth-2\tabcolsep\relax}}{\footnotesize continua na próxima página\protect\englishword{\showfont}}
-\endfoot
-
-\hline
-\multicolumn{2}{p{\dimexpr\textwidth-2\tabcolsep\relax}}{\fonte{O autor -- \showfont} }
-\endlastfoot
-    Cor                          & Branco - \englishword{\showfont}                                 \\ \hline
-    Formato do papel             & A4                                                               \\ \hline
-    Gramatura                    & 75                                                               \\ \hline
-    Impressão                    & Frente e verso                                                   \\ \hline
-    Margens                      & Direita e superior 3, Inferior e esquerda: 2.                    \\ \hline
-    Cabeçalho                    & 0,7                                                              \\ \hline
-    Rodapé                       & 0,7                                                              \\ \hline
-    Paginação                    & Externa                                                          \\ \hline
-    Alinhamento vertical         & Superior                                                         \\ \hline
-    Alinhamento do texto         & Justificado                                                      \\ \hline
-    Fonte sugerida               & Times New Roman                                                  \\ \hline
-    Tamanho da fonte             & 12 para o texto incluindo os títulos das seções e subseções.
-                                   As citações com mais de três linhas as legendas das ilustrações
-                                   e tabelas, fonte 10.                                             \\ \hline
-    Espaçamento entre linhas     & Um e meio (1,5)                                                  \\ \hline
-    Espaçamento entre parágrafos & Anterior 0,0; Posterior 0,0                                      \\ \hline
-    Numeração da seção           & As seções  primárias devem  começar  sempre em páginas ímpares.
-                                   Deixar um espaço (simples) entre o título da seção e o texto e
-                                   entre o texto e o título da subseção.                            \\ \hline
-
-\end{tabularx}
+It is intuitive that a learning-based primal heuristic is built using a solution prediction model.
+In fact, the model by itself could be a primal heuristic, as it ideally provides solutions to problem instances.
+However, in practice, the probabilistic nature of the learning algorithms 
 
 
-\begin{figure}
-    \caption{Exemplo de figura}
-    \label{fig:ex01}
-    \centering
-    \includegraphics[width=\linewidth]{pictures/ex01}
-\fonte{o autor -- \showfont}
-\end{figure}
+This master thesis delves into the intersection of deep learning and MILP optimization, exploring the potential of leveraging neural networks to develop data-driven primal heuristics.
+The focus lies on primal heuristics built from models trained with supervised learning to predict candidate solutions to MILP problem instances.
 
 
-Por exemplo, na \figref{fig:ex01}, tem-se...
+The focus lies on the creation of supervised solution prediction models, where the deep-learning architecture is trained on historical data to predict high-quality feasible solutions for MILP instances.
+This novel approach aims to overcome the limitations of traditional heuristics by harnessing the power of artificial intelligence to learn intricate patterns and relationships within the problem space.
 
-\begin{figure}
-    \caption{Exemplo de aquisição}
-    \label{fig:tek0009}
-    \centering
-    \includegraphics[width=0.9\linewidth]{pictures/tek0009}
-    \fonte{o autor -- \showfont}
-\end{figure}
+The overarching goal of this research is to contribute to the development of efficient and adaptable primal heuristics that can significantly improve the performance of MILP solvers.
+By combining the strengths of deep learning and optimization, this thesis seeks to advance the state-of-the-art in tackling the inherent challenges posed by MILP problems, ultimately paving the way for more effective decision-making in complex real-world scenarios.
 
-Este documento e seu código-fonte são exemplos de referência de uso da classe
-\textsf{abntex2} e do pacote \textsf{abntex2cite}. O documento
-exemplifica a elaboração de trabalho acadêmico (tese, dissertação e outros do
-gênero) produzido conforme a ABNT NBR 14724:2011 \emph{Informação e documentação
-- Trabalhos acadêmicos - Apresentação}.
 
-A expressão ``Modelo Canônico'' é utilizada para indicar que \abnTeX{} não é
-modelo específico de nenhuma universidade ou instituição, mas que implementa tão
-somente os requisitos das normas da ABNT. Uma lista completa das normas
-observadas pelo \abnTeX{} é apresentada em \textcite{abntex2classe}.
+Main objective: to evaluate primal heuristics for MILP problems based on solution prediction models trained with supervised learning techniques
 
-Sinta-se convidado a participar do projeto \abnTeX{}! Acesse o site do projeto em
-\url{http://abntex2.googlecode.com/}. Também fique livre para conhecer,
-estudar, alterar e redistribuir o trabalho do \abnTeX{}, desde que os arquivos
-modificados tenham seus nomes alterados e que os créditos sejam dados aos
-autores originais, nos termos da ``The \LaTeX{} Project Public
-License''\footnote{\url{http://www.latex-project.org/lppl.txt}}.
+Three research questions:
+- how to design deep learning models able to provide candidate solutions for instances of an MILP problem?
+- how to incorporate solution prediction models in primal heuristics?
+- which supervised learning techniques are most effective to train solution prediction models for primal heuristics?
 
-Encorajamos que sejam realizadas customizações específicas deste exemplo para
-universidades e outras instituições --- como capas, folha de aprovação, etc.
-Porém, recomendamos que ao invés de se alterar diretamente os arquivos do
-\abnTeX{}, distribua-se arquivos com as respectivas customizações.
-Isso permite que futuras versões do \abnTeX{}~não se tornem automaticamente
-incompatíveis com as customizações promovidas. Consulte
-\textcite{abntex2-wiki-como-customizar} par mais informações.
+Objectives:
+- Assess the literature on supervised learning solution prediction models for MILP problems, including model architectures, supervised learning algorithms, and learning-based primal heuristics
+- Evaluate the most promising techniques in a realistic application with respect to the performance of the resulting primal heuristic
 
-Este documento deve ser utilizado como complemento dos manuais do \abnTeX{}
-\cite{abntex2classe,abntex2cite,abntex2cite-alf} e da classe \textsf{memoir}
-\cite{memoir}.
-
-Esperamos, sinceramente, que o \abnTeX{} aprimore a qualidade do trabalho que
-você produzirá, de modo que o principal esforço seja concentrado no principal:
-na contribuição científica.
-
-Equipe \abnTeX{}
-
-Lauro César Araujo
+\section{Objectives}\label{chap:objectives}
 
 
