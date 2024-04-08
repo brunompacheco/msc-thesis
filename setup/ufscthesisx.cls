@@ -1022,7 +1022,7 @@
 
 \usepackage{tabularx}
 \usepackage{multirow}
-
+\usepackage{bm}
 
 
 % The package supports the Text Companion fonts, which provide many text symbols (such as
