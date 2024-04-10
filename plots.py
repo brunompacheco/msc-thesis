@@ -32,17 +32,19 @@ if __name__ == '__main__':
     # min -y
     # s.t. z <= y
     #      z + y <= 5
-    #      y >= 0
+    #      y >= 1
     #      z \in \Z
 
     # ax = plt.axes()
     # ax.add_patch(Polygon([[0., 0.], [2.5, 2.5], [5., 0.], [0., 0.]], facecolor='b', edgecolor='k'))
     # plt.fill([0., 2.5, 5., 0.], [0., 2.5, 0., 0.], colors[2], edgecolor=colors[1], label=r"$A\boldsymbol{x} \le \boldsymbol{b}$")
     # plt.fill([0., 2.5, 5., 0.], [0., 2.5, 0., 0.], colors[2], alpha=0.5, label=r"$A\boldsymbol{x} \le \boldsymbol{b}$")
-    plt.fill([0., 2.5, 5., 0.], [0., 2.5, 0., 0.], facecolor='w', edgecolor=colors[2], linestyle='--', linewidth=0.5, label=r"$A\boldsymbol{x} \le \boldsymbol{b}$")
-    x_feasible = np.arange(0, 5, 1)
+    plt.fill([1., 2.5, 4., 1.], [1., 2.5, 1., 1.], facecolor='w', edgecolor=colors[2], linestyle='--', linewidth=0.5, label=r"$A\boldsymbol{x} \le \boldsymbol{b}$")
+    x_feasible = np.arange(1, 5, 1)
     y_max = np.min([5 - x_feasible, x_feasible], 0)
-    plt.vlines(x_feasible, np.zeros(len(x_feasible)), y_max, colors[1], 'solid', capstyle='round', label=r"$\mathcal{X}$")
+    plt.vlines(x_feasible, np.ones(len(x_feasible)), y_max, colors[1], 'solid', linewidth=2, capstyle='round', label=r"$\mathcal{X}$")
+    plt.scatter(x_feasible, y_max, s=1, c=colors[1])
+    plt.scatter(x_feasible, np.ones(len(x_feasible)), s=1, c=colors[1])
     plt.ylim(0, 4.5)
     plt.xticks(np.arange(0, 6, 1))
 
