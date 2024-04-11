@@ -74,7 +74,9 @@ if __name__ == '__main__':
     plt.plot(1, 0, ">k", markersize=2, transform=plt.gca().get_yaxis_transform(), clip_on=False)
     plt.plot(0, 1, "^k", markersize=2, transform=plt.gca().get_xaxis_transform(), clip_on=False)
     plt.xlabel('$z$')
-    plt.ylabel('$y$')
+    plt.ylabel('$y$', rotation=0)
+    plt.gca().xaxis.set_label_coords(1.05, 0.04)
+    plt.gca().yaxis.set_label_coords(0.04, 1.05)
     plt.legend()
 
     # plt.show()
