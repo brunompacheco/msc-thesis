@@ -45,6 +45,7 @@ if __name__ == '__main__':
     plt.vlines(x_feasible, np.ones(len(x_feasible)), y_max, colors[1], 'solid', linewidth=2, capstyle='round', label=r"$\mathcal{X}$")
     plt.scatter(x_feasible, y_max, s=1, c=colors[1])
     plt.scatter(x_feasible, np.ones(len(x_feasible)), s=1, c=colors[1])
+    plt.xlim(0, 5.15)
     plt.ylim(0, 4.5)
     plt.xticks(np.arange(0, 6, 1))
 
@@ -76,7 +77,7 @@ if __name__ == '__main__':
     plt.xlabel('$z$')
     plt.ylabel('$y$', rotation=0)
     plt.gca().xaxis.set_label_coords(1.05, 0.04)
-    plt.gca().yaxis.set_label_coords(0.04, 1.05)
+    plt.gca().yaxis.set_label_coords(0.00, 1.05)
     plt.legend()
 
     # plt.show()
