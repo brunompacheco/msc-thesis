@@ -29,11 +29,11 @@ if __name__ == '__main__':
     plt.figure()
 
     # Problem definition
-    # min -y
-    # s.t. z <= y
-    #      z + y <= 5
-    #      y >= 1
-    #      z \in \Z
+    # min -x_2
+    # s.t. x_1 <= x_2
+    #      x_1 + x_2 <= 5
+    #      x_2 >= 1
+    #      x \in \Z^2
 
     # ax = plt.axes()
     # ax.add_patch(Polygon([[0., 0.], [2.5, 2.5], [5., 0.], [0., 0.]], facecolor='b', edgecolor='k'))
@@ -42,8 +42,8 @@ if __name__ == '__main__':
     plt.fill([1., 2.5, 4., 1.], [1., 2.5, 1., 1.], facecolor='w', edgecolor=colors[2], linestyle='--', linewidth=0.5, label=r"$A\boldsymbol{x} \le \boldsymbol{b}$")
     x_feasible = np.arange(1, 5, 1)
     y_max = np.min([5 - x_feasible, x_feasible], 0)
-    plt.vlines(x_feasible, np.ones(len(x_feasible)), y_max, colors[1], 'solid', linewidth=2, capstyle='round', label=r"$\mathcal{X}$")
-    plt.scatter(x_feasible, y_max, s=1, c=colors[1])
+    # plt.vlines(x_feasible, np.ones(len(x_feasible)), y_max, colors[1], 'solid', linewidth=2, capstyle='round', label=r"$\mathcal{X}$")
+    plt.scatter(x_feasible, y_max, s=1, c=colors[1], label=r"$\mathcal{X}$")
     plt.scatter(x_feasible, np.ones(len(x_feasible)), s=1, c=colors[1])
     plt.xlim(0, 5.15)
     plt.ylim(0, 4.5)
@@ -74,8 +74,8 @@ if __name__ == '__main__':
     plt.gca().spines["left"].set_bounds(low=0, high=ylim[1])
     plt.plot(1, 0, ">k", markersize=2, transform=plt.gca().get_yaxis_transform(), clip_on=False)
     plt.plot(0, 1, "^k", markersize=2, transform=plt.gca().get_xaxis_transform(), clip_on=False)
-    plt.xlabel('$z$')
-    plt.ylabel('$y$', rotation=0)
+    plt.xlabel('$x_1$')
+    plt.ylabel('$x_2$', rotation=0)
     plt.gca().xaxis.set_label_coords(1.05, 0.04)
     plt.gca().yaxis.set_label_coords(0.00, 1.05)
     plt.legend()
