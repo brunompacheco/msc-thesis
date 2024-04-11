@@ -40,6 +40,8 @@ Note that even if a problem is feasible ($\mathcal{X}\neq \varnothing$), it may 
 Furthermore, if an optimal solution exists, it may no be unique.
 % TODO: show how a problem may have no optimal solution even if with bounded feasible region. see Nemhauser, I.4.6
 
+% TODO: show NP-hardness of IP by reducing SAT to it and citing "Computers and intractability: A guide to the theory of NP-completeness"
+
 \section{Mixed-Integer Linear Programs}
 
 MILP is a subset of IP in which the objective and the constraints are all linear functions and the problem requires integer and continuous variables.
@@ -60,21 +62,24 @@ As an example, take the MILP problem
     \min_{z,y} \quad & -y \\
     \textrm{s.t.} \quad & z - y\le 0 \\
       & z+y \le 5 \\
-      & z \in \Z, y\ge 0
+      & z \in \Z, y\ge 1
 ,\end{split}
 \end{equation}
-in which, to follow the notation of \eqref{eq:general-milp}, we have $\bm{x}=(z,y)$.
-The feasible region of this problem is illustrated in Fig.~\ref
+in which, to follow the notation of \eqref{eq:general-milp}, we have $\bm{x}=(z,y)$, \[
+A=\begin{bmatrix} 1 & -1 \\ 1 & 1 \\0 & -1 \end{bmatrix}, \bm{b} = (0, 5, 0), \bm{c} = (0, -1) 
+.\]
+The feasible region of this problem is illustrated in Fig.~\ref{fig:milp-example}.
 
 \begin{figure}[h]
     \centering
     \includegraphics{pictures/milp_example_feasible_region.pdf}
     \caption{Feasible region of \eqref{eq:example-milp}.}
-    \label{fig:scopus-trend}
+    \label{fig:milp-example}
 \end{figure}
 
 The significance of this class of problems has already been recognized by \citeonline{dantzigSignificanceSolvingLinear1960}.
-% TODO: review these statements
+% TODO: expand on Dantizig, 1960; state that it is on top of being NP-hard, as the SAT reduction renders a linear IP, and, thus, an MILP
+% TODO: review the following statements
 Naturally, MILP is necessary whenever linear programming (LP) problems require solutions to assume integer values.
 On top of that, integer variables can be used to represent discrete choices over LP problems.
 Finally, continuous nonlinear functions can be approximated to arbitrary quality by piecewise linear functions, and such functions 
