@@ -40,7 +40,9 @@ Note that even if a problem is feasible ($\mathcal{X}\neq \varnothing$), it may 
 Furthermore, if an optimal solution exists, it may no be unique.
 % TODO: show how a problem may have no optimal solution even if with bounded feasible region. see Nemhauser, I.4.6
 
-% TODO: show NP-hardness of IP by reducing SAT to it and citing "Computers and intractability: A guide to the theory of NP-completeness"
+Beyond the practical applications of integer programming, its computational complexity renders it an important theoretical model.
+It is easy to see that integer programming is an NP-complete problem~\cite{nemhauserIntegerCombinatorialOptimization1999}.
+In fact, one of Karp's 21 NP-complete problems~\cite{karpReducibilityCombinatorialProblems1972} is a special case of integer programming with no objective function (constraint satisfaction problem) and solely binary variables.
 
 \section{Mixed-Integer Linear Programs}
 
@@ -53,41 +55,54 @@ Formally, an MILP can be formulated as
 	  & \bm{x} \in \Z^{n}\times \R^{p}
 ,\end{split}
 \end{equation}
-where $A\in \R^{m\times (n+p)}$ is the constraint matrix, $\bm{b}\in \R^{m}$ is the right-hand side vector, $\bm{c}\in \R^{n+p}$ is the cost vector, and $n>0$, $p>0$.
+where $A\in \R^{m\times (n+p)}$ is the constraint matrix, $\bm{b}\in \R^{m}$ is the right-hand side vector, and $\bm{c}\in \R^{n+p}$ is the cost vector.
 An \emph{instance} of an MILP problem is specified by a tuple  $\left( \bm{c},\bm{b},A,n \right)$.
 
+The significance of this class of problems has already been recognized by \citeonline{dantzigSignificanceSolvingLinear1960}.
+Many well-known problems can be formulated through MILP, such as the Traveling Salesperson Problem (TSP) and the map coloring problem.
+Furthermore, continuous nonlinear functions can be approximated to arbitrary quality by piecewise linear functions, which admit an MILP formulation~\cite{camponogaraModelsAlgorithmsOptimal2015}.
+In other words, MILP is a powerful tool for approximating optimization problems with continuous nonlinearities.
+
+\section{Solving MILP Problems}
+
+% TODO: solving MILP is hard, in fact, it is NP-complete, as seen Karp's 
+Although MILP offers powerful models for a wide range of problems, solving such problems is unarguably hard.
+In fact, the NP-complete problem formulated by \citeonline{karpReducibilityCombinatorialProblems1972} only contains linear terms, which renders it an special case of MILP and, thus, assuming P$\neq$NP, classifies MILP problems as NP-complete.
+However, despite the intractable nature, there are efficient and reliable algorithms and software solutions for the computation of optimal and approximate solutions to MILP problems~\cite{bengioMachineLearningCombinatorial2021}.
+
+\subsection{The Branch-and-Bound Algorithm}
+
+The main idea behind the branch-and-bound algorithm is to ignore the integrality constraints of the MILP problem, solve the resulting LP, and hope that the solution has the necessary integer components~\cite{vanderbeiLinearProgrammingFoundations1998}.
+If the LP relaxation\footnote{The linear programming problem obtained by ignoring the integrality constraints of an MILP is called its \emph{LP relaxation}.} of an MILP problem has an optimal solution that respects the integrality constraints, than that solution is also optimal for the original problem.
+% integer solutions are naturally occuring to the LP problem on the convex hull of integer solutions for an MILP
+% this is easy to see, as optimal solutions (if they exist) to LPs are always at the vertices of its feasible region (which is a polytope) and the vertices of the convex hull of an MILP all respect the original integrality constraints
+However, that is not always the case.
 As an example, take the MILP problem
 \begin{equation}\label{eq:example-milp}
 \begin{split}
-    \min_{z,y} \quad & -y \\
-    \textrm{s.t.} \quad & z - y\le 0 \\
-      & z+y \le 5 \\
-      & z \in \Z, y\ge 1
+    \min_{\bm{x}=(x_1,x_2)} \quad & -x_2 \\
+    \textrm{s.t.} \quad & x_1 - x_2\le 0 \\
+      & x_1+x_2 \le 5 \\
+      & x_2 \ge 1 \\
+      & \bm{x} \in \Z^2
 ,\end{split}
 \end{equation}
-in which, to follow the notation of \eqref{eq:general-milp}, we have $\bm{x}=(z,y)$, \[
+for which, following the notation of \eqref{eq:general-milp}, we have \[
 A=\begin{bmatrix} 1 & -1 \\ 1 & 1 \\0 & -1 \end{bmatrix}, \bm{b} = (0, 5, 0), \bm{c} = (0, -1) 
 .\]
-The feasible region of this problem is illustrated in Fig.~\ref{fig:milp-example}.
+As Fig.~\ref{fig:milp-example} illustrates, the optimal solutions to this problem are $\bm{x}^{*} \in \left\{ (2,2),(3,2) \right\} $, whereas the optimal solution of its LP relaxation is $(2.5, 2.5)$. 
 
 \begin{figure}[h]
     \centering
     \includegraphics{pictures/milp_example_feasible_region.pdf}
-    \caption{Feasible region of \eqref{eq:example-milp}.}
+    \caption{Feasible region of example MILP problem \eqref{eq:example-milp}. Dashed lines represent the feasible region of the LP relaxation.}
     \label{fig:milp-example}
 \end{figure}
 
-The significance of this class of problems has already been recognized by \citeonline{dantzigSignificanceSolvingLinear1960}.
-% TODO: expand on Dantizig, 1960; state that it is on top of being NP-hard, as the SAT reduction renders a linear IP, and, thus, an MILP
-% TODO: review the following statements
-Naturally, MILP is necessary whenever linear programming (LP) problems require solutions to assume integer values.
-On top of that, integer variables can be used to represent discrete choices over LP problems.
-Finally, continuous nonlinear functions can be approximated to arbitrary quality by piecewise linear functions, and such functions 
+A naïve approach is to round the solution of the LP relaxation to the nearest integer value on the variables that violate the integrality constraints.
+This strategy, however, might not even result in feasible solutions to the LP relaxation.
+Note that an optimal solution to an LP is at a vertex of its feasible region, and, thus, a naïve deviation can result in an infeasible solution.
 
-
-\section{Solving MILP Problems}
-
-\subsection{The Branch-and-Bound Algorithm}
 
 \subsection{Heuristics}
 
