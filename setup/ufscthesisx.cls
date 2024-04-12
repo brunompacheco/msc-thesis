@@ -901,6 +901,9 @@
 % 6. `badboxes.tex`
 
 
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows.meta}
 
 % Please tutor the usage of patchcmd and xpatch
 % https://tex.stackexchange.com/questions/152773/please-tutor-the-usage-of-patchcmd-and-xpatch
