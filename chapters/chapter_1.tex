@@ -20,7 +20,7 @@ It is not difficult to see that integer and combinatorial optimization encompass
 Examples include train scheduling, airline crew scheduling, production planning, electricity generation planning, and cutting problems~\cite{wolseyIntegerProgramming1998}.
 
 Mathematical programming is a language naturally suitable to formulate integer and combinatorial optimization problems, for example, in the form
-\begin{equation}\label{eq:general-ip}
+\begin{equation}\label{eq:general-ip}\tag{IP}
     \begin{split}
 	\min_{\bm{x}} \quad & f\left( \bm{x} \right) \\
 	\textrm{s.t.} \quad & \bm{g}\left( \bm{x} \right) \le \bm{0} \\
@@ -32,11 +32,11 @@ Furthermore, $\bm{g}: \Z^{n}\times \R^{p} \longrightarrow \R^{m}$,  and $\bm{0}$
 Note that maximizing a function is equivalent to minimizing its negative, and an equality constraint can be represented by two inequalities, which renders \eqref{eq:general-ip} a complete formulation.
 
 For an integer program formulated as in \eqref{eq:general-ip}, the set \[
-\mathcal{X}=\left\{ \bm{x}\in \Z^{n}\times \R^{p}: \bm{g}\left( \bm{x} \right) \le \bm{0}\right\} 
-\] is named the \emph{feasible region} of the problem, and a vector $\bm{x}\in \mathcal{X}$ is a \emph{feasible solution}.
-A feasible solution $\bm{x}^{*}\in \mathcal{X}$ is \emph{optimal} if, and only if, there is no other feasible solution results in a lower value of the \emph{objective function} $f: \Z^{n}\times \R^{p} \longrightarrow \R$, i.e., $\bm{x}^{*}$ is optimal $\iff f(\bm{x}^{*}) \le f(\bm{x}) ,\,\forall \bm{x}\in \mathcal{X}$.
+X=\left\{ \bm{x}\in \Z^{n}\times \R^{p}: \bm{g}\left( \bm{x} \right) \le \bm{0}\right\} 
+\] is named the \emph{feasible region} of the problem, and a vector $\bm{x}\in X$ is a \emph{feasible solution}.
+A feasible solution $\bm{x}^{*}\in X$ is \emph{optimal} if, and only if, there is no other feasible solution results in a lower value of the \emph{objective function} $f: \Z^{n}\times \R^{p} \longrightarrow \R$, i.e., $\bm{x}^{*}$ is optimal $\iff f(\bm{x}^{*}) \le f(\bm{x}) ,\,\forall \bm{x}\in X$.
 
-Note that even if a problem is feasible ($\mathcal{X}\neq \varnothing$), it may not have an optimal solution, e.g., if the feasible region is unbounded and the objective function has no global minimum.
+Note that even if a problem is feasible ($X\neq \varnothing$), it may not have an optimal solution, e.g., if the feasible region is unbounded and the objective function has no global minimum.
 Furthermore, if an optimal solution exists, it may no be unique.
 % TODO: show how a problem may have no optimal solution even if with bounded feasible region. see Nemhauser, I.4.6
 
@@ -48,7 +48,7 @@ In fact, one of Karp's 21 NP-complete problems~\cite{karpReducibilityCombinatori
 
 MILP is a subset of IP in which the objective and the constraints are all linear functions and the problem requires integer and continuous variables.
 Formally, an MILP can be formulated as 
-\begin{equation}\label{eq:general-milp}
+\begin{equation}\label{eq:general-milp}\tag{MILP}
 \begin{split}
     \min_{\bm{x}} \quad & \bm{c}^{T}\bm{x} \\
     \textrm{s.t.} \quad & A\bm{x} \le \bm{b} \\
@@ -73,15 +73,18 @@ Furthermore, the applications of MILP often require high-quality solutions in a 
 
 \subsection{The Branch-and-Bound Algorithm}
 
-The main idea behind the branch-and-bound algorithm is to ignore the integrality constraints of the MILP problem, solve the resulting LP, and hope that the solution has the necessary integer components~\cite{vanderbeiLinearProgrammingFoundations1998}.
-If the LP relaxation\footnote{The linear programming problem obtained by ignoring the integrality constraints of an MILP is called its \emph{LP relaxation}.} of an MILP problem has an optimal solution that respects the integrality constraints, than that solution is also optimal for the original problem.
-% integer solutions are naturally occuring to the LP problem on the convex hull of integer solutions for an MILP
-% this is easy to see, as optimal solutions (if they exist) to LPs are always at the vertices of its feasible region (which is a polytope) and the vertices of the convex hull of an MILP all respect the original integrality constraints
-However, that is not always the case.
-As an example, take the MILP problem
+The branch-and-bound algorithm follows a divide-and-conquer approach.
+An MILP problem is divided into smaller, easier problems, and the solution to these problems is combined such that a solution to the original problem is found.
+
+An MILP problem is divided by decomposing its feasible region.
+Given a problem as in \eqref{eq:general-milp}, and a decomposition of its feasible region $X=X_1\cup \ldots\cup X_K$, let $\bm{x}^{k}$ be the optimal solution of $z^{k}=\min\{ \bm{c}^{T}\bm{x} : \bm{x}\in X_k \}$.
+If $k^{*}= \arg\min_k z^{k}$, then $z^{k^*}$ is the optimal value of the MILP problem and $\bm{x}^{k^*}$ is an optimal solution.
+
+The naïve approach to decompose $X$ is to enumerate all possible assignments to the integer variables in a tree structure.
+For example, consider the MILP problem
 \begin{equation}\label{eq:example-milp}
 \begin{split}
-    \min_{\bm{x}=(x_1,x_2)} \quad & -x_2 \\
+    P: \min_{\bm{x}=(x_1,x_2)} \quad & -x_2 \\
     \textrm{s.t.} \quad & x_1 - x_2\le 0 \\
       & x_1+x_2 \le 5 \\
       & x_2 \ge 1 \\
@@ -91,7 +94,108 @@ As an example, take the MILP problem
 for which, following the notation of \eqref{eq:general-milp}, we have \[
 A=\begin{bmatrix} 1 & -1 \\ 1 & 1 \\0 & -1 \end{bmatrix}, \bm{b} = (0, 5, 0), \bm{c} = (0, -1) 
 .\]
-As Fig.~\ref{fig:milp-example} illustrates, the optimal solutions to this problem are $\bm{x}^{*} \in \left\{ (2,2),(3,2) \right\} $, whereas the optimal solution of its LP relaxation is $(2.5, 2.5)$. 
+For this problem, the tree structure of Fig.~\ref{fig:naive-tree-example-milp} could be assembled to enumerate a decomposition $X=X_{1,1}\cup \ldots\cup X_{4,2}$ under all possible assignments to the integer variables, assuming that lower and upper bounds for all variables are known ($X\subseteq \left\{ 1,2,3,4 \right\} \times \left\{ 1,2 \right\} $).
+Note that $X_{1,2}$ and $X_{4,2}$ are empty sets, i.e., they result in infeasible problems.
+In such cases, it is assumed that $z^{k}=\infty$.
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[every child node/.style={circle,draw},level 1/.style={sibling distance=3cm},level 2/.style={sibling distance=1.5cm}, level distance = 3cm,edge from parent path={
+(\tikzparentnode.south) |-   % Start from parent
+++(0,-5mm) -|
+    %($(\tikzparentnode.south)-(0,1mm)$) -|
+%($(\tikzparentnode)!0.5!(\tikzchildnode)$) -| % make an ortho line to mid point
+(\tikzchildnode.north)}]
+        \node[circle,draw] (X) {$X$} 
+	    child { node {$X_1$}
+        	child { node {$X_{1,1}$} edge from parent [->] node (x2) [near end,above,sloped] {$x_2=1$} }
+        	child { node {$X_{1,2}$} edge from parent [->] node (x2) [near end,above,sloped] {$x_2=2$} }
+        	edge from parent [->] node [near end,above,sloped] (x1) {$x_1=1$}
+            }
+            child { node {$X_2$}
+        	child { node {$X_{2,1}$} edge from parent [->] node [near end,above,sloped] {$x_2=1$} }
+        	child { node {$X_{2,2}$} edge from parent [->] node [near end,above,sloped] {$x_2=2$} }
+        	edge from parent [->] node [near end,above,sloped] {$x_1=2$}
+            }
+            child { node {$X_3$}
+        	child { node {$X_{3,1}$} edge from parent [->] node [near end,above,sloped] {$x_2=1$} }
+        	child { node {$X_{3,2}$} edge from parent [->] node [near end,above,sloped] {$x_2=2$} }
+        	edge from parent [->] node [near end,above,sloped] {$x_1=3$}
+            }
+	    child { node {$X_4$}
+        	child { node {$X_{4,1}$} edge from parent [->] node [near end,above,sloped] {$x_2=1$} }
+        	child { node {$X_{4,2}$} edge from parent [->] node [near end,above,sloped] {$x_2=2$} }
+        	edge from parent [->] node [near end,above,sloped] {$x_1=4$}
+            }
+            ;
+	%\node[left = of x2] (x2_label) {$x_2=$};
+	%\node at (x2_label |- x1) {$x_1=$};
+	% \node[left = of x1 -| x2] {$x_1=$};
+    \end{tikzpicture}
+    \caption{Enumeration of all possible assignments for the integer variables of the example MILP problem of Eq. \eqref{eq:example-milp}, assuming lower and upper bounds are known. Leaf nodes contain the sets resulting from fixing the assignments, such that $X=X_1\cup \ldots\cup X_8$.}
+    \label{fig:naive-tree-example-milp}
+\end{figure}
+
+The complete enumeration strategy for decomposing $X=X_1\cup \ldots\cup X_K$ implies that every $z^{k}=\min\{\bm{c}^{T}\bm{x} : \bm{x}\in X_k\}$ problem is an LP.
+Therefore, once a leaf node is reached, it is possible to compute an optimal solution in polynomial time.
+
+However, it is easy to see that complete enumeration of the integer assignments is not a viable option even for problems of moderate size.
+Instead of searching on the complete tree of integer assignments, the branch-and-bound algorithm implements a guided exploration that ignores (or \emph{prunes}) entire branches of the tree based on upper and lower bounds of the problems associated to the decomposition of $X$.
+To see this, first take a decomposition  $X=X_1\cup \ldots\cup X_K$ with $\bm{x}^k$ and $z^k$ as previously, and let $\underline{z}^{k}$ and $\overline{z}^{k}$ be lower and upper bounds (resp.) for every $z^{k}$.
+Then, $\underline{z}=\min_k \underline{z}^{k}$ and $\overline{z}=\min_k \overline{z}^{k}$ are lower and upper bounds (resp.) for $z$.
+Finally, if $\underline{z}^{k} \ge \overline{z}$ for a given $k$, then the optimal solution will not come from $X_k$, which implies that there is no need to explore the tree beyond $X_k$, i.e., that entire branch can be pruned. 
+
+Again on the example MILP problem of \eqref{eq:example-milp}, suppose the LP relaxation of the problem was solved, which resulted in a lower bound $\underline{z}=2.5$.
+Then, a decomposition based on variable $x_2$ was made, such that $X=X_1\cup X_2$, with $X_k = \left\{ \bm{x} : A\bm{x}\le \bm{b}, x_2 = k \right\}$.
+The LP relaxation associated to each $X_k$ resulted in lower and upper bounds as denoted in Fig.~\ref{fig:pruning-example-milp}.
+Because the lower bound of the problem associated to $X_1$ is greater than the upper bound of the problem associated to $X_2$, the optimal solution is definitely not in $X_1$, so this branch of the tree can be pruned.
+Beyond that, the optimal solution of the LP relaxation from $X_1$ is already an integer solution, so no further decomposition is necessary. 
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[every child node/.style={circle,draw},level 1/.style={sibling distance=3cm},level 2/.style={sibling distance=1.5cm}, level distance = 3cm,edge from parent path={
+(\tikzparentnode.south) |-   % Start from parent
+++(0,-5mm) -|
+    %($(\tikzparentnode.south)-(0,1mm)$) -|
+%($(\tikzparentnode)!0.5!(\tikzchildnode)$) -| % make an ortho line to mid point
+(\tikzchildnode.north)}]
+        \node[circle,draw] (X) {$X$} 
+	    child { node[fill=red!50] (X1) {$X_1$}
+        	edge from parent [->] node [near end,above,sloped] (x1) {$x_2=1$}
+            }
+            child { node (X2) {$X_2$}
+        	edge from parent [->] node [near end,above,sloped] {$x_2=2$}
+            }
+            ;
+	\node[below left = 0cm of X] {$-2.5$} ;
+	\node[above left = 0cm of X] {$\infty$} ;
+	\node[below left = 0cm of X1] {$-1$} ;
+	\node[above left = 0cm of X1] {$-1$} ;
+	\node[below left = 0cm of X2] {$-2.5$} ;
+	\node[above left = 0cm of X2] {$-2$} ;
+	%\node[left = of x2] (x2_label) {$x_2=$};
+	%\node at (x2_label |- x1) {$x_1=$};
+	% \node[left = of x1 -| x2] {$x_1=$};
+    \end{tikzpicture}
+    \caption{Example of tree exploration with MILP problem of Eq. \eqref{eq:example-milp}. Associated upper (resp. lower) bounds are illustrated at the top (resp. bottom) left of each node. Node of set $X_1$ is painted red to indicate it is pruned based on the bounds from $X_2$.}
+    \label{fig:pruning-example-milp}
+\end{figure}
+
+
+
+% As Fig.~\ref{fig:milp-example} illustrates, the optimal solutions to this problem are $\bm{x}^{*} \in \left\{ (2,2),(3,2) \right\} $, whereas the optimal solution of its LP relaxation is $(2.5, 2.5)$. 
+
+
+
+
+
+
+The main idea behind the branch-and-bound algorithm is to ignore the integrality constraints of the MILP problem, solve the resulting LP, and hope that the solution has the necessary integer components~\cite{vanderbeiLinearProgrammingFoundations1998}.
+If the LP relaxation\footnote{The linear programming problem obtained by ignoring the integrality constraints of an MILP is called its \emph{LP relaxation}.} of an MILP problem has an optimal solution that respects the integrality constraints, than that solution is also optimal for the original problem.
+% integer solutions are naturally occuring to the LP problem on the convex hull of integer solutions for an MILP
+% this is easy to see, as optimal solutions (if they exist) to LPs are always at the vertices of its feasible region (which is a polytope) and the vertices of the convex hull of an MILP all respect the original integrality constraints
+However, that is not always the case.
+As an example, take the MILP problem
 
 \begin{figure}[h]
     \centering
@@ -103,6 +207,15 @@ As Fig.~\ref{fig:milp-example} illustrates, the optimal solutions to this proble
 A naïve approach is to round the solution of the LP relaxation to the nearest integer value on the variables that violate the integrality constraints.
 This strategy, however, might not even result in feasible solutions to the LP relaxation.
 Note that an optimal solution to an LP is at a vertex of its feasible region, and, thus, a naïve deviation can result in an infeasible solution.
+
+One way to guarantee that the solution to the LP relaxation will be the optimal solution to the MILP problem is to constrain the feasible region of the LP to be the \emph{convex hull} of $X$.
+In other words, given an MILP problem such as in \eqref{eq:general-milp}, the solution to the LP problem
+\begin{align*}
+    \min_{\bm{x}} \quad & \bm{c}^{T}\bm{x} \\
+    \textrm{s.t.} \quad & \bm{x}\in \conv(X) \times  \R^{n+p}
+\end{align*}
+is guaranteed to be the optimal solution to the original problem.
+
 
 
 \subsection{Heuristics}
