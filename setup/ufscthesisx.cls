@@ -901,6 +901,8 @@
 % 6. `badboxes.tex`
 
 
+\usepackage{cancel}
+
 \usepackage{tikz}
 \usetikzlibrary{positioning}
 \usetikzlibrary{arrows.meta}
