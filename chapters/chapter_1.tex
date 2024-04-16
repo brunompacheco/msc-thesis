@@ -253,17 +253,43 @@ Similarly, it is relevant to understand whether the solutions provided are guara
 
 Common examples of heuristic algorithms are greedy algorithms and local search approaches.
 Greedy heuristics construct the solution incrementally by selecting, at each step, the alternative that best improves the objective function.
-Local search algorithms take a feasible solution and try to improve the objective function by performing only limited changes.
-
-The examples above indicate that a heuristic algorithm has to be adapted to the structure of the class of MILP problems at hand.
-Take the Symmetric TSP as an example.
-A greedy heuristic for such problem could be to add to the solution the closest city to the last one visited that is not yet part of the tour.
+Take the Symmetric TSP (STSP) as an example.
+A greedy heuristic for such problem could be to add to the solution the edge with the smallest cost.
 Note that this greedy heuristic will always return a feasible solution, although it is not expected that the solution will be close to optimal.
-Giving a complete tour (feasible solution), a local search can be performed by removing two non-consecutive edges at once that are part of the solution.
-This way, there will be a single tour possible that differs from the original, which will limit the local search in a 2-neighborhood of the original tour.
 
-- analysis of heuristics
+Local search algorithms take a feasible solution and try to improve the objective function by performing only limited changes.
+Giving a complete tour (feasible solution) for the STSP, a small deviation can be achieved by removing two non-consecutive edges that are part of the solution.
+This way, there will be a single tour possible that differs from the original, which will limit the local search to a 2-neighborhood of the original tour.
 
+Not only the design of heuristic algorithms depends on the class of problems of interest, but the performance analysis is highly dependent on the instances that are expected to be fed to the heuristic.
+To better formalize this idea, let us write
+\begin{align*}
+    P(I): \min_{\bm{x}} \quad & \bm{c}_I^{T}\bm{x} \\
+    \textrm{s.t.} \quad & A_I\bm{x} \le \bm{b}_I \\
+      & \bm{x}\in \Z^{n_I}\times \R^{p_I}
+,\end{align*}
+for all instances $I\in \mathcal{I}$.
+The set $\mathcal{I}$ contains all instances of the MILP problem of interest, e.g., all TSPs, TSPs within a given country with all possible edge weights, course scheduling for a given university for varying student interest, energy system optimization problems for a multi-modal power plant under different weather conditions.
+Using this notation, it is possible to say that the performance of the heuristic can be analyzed from the set $\mathcal{I}$.
+
+A possible evaluation is to perform a worst-case analysis of the heuristic.
+The essential idea of a worst-case analysis is to determine the maximum deviation between the optimum objective value and the objective value of the heuristic solution. 
+Let $z(I)$ be the optimum objective value of instance $I\in \mathcal{I}$, and $z_H(I)$ be the objective value of the solution provided by a heuristic $H$.
+The worst-case performance is, then,
+\begin{equation}
+    \begin{split}
+	\max_{I\in \mathcal{I}} \quad& |z(I) - z_H(I)| \\
+	\textrm{s.t.} \quad& X_I \neq \varnothing
+    ,\end{split}
+\end{equation}
+where $X_I$ is the feasible region of instance $I$.
+
+Not always, however, the worst-case performance can be determined analytically.
+A performance estimate can be defined in such cases.
+Let $\mathcal{P}$ be a probability distribution over $\mathcal{I}$.
+The expected performance of a heuristic can be defined as \[
+    \mathbb{E}_{I\sim \mathcal{P}} |z(I) - z_H(I)|
+,\] which can be approximated by Monte Carlo sampling.
 
 \subsubsection{Matheuristics}
 
