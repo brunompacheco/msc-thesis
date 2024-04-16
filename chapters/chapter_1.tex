@@ -41,7 +41,7 @@ Furthermore, if an optimal solution exists, it may no be unique.
 % TODO: show how a problem may have no optimal solution even if with bounded feasible region. see Nemhauser, I.4.6
 
 Beyond the practical applications of integer programming, its computational complexity renders it an important theoretical model.
-It is easy to see that integer programming is an NP-complete problem~\cite{nemhauserIntegerCombinatorialOptimization1999}.
+It is easy to see that integer programming is an NP-hard problem~\cite{nemhauserIntegerCombinatorialOptimization1999}.
 In fact, one of Karp's 21 NP-complete problems~\cite{karpReducibilityCombinatorialProblems1972} is a special case of integer programming with no objective function (constraint satisfaction problem) and solely binary variables.
 
 \section{Mixed-Integer Linear Programs}
@@ -65,9 +65,9 @@ In other words, MILP is a powerful tool for approximating optimization problems 
 
 \section{Solving MILP Problems}
 
-% TODO: solving MILP is hard, in fact, it is NP-complete, as seen Karp's 
+% TODO: solving MILP is hard, in fact, it is NP-hard, as seen Karp's 
 Although MILP offers powerful models for a wide range of problems, solving such problems is unarguably hard.
-In fact, the NP-complete problem formulated by \citeonline{karpReducibilityCombinatorialProblems1972} only contains linear terms, which renders it an special case of MILP and, thus, assuming P$\neq$NP, classifies MILP problems as NP-complete.
+In fact, the NP-complete problem formulated by \citeonline{karpReducibilityCombinatorialProblems1972} only contains linear terms, which renders it an special case of MILP and, thus, assuming P$\neq$NP, classifies MILP problems as NP-hard.
 However, despite the intractable nature, there are efficient and reliable algorithms and software solutions for the computation of optimal and approximate solutions to MILP problems~\cite{bengioMachineLearningCombinatorial2021}.
 Furthermore, the applications of MILP often require high-quality solutions in a limited time, which motivate the development of heuristic approaches, i.e., approaches that trade optimality (or feasibility) guarantees for a tractable running time.
 
@@ -251,7 +251,7 @@ Overall, distinguishing features of heuristics are on the feasibility and optima
 For feasibility, it is important to know if there are feasibility guarantees on the heuristic solution or, at least, an expectation on how often the heuristic will return infeasible solutions.
 Similarly, it is relevant to understand whether the solutions provided are guaranteed to be within a limited distance (in terms of the objective function) of the optimal solutions, or if there is an expected value for such distance. 
 
-Common examples of heuristic algorithms are greedy algorithms and local search approaches.
+Common examples of heuristic algorithms are greedy algorithms and local search approaches~\cite{nemhauserIntegerCombinatorialOptimization1999,wolseyIntegerProgramming1998}.
 Greedy heuristics construct the solution incrementally by selecting, at each step, the alternative that best improves the objective function.
 Take the Symmetric TSP (STSP) as an example.
 A greedy heuristic for such problem could be to add to the solution the edge with the smallest cost.
@@ -261,7 +261,39 @@ Local search algorithms take a feasible solution and try to improve the objectiv
 Giving a complete tour (feasible solution) for the STSP, a small deviation can be achieved by removing two non-consecutive edges that are part of the solution.
 This way, there will be a single tour possible that differs from the original, which will limit the local search to a 2-neighborhood of the original tour.
 
-Not only the design of heuristic algorithms depends on the class of problems of interest, but the performance analysis is highly dependent on the instances that are expected to be fed to the heuristic.
+A general heuristic (or metaheuristic) algorithm for MILP problems is \emph{diving}~\cite{fischettiHeuristicsMixedInteger2011}.
+Diving methods solve the LP relaxation, fix integer variables that assume fractional values, and update the LP relaxation.
+This process is repeated until there are no more integer variables to be fixed.
+It is often called diving because it is equivalent to quickly navigating to a leaf node in a branch-and-bound tree.
+
+Recently, heuristics based on machine learning models have been proposed~\cite{bengioMachineLearningCombinatorial2021}.
+This will be discussed in Section~\ref{sec:learning-based-heuristics}.
+
+\subsubsection{Matheuristics}
+
+Matheuristics is the name given to heuristic algorithms that use a mathematical programming model at its core.
+In fact, the diving algorithm introduced above can be seen as a form of matheuristic.
+In this section, however, the focus is on algorithms that actively optimize mathematical programming models.
+Relaxation induced neighborhood search (RINS) exemplifies the distinction.
+
+RINS can be framed as a diving algorithm~\cite{maniezzoMatheuristicsAlgorithmsImplementations2021}.
+However, upon finding an incumbent feasible solution, a neighborhood is defined based on which integer variables are fixed, and which are left for further exploration.
+This is done through a sub-MILP problem.
+Let $P$ be an MILP problem as in \eqref{eq:general-milp}, $\bm{x}^{h}$ be a feasible solution, and $\widetilde{\bm{x}}$ the solution to the LP relaxation of $P$.
+Let $J = \{j = 1,\ldots,n : x_j^{h} = \widetilde{x}_j\}$ be the index set of variables to fix.
+Then, the sub-MILP problem
+\begin{align*}
+    \min_{\bm{x}} \quad & \bm{c}^{T}\bm{x} \\
+    \textrm{s.t.} \quad & A\bm{x}\le \bm{b} \\
+      & x_j = x_j^{h}, \forall j \in J \\
+      & \bm{x}\in \Z^{n}\times \R^{p}
+\end{align*}
+can be solved, e.g., using branch-and-bound.
+Note that all integer variables that assume the same value in the feasible solution and in the solution to the LP relaxation are fixed, thus, reducing the search space, but abdicating from optimality guarantees.
+
+\subsubsection{Performance analysis}
+
+The performance analysis of heuristic algorithms depends on the instances of interest.
 To better formalize this idea, let us write
 \begin{align*}
     P(I): \min_{\bm{x}} \quad & \bm{c}_I^{T}\bm{x} \\
@@ -290,8 +322,6 @@ Let $\mathcal{P}$ be a probability distribution over $\mathcal{I}$.
 The expected performance of a heuristic can be defined as \[
     \mathbb{E}_{I\sim \mathcal{P}} |z(I) - z_H(I)|
 ,\] which can be approximated by Monte Carlo sampling.
-
-\subsubsection{Matheuristics}
 
 
 
