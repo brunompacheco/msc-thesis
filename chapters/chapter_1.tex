@@ -242,10 +242,30 @@ The reader is pointed to \citeonline{wolseyIntegerProgramming1998} and \citeonli
 \subsection{Heuristics}
 
 Although branch-and-bound provides an efficient algorithmic approach to solve an MILP, it is still intractable.
-Many practical applications have a significant cost on the running time, to the point of implying a trade-off between running time and solution quality. 
-In other words, \emph{heuristics} that can provide high-quality solutions in tractable time hold great value for many practical applications.
+The development of heuristic or approximation algorithms is justified in many ways, as can be seen in \citeonline{wolseyIntegerProgramming1998}, Chapter 12.
+The major one, for this work, is from practical applications with significant running time cost.
+In simple terms, such applications require good solutions quickly, rather than optimal solutions in an unknown time-horizon.
 
-\subsection{Matheuristics}
+Heuristic algorithms are an umbrella term that encompass several different algorithms with different characteristics.
+Overall, distinguishing features of heuristics are on the feasibility and optimality of the solutions returned.
+For feasibility, it is important to know if there are feasibility guarantees on the heuristic solution or, at least, an expectation on how often the heuristic will return infeasible solutions.
+Similarly, it is relevant to understand whether the solutions provided are guaranteed to be within a limited distance (in terms of the objective function) of the optimal solutions, or if there is an expected value for such distance. 
+
+Common examples of heuristic algorithms are greedy algorithms and local search approaches.
+Greedy heuristics construct the solution incrementally by selecting, at each step, the alternative that best improves the objective function.
+Local search algorithms take a feasible solution and try to improve the objective function by performing only limited changes.
+
+The examples above indicate that a heuristic algorithm has to be adapted to the structure of the class of MILP problems at hand.
+Take the Symmetric TSP as an example.
+A greedy heuristic for such problem could be to add to the solution the closest city to the last one visited that is not yet part of the tour.
+Note that this greedy heuristic will always return a feasible solution, although it is not expected that the solution will be close to optimal.
+Giving a complete tour (feasible solution), a local search can be performed by removing two non-consecutive edges at once that are part of the solution.
+This way, there will be a single tour possible that differs from the original, which will limit the local search in a 2-neighborhood of the original tour.
+
+- analysis of heuristics
+
+
+\subsubsection{Matheuristics}
 
 
 
