@@ -46,11 +46,35 @@ The understanding of such concepts is essential for exploring the design and imp
 
 \section{Supervised Learning}
 
-\subsection{Gradient-based optimization}
+The supervised learning can be seen as the problem of finding a function that best associates inputs $x$ to outputs $y$ given a \emph{training set} with finitely many examples of such inputs and outputs~\cite{Goodfellow-et-al-2016}.
+Although the machine learning area has attracted plenty of attention in the last decade, this learning problem is not new.
+In fact, the core concepts were already established by \citeonline{vapnikNatureStatisticalLearning2000}, which will be the main reference for this section, even though a more modern notation, derived from pattern recognition, is adopted~\cite{bishopPatternRecognitionMachine2006,hastieElementsStatisticalLearning2009}.
 
-\subsection{Learning with supervision}
+To be more precise, supervised learning will be defined here as a problem of estimating a function that minimizes the risk.
+Let $\mathcal{X}$ and $\mathcal{Y}$ be the input and output space, and $\mathcal{P}$ be a joint probability distribution over $\mathcal{X}\times \mathcal{Y}$.
+To evaluate a function $f: \mathcal{X} \longrightarrow \mathcal{Y}$ with respect to its capacity to perform the right association between an input $x\in \mathcal{X}$ and an output $y\in \mathcal{Y}$, one measure's the discrepancy, or the \emph{loss}, $\ell(y,f(x))$.
+In this context, the \emph{risk} associated to $f$ is the expected value of the loss function with respect to the probability distribution $\mathcal{P}$, or \[
+    R(f) = \int_{\mathcal{X}\times \mathcal{Y}} \ell(y,f(x))\mathcal{P}(x,y)
+    %R(f) = \mathbb{E}_{(x,y)\sim \mathcal{P}} \ell(y,f(x))
+.\] 
+
+The machine learning paradigm is that the joint probability function is fixed, but unknown, and one only has access to a finite number of samples~\cite{vapnikNatureStatisticalLearning2000}.
+This idea is best represented through a \emph{dataset}, which is a finite set $\mathcal{D}$ of independent and identically distributed (i.i.d.) samples drawn according to $\mathcal{P}$.
+In this context, the \emph{empirical risk} associated to a function $f$ is \[
+    \widetilde{R}(f) = \frac{1}{|\mathcal{D}|} \sum_{(x,y)\in \mathcal{D}} \ell(y, f(x))
+.\]
+
+In this work, it is considered that the function to be estimated is chosen from a \emph{parametric model}\footnotemark, which is a family of functions $f: \mathcal{X}\times \Theta \longrightarrow \mathcal{Y}$ defined over a parameter space $\Theta$.
+\footnotetext{This is in contrast to non-parametric models, whose functions' parameters are defined in terms of the dataset~\cite{murphyMachineLearningProbabilistic2013}.}
+The problem then becomes that of finding a parameter vector that minimizes the empirical risk from a dataset $\mathcal{D}$, or \[
+\min_{\theta \in  \Theta} \widetilde{R}(\theta)
+,\] where \[
+    \widetilde{R}(\theta) = \frac{1}{|\mathcal{D}|} \sum_{(x,y)\in \mathcal{D}} \ell(y, f(x;\theta))
+.\]
 
 \section{Neural Networks}
+
+\subsection{Gradient-based optimization}
 
 \subsection{Graph Neural Networks}
 

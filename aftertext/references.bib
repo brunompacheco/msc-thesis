@@ -18,6 +18,18 @@
   file = {/home/brunompacheco/Zotero/storage/CAVDYZCL/Bengio et al. - 2021 - Machine learning for combinatorial optimization A.pdf;/home/brunompacheco/Zotero/storage/DCDLVZKT/S0377221720306895.html}
 }
 
+@book{bishopPatternRecognitionMachine2006,
+  title = {Pattern Recognition and Machine Learning},
+  author = {Bishop, Christopher M.},
+  year = {2006},
+  series = {Information Science and Statistics},
+  publisher = {Springer},
+  address = {New York},
+  isbn = {978-0-387-31073-2},
+  lccn = {Q327 .B52 2006},
+  keywords = {Machine learning,Pattern perception}
+}
+
 @article{camponogaraModelsAlgorithmsOptimal2015,
   title = {Models and {{Algorithms}} for {{Optimal Piecewise-Linear Function Approximation}}},
   author = {Camponogara, Eduardo and Nazari, Luiz Fernando},
@@ -152,6 +164,20 @@
   file = {/home/brunompacheco/Zotero/storage/CYLS7UJ4/Han et al. - 2023 - A GNN-Guided Predict-and-Search Framework for Mixe.pdf;/home/brunompacheco/Zotero/storage/QJDR4L2K/2302.html}
 }
 
+@book{hastieElementsStatisticalLearning2009,
+  title = {The Elements of Statistical Learning: Data Mining, Inference, and Prediction},
+  shorttitle = {The Elements of Statistical Learning},
+  author = {Hastie, Trevor and Tibshirani, Robert and Friedman, J. H.},
+  year = {2009},
+  series = {Springer Series in Statistics},
+  edition = {2nd ed},
+  publisher = {Springer},
+  address = {New York, NY},
+  isbn = {978-0-387-84857-0 978-0-387-84858-7},
+  lccn = {Q325.5 .H39 2009},
+  keywords = {Bioinformatics,Computational intelligence,Data mining,Forecasting,Inference,Machine learning,Methodology,Statistics}
+}
+
 @incollection{karpReducibilityCombinatorialProblems1972,
   title = {Reducibility among {{Combinatorial Problems}}},
   booktitle = {Complexity of {{Computer Computations}}},
@@ -220,6 +246,19 @@
   langid = {english}
 }
 
+@book{murphyMachineLearningProbabilistic2013,
+  title = {Machine Learning: A Probabilistic Perspective},
+  shorttitle = {Machine Learning},
+  author = {Murphy, Kevin P.},
+  year = {2013},
+  series = {Adaptive Computation and Machine Learning Series},
+  edition = {4. print. (fixed many typos)},
+  publisher = {MIT Press},
+  address = {Cambridge, Mass.},
+  isbn = {978-0-262-01802-9},
+  langid = {english}
+}
+
 @misc{nairSolvingMixedInteger2021,
   title = {Solving {{Mixed Integer Programs Using Neural Networks}}},
   author = {Nair, Vinod and Bartunov, Sergey and Gimeno, Felix and {von Glehn}, Ingrid and Lichocki, Pawel and Lobov, Ivan and O'Donoghue, Brendan and Sonnerat, Nicolas and Tjandraatmadja, Christian and Wang, Pengming and Addanki, Ravichandra and Hapuarachchi, Tharindi and Keck, Thomas and Keeling, James and Kohli, Pushmeet and Ktena, Ira and Li, Yujia and Vinyals, Oriol and Zwols, Yori},
@@ -231,7 +270,7 @@
   publisher = {arXiv},
   doi = {10.48550/arXiv.2012.13349},
   urldate = {2023-05-08},
-  abstract = {Mixed Integer Programming (MIP) solvers rely on an array of sophisticated heuristics developed with decades of research to solve large-scale MIP instances encountered in practice. Machine learning offers to automatically construct better heuristics from data by exploiting shared structure among instances in the data. This paper applies learning to the two key sub-tasks of a MIP solver, generating a high-quality joint variable assignment, and bounding the gap in objective value between that assignment and an optimal one. Our approach constructs two corresponding neural network-based components, Neural Diving and Neural Branching, to use in a base MIP solver such as SCIP. Neural Diving learns a deep neural network to generate multiple partial assignments for its integer variables, and the resulting smaller MIPs for un-assigned variables are solved with SCIP to construct high quality joint assignments. Neural Branching learns a deep neural network to make variable selection decisions in branch-and-bound to bound the objective value gap with a small tree. This is done by imitating a new variant of Full Strong Branching we propose that scales to large instances using GPUs. We evaluate our approach on six diverse real-world datasets, including two Google production datasets and MIPLIB, by training separate neural networks on each. Most instances in all the datasets combined have \$10\^{}3-10\^{}6\$ variables and constraints after presolve, which is significantly larger than previous learning approaches. Comparing solvers with respect to primal-dual gap averaged over a held-out set of instances, the learning-augmented SCIP is 2x to 10x better on all datasets except one on which it is \$10\^{}5\$x better, at large time limits. To the best of our knowledge, ours is the first learning approach to demonstrate such large improvements over SCIP on both large-scale real-world application datasets and MIPLIB.},
+  abstract = {Mixed Integer Programming (MIP) solvers rely on an array of sophisticated heuristics developed with decades of research to solve large-scale MIP instances encountered in practice. Machine learning offers to automatically construct better heuristics from data by exploiting shared structure among instances in the data. This paper applies learning to the two key sub-tasks of a MIP solver, generating a high-quality joint variable assignment, and bounding the gap in objective value between that assignment and an optimal one. Our approach constructs two corresponding neural network-based components, Neural Diving and Neural Branching, to use in a base MIP solver such as SCIP. Neural Diving learns a deep neural network to generate multiple partial assignments for its integer variables, and the resulting smaller MIPs for un-assigned variables are solved with SCIP to construct high quality joint assignments. Neural Branching learns a deep neural network to make variable selection decisions in branch-and-bound to bound the objective value gap with a small tree. This is done by imitating a new variant of Full Strong Branching we propose that scales to large instances using GPUs. We evaluate our approach on six diverse real-world datasets, including two Google production datasets and MIPLIB, by training separate neural networks on each. Most instances in all the datasets combined have \$10{\textasciicircum}3-10{\textasciicircum}6\$ variables and constraints after presolve, which is significantly larger than previous learning approaches. Comparing solvers with respect to primal-dual gap averaged over a held-out set of instances, the learning-augmented SCIP is 2x to 10x better on all datasets except one on which it is \$10{\textasciicircum}5\$x better, at large time limits. To the best of our knowledge, ours is the first learning approach to demonstrate such large improvements over SCIP on both large-scale real-world application datasets and MIPLIB.},
   archiveprefix = {arxiv},
   keywords = {*,Computer Science - Artificial Intelligence,Computer Science - Discrete Mathematics,Computer Science - Machine Learning,Computer Science - Neural and Evolutionary Computing,end-to-end,imitation learning,Mathematics - Optimization and Control},
   file = {/home/brunompacheco/Zotero/storage/84IBM572/Nair et al. - 2021 - Solving Mixed Integer Programs Using Neural Networ.pdf;/home/brunompacheco/Zotero/storage/7NQQJVA5/2012.html}
@@ -290,6 +329,19 @@
   isbn = {978-0-7923-8141-9 978-0-7923-9804-2},
   langid = {english},
   file = {/home/brunompacheco/Zotero/storage/DN4XE2B6/Vanderbei - 1998 - Linear programming foundations and extensions.pdf}
+}
+
+@book{vapnikNatureStatisticalLearning2000,
+  title = {The {{Nature}} of {{Statistical Learning Theory}}},
+  author = {Vapnik, V. N.},
+  year = {2000},
+  edition = {Second edition},
+  publisher = {Springer New York : Imprint : Springer},
+  address = {New York, NY},
+  abstract = {The aim of this book is to discuss the fundamental ideas which lie behind the statistical theory of learning and generalization. It considers learning as a general problem of function estimation based on empirical data. Omitting proofs and technical details, the author concentrates on discussing the main results of learning theory and their connections to fundamental problems in statistics. These include: * the setting of learning problems based on the model of minimizing the risk functional from empirical data * a comprehensive analysis of the empirical risk minimization principle including necessary and sufficient conditions for its consistency * non-asymptotic bounds for the risk achieved using the empirical risk minimization principle * principles for controlling the generalization ability of learning machines using small sample sizes based on these bounds * the Support Vector methods that control the generalization ability when estimating function using small sample size. The second edition of the book contains three new chapters devoted to further development of the learning theory and SVM techniques. These include: * the theory of direct method of learning based on solving multidimensional integral equations for density, conditional probability, and conditional density estimation * a new inductive principle of learning. Written in a readable and concise style, the book is intended for statisticians, mathematicians, physicists, and computer scientists. Vladimir N. Vapnik is Technology Leader AT \& T Labs-Research and Professor of London University. He is one of the founders of},
+  isbn = {978-1-4757-3264-1},
+  langid = {english},
+  annotation = {OCLC: 864225872}
 }
 
 @incollection{wolseyFormulations2020,
