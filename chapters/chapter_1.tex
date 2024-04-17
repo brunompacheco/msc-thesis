@@ -274,11 +274,11 @@ This will be discussed in Section~\ref{sec:learning-based-heuristics}.
 Matheuristics is the name given to heuristic algorithms that use a mathematical programming model at its core.
 In fact, the diving algorithm introduced above can be seen as a form of matheuristic.
 In this section, however, the focus is on algorithms that actively optimize mathematical programming models.
-Relaxation induced neighborhood search (RINS) exemplifies the distinction.
+Relaxation induced neighborhood search (RINS), often framed as a diving algorithm~\cite{maniezzoMatheuristicsAlgorithmsImplementations2021}, exemplifies the distinction intended in this chapter.
 
-RINS can be framed as a diving algorithm~\cite{maniezzoMatheuristicsAlgorithmsImplementations2021}.
-However, upon finding an incumbent feasible solution, a neighborhood is defined based on which integer variables are fixed, and which are left for further exploration.
-This is done through a sub-MILP problem.
+The RINS algorithm aims to improve a feasible solution by solving a smaller MILP problem. 
+A neighborhood around a feasible solution is defined by fixing the values of some integer variables.
+The search on this neighborhood is performed by adding the variable fixing constraints to the original problem, effectively reducing its feasible region.
 Let $P$ be an MILP problem as in \eqref{eq:general-milp}, $\bm{x}^{h}$ be a feasible solution, and $\widetilde{\bm{x}}$ the solution to the LP relaxation of $P$.
 Let $J = \{j = 1,\ldots,n : x_j^{h} = \widetilde{x}_j\}$ be the index set of variables to fix.
 Then, the sub-MILP problem
@@ -290,6 +290,9 @@ Then, the sub-MILP problem
 \end{align*}
 can be solved, e.g., using branch-and-bound.
 Note that all integer variables that assume the same value in the feasible solution and in the solution to the LP relaxation are fixed, thus, reducing the search space, but abdicating from optimality guarantees.
+
+As the RINS example above illustrates, a mathematical programming model plays a central role in a matheuristic~\cite{fischettiMatheuristics2016}.
+Because of their flexibility, matheuristics are also used within branch-and-bound algorithms, e.g., to find tighter bounds and accelerate the time to the first feasible solution~\cite{fischettiMatheuristics2016,maniezzoMatheuristicsAlgorithmsImplementations2021}.
 
 \subsubsection{Performance analysis}
 
