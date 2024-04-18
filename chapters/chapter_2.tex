@@ -67,13 +67,20 @@ In this context, the \emph{empirical risk} associated to a function $f$ over a d
 
 In this work, it is considered that the function to be estimated is chosen from a \emph{parametric model}\footnotemark, which is a family of functions $f: \mathcal{X}\times \Theta \longrightarrow \mathcal{Y}$ defined over a parameter space $\Theta$.
 \footnotetext{This is in contrast to non-parametric models, whose functions' parameters are defined in terms of the dataset~\cite{murphyMachineLearningProbabilistic2013}.}
-The problem then becomes that of finding a parameter vector that minimizes the empirical risk from a dataset $\mathcal{D}$, or \[
-\min_{\theta \in  \Theta} R_\textrm{emp}(\mathcal{D},\theta)
+The problem then becomes that of finding a parameter vector that minimizes the empirical risk from a dataset $\mathcal{D}$, or \emph{fitting} a model to a dataset, denoted \[
+\min_{\theta \in  \Theta} \mathcal{L}(\theta)
 ,\] where \[
-    R_\textrm{emp}(\mathcal{D},\theta) = \frac{1}{|\mathcal{D}|} \sum_{(x,y)\in \mathcal{D}} \ell(y, f(x;\theta))
-.\]
+    \mathcal{L}(\theta) = \frac{1}{|\mathcal{D}|} \sum_{(x,y)\in \mathcal{D}} \ell(y, f(x;\theta))
+\] is an alternate, commonly found notation for the empirical risk, which often carries the name \emph{cost function}~\cite{murphyMachineLearningProbabilistic2013,bengioMachineLearningCombinatorial2021}.
+Both "empirical risk" and "cost function" will be used interchangeably throughout this dissertation, although the former has a stronger connection to learning theory, while the latter is more related to practical matters.
 
-\subsection{Generalization and overfitting}
+A supervised learning algorithm is essentially an algorithm to optimize a cost function given a model and a dataset.
+In fact, it is possible to define a supervised learning algorithm as a simple recipe: "combine a speciﬁcation of a dataset, a cost function, an optimization procedure and a model"~\cite{bengioMachineLearningCombinatorial2021}.
+Many different algorithms exist that are suitable for different components of this recipe.
+For example, there are algorithms particular to decision tree models~\cite{breimanClassificationRegressionTrees2017}.
+The least squares algorithm (used in the example of Section~\ref{sec:generalization-overfitting}) can be seen as a supervised learning algorithm for polynomial models given and the squared error loss function.
+
+\subsection{Generalization and overfitting}\label{sec:generalization-overfitting}
 
 Blindly minimizing the empirical risk can lead to a problem named \emph{overfitting}.
 Overfitting happens when the empirical risk does not reflect the true risk, that is, when a function is \emph{fit} for the dataset, but not for the underlying data distribution.
@@ -84,10 +91,10 @@ It is desired to find a function that minimizes the risk measured through the sq
     \ell(y,f(x)) = (y-f(x))^2
 .\] 
 The models $f_1,f_2,f_3$ are polynomials of degree 1, 3, and 15, whose parameters are the weights of the polynomials.
-These models are adjusted using least squares algorithm, such that their parameter choices achieves a global minimum of the empirical risk.
+These models are adjusted using least squares algorithm, resulting in parameter vectors $\theta_1^*,\theta_2^*,\theta_3^*$ that achieve a global minimum of the empirical risk with their respective models.
 The performance of these models is illustrated in Fig.~\ref{fig:overfitting-example}.
 
-Note that the model $f_3$ achieves the lowest empirical risk on $\mathcal{D}$.
+Note that model $f_3$ achieves the lowest empirical risk on $\mathcal{D}$.
 However, $f_2$ is the one that seems to best associates inputs to outputs, considering a visual intuition of the underlying data distribution.
 One could say that $f_3$ is \emph{too complex} for the underlying distribution, which leads to it being more tightly adjusted to the noise present in the dataset rather than on the underlying data distribution~\cite{murphyMachineLearningProbabilistic2013}.
 On the other hand of the spectrum is the $f_1$ model, which is not complex enough to model the desired behavior.
@@ -96,7 +103,7 @@ While $f_3$ is overfitting the data, $f_1$ is underfitting it.
 \begin{figure}[h]
     \centering
     \includegraphics{pictures/overfitting.pdf}
-    \caption{Example of overfitting. The three functions shown ($f_1,f_2,f_3$) are polynomials of degree 1, 3 and 10 adjusted to the dataset $\mathcal{D}$. The models' parameter vectors are omitted from this illustration for simplicity purposes. The functions achieve empirical risks of $R_\textrm{emp}(\mathcal{D},f_1)=43.66$, $R_\textrm{emp}(\mathcal{D},f_2)=3.67$, and $R_\textrm{emp}(\mathcal{D},f_3)=1.86$.}
+    \caption{Example of overfitting. The three models shown ($f_1,f_2,f_3$) are polynomials of degree 1, 3 and 10 adjusted to the dataset $\mathcal{D}$. The optimal parameter vectors $\theta_1^*,\theta_2^*$ and $\theta_3^*$ were adjusted using a least squares algorithm. The empirical risks are $\mathcal{L}(\theta_1^*)=43.66$, $\mathcal{L}(\theta_2^*)=3.67$, and $\mathcal{L}(\theta_3^*)=1.86$.}
     \label{fig:overfitting-example}
 \end{figure}
 
@@ -104,15 +111,22 @@ The level of overfitting that a function $f$ presents could be determined throug
 More specifically, a function can be said to overfit the dataset if it has a high generalization gap.
 As the underlying distribution $\mathcal{P}$ is not known, the generalization gap is approximated by \emph{splitting} the dataset $\mathcal{D}$ into a training set $\mathcal{D}_\textrm{train}$ and a test set $\mathcal{D}_\textrm{test}$.
 The idea is that the parameters of the model are adjusted according to the empirical risk of $\mathcal{D}_\textrm{train}$, while $\mathcal{D}_\textrm{test}$ is reserved for estimating the true risk, also called \emph{generalization error}.
+This way, the resulting function cannot be overfitted to $\mathcal{D}_\textrm{test}$, which is kept as an untouched source of information of the underlying distribution.
 Finally, the generalization gap can be estimated as  \[
     R_\textrm{emp}(\mathcal{D}_\textrm{test},f) - R_\textrm{emp}(\mathcal{D}_\textrm{train},f)
 .\] 
 
+\subsection{Hyperparameter optimization}
 
+In practice, the dataset $\mathcal{D}$ is partitioned into three sets, as a validation set $\mathcal{D}_\textrm{val}$ is necessary for \emph{hyperparameter optimization}.
 
-\subsection{Gradient-based optimization}
+% See Bengio et al., Ch. 5.3
 
 \section{Neural Networks}
+
+\subsection{Gradient-based learning}
+
+% See Bengio et al., Ch. 6.2
 
 \subsection{Graph Neural Networks}
 
