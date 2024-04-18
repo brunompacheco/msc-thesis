@@ -46,35 +46,73 @@ The understanding of such concepts is essential for exploring the design and imp
 
 \section{Supervised Learning}
 
-The supervised learning can be seen as the problem of finding a function that best associates inputs $x$ to outputs $y$ given a \emph{training set} with finitely many examples of such inputs and outputs~\cite{Goodfellow-et-al-2016}.
+Supervised learning can be seen as the problem of finding a function that best associates inputs $x$ to outputs $y$ given a \emph{training set} with finitely many examples of such inputs and outputs~\cite{Goodfellow-et-al-2016}.
 Although the machine learning area has attracted plenty of attention in the last decade, this learning problem is not new.
-In fact, the core concepts were already established by \citeonline{vapnikNatureStatisticalLearning2000}, which will be the main reference for this section, even though a more modern notation, derived from pattern recognition, is adopted~\cite{bishopPatternRecognitionMachine2006,hastieElementsStatisticalLearning2009}.
+In fact, the core concepts were already established in the 1960s and 1970s~\cite{vapnikNatureStatisticalLearning2000}.
+This section's approach to supervised learning will be that of statistical learning theory, based on \citeonline{vapnikNatureStatisticalLearning2000}, but with a more modern notation, derived from pattern recognition~\cite{bishopPatternRecognitionMachine2006,hastieElementsStatisticalLearning2009}.
 
 To be more precise, supervised learning will be defined here as a problem of estimating a function that minimizes the risk.
 Let $\mathcal{X}$ and $\mathcal{Y}$ be the input and output space, and $\mathcal{P}$ be a joint probability distribution over $\mathcal{X}\times \mathcal{Y}$.
 To evaluate a function $f: \mathcal{X} \longrightarrow \mathcal{Y}$ with respect to its capacity to perform the right association between an input $x\in \mathcal{X}$ and an output $y\in \mathcal{Y}$, one measure's the discrepancy, or the \emph{loss}, $\ell(y,f(x))$.
-In this context, the \emph{risk} associated to $f$ is the expected value of the loss function with respect to the probability distribution $\mathcal{P}$, or \[
-    R(f) = \int_{\mathcal{X}\times \mathcal{Y}} \ell(y,f(x))\mathcal{P}(x,y)
+In this context, the \emph{risk} associated to $f$ over the joint distribution $\mathcal{P}$ is the expected value of the loss function, or \[
+    R(\mathcal{P},f) = \int_{\mathcal{X}\times \mathcal{Y}} \ell(y,f(x))\mathcal{P}(x,y)
     %R(f) = \mathbb{E}_{(x,y)\sim \mathcal{P}} \ell(y,f(x))
 .\] 
 
 The machine learning paradigm is that the joint probability function is fixed, but unknown, and one only has access to a finite number of samples~\cite{vapnikNatureStatisticalLearning2000}.
 This idea is best represented through a \emph{dataset}, which is a finite set $\mathcal{D}$ of independent and identically distributed (i.i.d.) samples drawn according to $\mathcal{P}$.
-In this context, the \emph{empirical risk} associated to a function $f$ is \[
-    \widetilde{R}(f) = \frac{1}{|\mathcal{D}|} \sum_{(x,y)\in \mathcal{D}} \ell(y, f(x))
+In this context, the \emph{empirical risk} associated to a function $f$ over a dataset $\mathcal{D}$ is \[
+    R_\textrm{emp}(\mathcal{D},f) = \frac{1}{|\mathcal{D}|} \sum_{(x,y)\in \mathcal{D}} \ell(y, f(x))
 .\]
 
 In this work, it is considered that the function to be estimated is chosen from a \emph{parametric model}\footnotemark, which is a family of functions $f: \mathcal{X}\times \Theta \longrightarrow \mathcal{Y}$ defined over a parameter space $\Theta$.
 \footnotetext{This is in contrast to non-parametric models, whose functions' parameters are defined in terms of the dataset~\cite{murphyMachineLearningProbabilistic2013}.}
 The problem then becomes that of finding a parameter vector that minimizes the empirical risk from a dataset $\mathcal{D}$, or \[
-\min_{\theta \in  \Theta} \widetilde{R}(\theta)
+\min_{\theta \in  \Theta} R_\textrm{emp}(\mathcal{D},\theta)
 ,\] where \[
-    \widetilde{R}(\theta) = \frac{1}{|\mathcal{D}|} \sum_{(x,y)\in \mathcal{D}} \ell(y, f(x;\theta))
+    R_\textrm{emp}(\mathcal{D},\theta) = \frac{1}{|\mathcal{D}|} \sum_{(x,y)\in \mathcal{D}} \ell(y, f(x;\theta))
 .\]
 
-\section{Neural Networks}
+\subsection{Generalization and overfitting}
+
+Blindly minimizing the empirical risk can lead to a problem named \emph{overfitting}.
+Overfitting happens when the empirical risk does not reflect the true risk, that is, when a function is \emph{fit} for the dataset, but not for the underlying data distribution.
+
+This concept is best understood through an example.
+Suppose $\mathcal{X},\mathcal{Y}\subseteq\R$ and that a dataset $\mathcal{D}$ with 40 i.i.d. samples is obtained such as illustrated in Fig.~\ref{fig:overfitting-example}.
+It is desired to find a function that minimizes the risk measured through the squared error loss \[
+    \ell(y,f(x)) = (y-f(x))^2
+.\] 
+The models $f_1,f_2,f_3$ are polynomials of degree 1, 3, and 15, whose parameters are the weights of the polynomials.
+These models are adjusted using least squares algorithm, such that their parameter choices achieves a global minimum of the empirical risk.
+The performance of these models is illustrated in Fig.~\ref{fig:overfitting-example}.
+
+Note that the model $f_3$ achieves the lowest empirical risk on $\mathcal{D}$.
+However, $f_2$ is the one that seems to best associates inputs to outputs, considering a visual intuition of the underlying data distribution.
+One could say that $f_3$ is \emph{too complex} for the underlying distribution, which leads to it being more tightly adjusted to the noise present in the dataset rather than on the underlying data distribution~\cite{murphyMachineLearningProbabilistic2013}.
+On the other hand of the spectrum is the $f_1$ model, which is not complex enough to model the desired behavior.
+While $f_3$ is overfitting the data, $f_1$ is underfitting it.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics{pictures/overfitting.pdf}
+    \caption{Example of overfitting. The three functions shown ($f_1,f_2,f_3$) are polynomials of degree 1, 3 and 10 adjusted to the dataset $\mathcal{D}$. The models' parameter vectors are omitted from this illustration for simplicity purposes. The functions achieve empirical risks of $R_\textrm{emp}(\mathcal{D},f_1)=43.66$, $R_\textrm{emp}(\mathcal{D},f_2)=3.67$, and $R_\textrm{emp}(\mathcal{D},f_3)=1.86$.}
+    \label{fig:overfitting-example}
+\end{figure}
+
+The level of overfitting that a function $f$ presents could be determined through the \emph{generalization gap}, which is the difference between the empirical risk and the true risk $R(\mathcal{P},f) - R_\textrm{emp}(\mathcal{D},f)$~\cite{murphyMachineLearningProbabilistic2013}.
+More specifically, a function can be said to overfit the dataset if it has a high generalization gap.
+As the underlying distribution $\mathcal{P}$ is not known, the generalization gap is approximated by \emph{splitting} the dataset $\mathcal{D}$ into a training set $\mathcal{D}_\textrm{train}$ and a test set $\mathcal{D}_\textrm{test}$.
+The idea is that the parameters of the model are adjusted according to the empirical risk of $\mathcal{D}_\textrm{train}$, while $\mathcal{D}_\textrm{test}$ is reserved for estimating the true risk, also called \emph{generalization error}.
+Finally, the generalization gap can be estimated as  \[
+    R_\textrm{emp}(\mathcal{D}_\textrm{test},f) - R_\textrm{emp}(\mathcal{D}_\textrm{train},f)
+.\] 
+
+
 
 \subsection{Gradient-based optimization}
+
+\section{Neural Networks}
 
 \subsection{Graph Neural Networks}
 

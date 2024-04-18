@@ -7,6 +7,13 @@ import scienceplots
 
 from matplotlib.patches import Polygon
 
+def debugger_is_active() -> bool:
+    """Return if the debugger is currently active
+
+    https://stackoverflow.com/a/67065084/7964333
+    """
+    return hasattr(sys, 'gettrace') and sys.gettrace() is not None
+
 plt.style.use(['science','vibrant'])
 plt.rcParams.update({
     'font.size': 12,
@@ -25,9 +32,10 @@ def scopus():
     plt.xlabel('Year')
     plt.ylabel('Count')
 
-    # plt.show()
-    plt.savefig('pictures/scopus.pdf')
-    plt.figure()
+    if debugger_is_active():
+        plt.show()
+    else:
+        plt.savefig('pictures/scopus.pdf')
 
 def milp_example():
     # Problem definition
@@ -82,9 +90,42 @@ def milp_example():
     plt.gca().yaxis.set_label_coords(0.00, 1.05)
     plt.legend()
 
-    # plt.show()
-    plt.savefig('pictures/milp_example_feasible_region.pdf')
+    if debugger_is_active():
+        plt.show()
+    else:
+        plt.savefig('pictures/milp_example_feasible_region.pdf')
 
+def overfitting():
+    x_train = np.linspace(0.5, 4.5, 40)
+    x_test = np.linspace(0, 5, 100)
+    y = lambda x: (x-2)**2 + 1 + np.random.normal(0, 0.5, len(x))
+    y_train = y(x_train)
+    y_test = y(x_test)
+
+    p1, res1, *_ = np.polyfit(x_train, y_train, 1, full=True)
+    p3, res3, *_ = np.polyfit(x_train, y_train, 3, full=True)
+    p15, res15, *_ = np.polyfit(x_train, y_train, 15, full=True)
+
+    print(f'R_emp(f_1) = {res1[0]:.2f}')
+    print(f'R_emp(f_2) = {res3[0]:.2f}')
+    print(f'R_emp(f_3) = {res15[0]:.2f}')
+
+    plt.plot(x_test, np.polyval(p1, x_test), label=r"$f_1$")
+    plt.plot(x_test, np.polyval(p3, x_test), label=r"$f_2$")
+    plt.plot(x_test, np.polyval(p15, x_test), label=r"$f_3$")
+
+    plt.scatter(x_train, y_train, c='r', s=1, label=r'$\mathcal{D}$', zorder=10)
+
+    plt.xlabel('$x$')
+    plt.ylabel('$y$')
+    plt.xlim(0, 5)
+    plt.ylim(0, 10)
+    plt.legend()
+
+    if debugger_is_active():
+        plt.show()
+    else:
+        plt.savefig('pictures/overfitting.pdf')
 
 if __name__ == '__main__':
     try:
@@ -94,7 +135,8 @@ if __name__ == '__main__':
         quit()
 
     if incumbent_plot in ['--all', '-a']:
-        scopus()
-        milp_example()
+        for plot in [scopus, milp_example]:
+            plt.figure()
+            plot()
     else:
         eval(incumbent_plot + '()')
