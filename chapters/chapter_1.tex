@@ -241,7 +241,7 @@ The reader is pointed to \citeonline{wolseyIntegerProgramming1998} and \citeonli
 
 \subsection{Heuristics}
 
-Although branch-and-bound provides an efficient algorithmic approach to solve an MILP, it is still intractable.
+Although branch-and-bound provides an efficient algorithmic approach to solve an MILP problem, there is no guarantee that it will find a feasible (let alone an optimal) solution considering the NP-hardness of the problem.
 The development of heuristic or approximation algorithms is justified in many ways, as can be seen in \citeonline{wolseyIntegerProgramming1998}, Chapter 12.
 The major one, for this work, is from practical applications with significant running time cost.
 In simple terms, such applications require good solutions quickly, rather than optimal solutions in an unknown time-horizon.
@@ -250,6 +250,7 @@ Heuristic algorithms are an umbrella term that encompass several different algor
 Overall, distinguishing features of heuristics are on the feasibility and optimality of the solutions returned.
 For feasibility, it is important to know if there are feasibility guarantees on the heuristic solution or, at least, an expectation on how often the heuristic will return infeasible solutions.
 Similarly, it is relevant to understand whether the solutions provided are guaranteed to be within a limited distance (in terms of the objective function) of the optimal solutions, or if there is an expected value for such distance. 
+Such heuristics with quality guarantees are referred to as approximation algorithms in the technical literature
 
 Common examples of heuristic algorithms are greedy algorithms and local search approaches~\cite{nemhauserIntegerCombinatorialOptimization1999,wolseyIntegerProgramming1998}.
 Greedy heuristics construct the solution incrementally by selecting, at each step, the alternative that best improves the objective function.
@@ -258,8 +259,9 @@ A greedy heuristic for such problem could be to add to the solution the edge wit
 Note that this greedy heuristic will always return a feasible solution, although it is not expected that the solution will be close to optimal.
 
 Local search algorithms take a feasible solution and try to improve the objective function by performing only limited changes.
-Giving a complete tour (feasible solution) for the STSP, a small deviation can be achieved by removing two non-consecutive edges that are part of the solution.
-This way, there will be a single tour possible that differs from the original, which will limit the local search to a 2-neighborhood of the original tour.
+Given a complete tour (feasible solution) for the STSP, a small deviation can be achieved by removing two non-consecutive edges that are part of the solution and adding two \emph{different} edges that reconnect the two disjoint paths.
+This way, a new tour will be achieved that differs from the original by two edges.
+In other words, such local search is limited to a 2-neighborhood of the original tour.
 
 A general heuristic (or metaheuristic) algorithm for MILP problems is \emph{diving}~\cite{fischettiHeuristicsMixedInteger2011}.
 Diving methods solve the LP relaxation, fix integer variables that assume fractional values, and update the LP relaxation.
@@ -274,7 +276,7 @@ This will be discussed in Section~\ref{sec:learning-based-heuristics}.
 Matheuristics is the name given to heuristic algorithms that use a mathematical programming model at its core.
 In fact, the diving algorithm introduced above can be seen as a form of matheuristic.
 In this section, however, the focus is on algorithms that actively optimize mathematical programming models.
-Relaxation induced neighborhood search (RINS), often framed as a diving algorithm~\cite{maniezzoMatheuristicsAlgorithmsImplementations2021}, exemplifies the distinction intended in this chapter.
+Relaxation induced neighborhood search (RINS)~\cite{maniezzoMatheuristicsAlgorithmsImplementations2021} exemplifies the distinction intended in this chapter.
 
 The RINS algorithm aims to improve a feasible solution by solving a smaller MILP problem. 
 A neighborhood around a feasible solution is defined by fixing the values of some integer variables.
