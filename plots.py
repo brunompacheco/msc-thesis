@@ -1,3 +1,4 @@
+import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -16,7 +17,7 @@ plt.rcParams.update({
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 
-if __name__ == '__main__':
+def scopus():
     df = pd.read_csv('scopus-search.csv', header=None, skiprows=9, names=['Year', 'Count'])
 
     plt.plot(df['Year'], df['Count'], 'o-', markersize=2)
@@ -28,6 +29,7 @@ if __name__ == '__main__':
     plt.savefig('pictures/scopus.pdf')
     plt.figure()
 
+def milp_example():
     # Problem definition
     # min -x_2
     # s.t. x_1 <= x_2
@@ -82,3 +84,17 @@ if __name__ == '__main__':
 
     # plt.show()
     plt.savefig('pictures/milp_example_feasible_region.pdf')
+
+
+if __name__ == '__main__':
+    try:
+        incumbent_plot = sys.argv[1]
+    except IndexError:
+        print("Specify which figure to plot!")
+        quit()
+
+    if incumbent_plot in ['--all', '-a']:
+        scopus()
+        milp_example()
+    else:
+        eval(incumbent_plot + '()')
