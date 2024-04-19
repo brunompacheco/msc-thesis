@@ -96,6 +96,7 @@ def milp_example():
         plt.savefig('pictures/milp_example_feasible_region.pdf')
 
 def overfitting():
+    np.random.seed(42)
     x_train = np.linspace(0.5, 4.5, 40)
     x_test = np.linspace(0, 5, 100)
     y = lambda x: (x-2)**2 + 1 + np.random.normal(0, 0.5, len(x))
@@ -135,7 +136,7 @@ if __name__ == '__main__':
         quit()
 
     if incumbent_plot in ['--all', '-a']:
-        for plot in [scopus, milp_example]:
+        for plot in [scopus, milp_example, overfitting]:
             plt.figure()
             plot()
     else:
