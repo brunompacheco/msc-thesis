@@ -47,7 +47,7 @@ The understanding of such concepts is essential for exploring the design and imp
 \section{Supervised Learning}
 
 Supervised learning can be seen as the problem of finding a function that best associates inputs $x$ to outputs $y$ given a \emph{training set} with finitely many examples of such inputs and outputs~\cite{Goodfellow-et-al-2016}.
-Although the machine learning area has attracted plenty of attention in the last decade, this learning problem is not new.
+Although the machine learning (ML) area has attracted plenty of attention in the last decade, this learning problem is not new.
 In fact, the core concepts were already established in the 1960s and 1970s~\cite{vapnikNatureStatisticalLearning2000}.
 This section's approach to supervised learning will be that of statistical learning theory, based on \citeonline{vapnikNatureStatisticalLearning2000}, but with a more modern notation, derived from pattern recognition~\cite{bishopPatternRecognitionMachine2006,hastieElementsStatisticalLearning2009}.
 
@@ -69,11 +69,15 @@ In this context, the \emph{empirical risk} associated to a function $f$ over a d
 
 In this work, it is considered that the function to be estimated is chosen from a \emph{parametric model}\footnotemark, which is a family of functions $f_\theta: \mathcal{X} \longrightarrow \mathcal{Y}$ defined over a parameter space $\Theta \ni \theta$.
 \footnotetext{This is in contrast to non-parametric models, whose functions' parameters are defined in terms of the dataset~\cite{murphyMachineLearningProbabilistic2013}.}
-The problem then becomes that of finding a parameter vector that minimizes the empirical risk from a dataset $\mathcal{D}$, or \emph{fitting} a model to a dataset, denoted \[
-\min_{\theta \in  \Theta} \mathcal{L}(\theta)
-,\] where \[
+The problem then becomes that of finding a parameter vector that minimizes the empirical risk from a dataset $\mathcal{D}$, or \emph{fitting} a model to a dataset, denoted
+\begin{equation}\label{eq:cost-minimization}
+    \min_{\theta \in  \Theta} \mathcal{L}(\theta)
+,\end{equation}
+where
+\begin{equation}\label{eq:cost-function}
     \mathcal{L}(\theta) = \frac{1}{|\mathcal{D}|} \sum_{(x,y)\in \mathcal{D}} \ell(y, f_\theta(x))
-\] is an alternate, commonly found notation for the empirical risk, which often carries the name \emph{cost function}~\cite{murphyMachineLearningProbabilistic2013,Goodfellow-et-al-2016}.
+\end{equation}
+is an alternate, commonly found notation for the empirical risk, which often carries the name \emph{cost function}~\cite{murphyMachineLearningProbabilistic2013,Goodfellow-et-al-2016}.
 Both "empirical risk" and "cost function" will be used interchangeably throughout this dissertation, although the former has a stronger connection to learning theory, while the latter is more related to practical matters.
 
 A supervised learning algorithm is essentially an algorithm to optimize a cost function given a model and a dataset.
@@ -157,23 +161,59 @@ An NN model can be written as
     f_\theta: \R^{n} &\longrightarrow \R^{m} \\
     x &\longmapsto f_\theta(x) = f^{(L)}_\theta(f^{(L-1)}_\theta(\cdots(f^{(1)}_\theta(x))\cdots))
 ,\end{align*}
-in which each $f^{(l)}_\theta$, $l=1,\ldots,L$, is a \emph{layer} of the network.
+in which each $f^{(l)}_\theta$, $l=1,\ldots,L$, is a \emph{layer} of the network, and $L$, the number of layers.
 All layers except the last one are called \emph{hidden} layers of the network.
 The last one is called the \emph{output} layer.
-A simple layer of an NN can a linear combination of its inputs followed by a nonlinear \emph{activation function} $\phi : \R^{d} \longrightarrow \R^{d}$, as in \[
+A simple layer of an NN can a linear combination of its inputs followed by a nonlinear function $\phi : \R^{d} \longrightarrow \R^{d}$, as in \[
 f^{(l)}_\theta = \phi\left( W^{(l)} x + c^{(l)} \right) 
 .\] 
-In the hidden layers, the default choice for $\phi$ is the rectified linear unit, or ReLU~\cite{Goodfellow-et-al-2016}, defined element-wise as $\phi(z)=\max\{0,z\}$.
-The activation function of the output layer is very application-dependent.
+Note that an NN's parameter vector can be seen as the concatenation of the parameters of all layers, i.e., $\theta = (W^{(1)},c^{(1)},W^{(2)},c^{(2)},\ldots,W^{(L)},c^{(L)})$.
+In the hidden layers, the default choice for $\phi$, the \emph{activation function}, is the rectified linear unit, or ReLU~\cite{Goodfellow-et-al-2016}, defined element-wise as $\phi(z)=\max\{0,z\}$.
+The activation function of the output layer is application-dependent.
 
-Deep neural networks (DNNs) is a larger family of models.
+% The number of layers, or \emph{depth}, of NNs is what characterizes deep learning.
+% While traditional machine learning models require substantial manual engineering effort to generate features that are able to provide to ML models sufficient, and high-quality information
+
+Deep neural networks (DNNs) are a larger family of models.
 Although DNNs are also composed by differentiable functions, these functions are assembled in any form of directed acyclic graph~\cite{murphyMachineLearningProbabilistic2013}.
 Note that this opens up to complex architectures that may contain feedbacks, memory, convolutions, etc~\cite{Goodfellow-et-al-2016}.
-
 
 \subsection{Gradient-based learning}
 
 % See Bengio et al., Ch. 6.2
+Because NNs are inherently differentiable, the cost (or empirical risk) minimization problem \eqref{eq:cost-minimization} can be naturally solved by gradient-based optimization, as long as the loss function is chosen to be differentiable.
+The gradient-descent method is one of the oldest algorithms to finding local minima of function~\cite{cauchy1847}.
+Such algorithm takes successive steps of the form
+\begin{equation}\label{eq:grad-step}
+    \theta \gets \theta - \lambda\, \nabla \mathcal{L}(\theta)
+,\end{equation}
+such that with a sufficiently small \emph{learning rate} $\lambda>0$, the parameter vector is always modified such that the cost function is minimized.
+
+A practical problem of gradient descent is that large training sets are often necessary to achieve low generalization errors, and this can make the computational cost of the gradient prohibitively large.
+An alternative is to breakdown the parameter vector update step \eqref{eq:grad-step} stochastically, in an algorithm called stochastic gradient descent (SGD).
+This is intuitively sound because the gradient of the empirical risk is already an expectation of the gradient of the actual risk. 
+Thus, instead of approximating the gradient using the entire training dataset, it is possible to approximate the gradient by sampling a limited number of examples from it.
+In other words, instead of computing the gradient as \[
+    g = \nabla \mathcal{L}(\theta) \gets \frac{1}{|\mathcal{D}_\textrm{train}|}\sum_{(x,y)\in \mathcal{D}_\textrm{train}} \nabla_\theta \ell(y,f_\theta(x))
+,\] in SGD it is computed as \[
+\widetilde{g} \gets \frac{1}{|\mathcal{B}|}\sum_{(x,y)\in \mathcal{B}} \nabla_\theta \ell(y,f_\theta(x)) 
+,\] where $\mathcal{B}\subset \mathcal{D}_\textrm{train}$ such that $|\mathcal{B}|\ll |\mathcal{D}_\textrm{train}|$, and then update the parameter vector as \[
+\theta \gets \theta -\lambda\, \widetilde{g}
+.\] 
+The set $\mathcal{B}$ is called a \emph{minibatch} and it is usually sampled uniformly from the training set~\cite{Goodfellow-et-al-2016}.
+
+Although gradient descent (and, as a consequence, SGD) does not provide any sort of convergence guarantees for nonconvex functions, is has been empirically shown to be a reliable method to achieving sufficiently small cost function values~\cite{Goodfellow-et-al-2016}
+Arguably, this can be traced back to the generalization problem.
+Differently from the traditional optimization paradigm, in which the performance is evaluated on the function being optimized, a learning algorithm optimizes indirectly, i.e., the performance metric of interest (generalization error) is not directly optimized.
+Therefore, achieving local or global optima is not as relevant for machine learning as it is for the field of optimization.
+In fact, local optima can be a source of overfitted parameter vectors.
+
+Several strategies have been proposed to tackle the shortcomings of SGD learning.
+
+
+- Adam introduction
+ - moment
+ - etc
 
 \subsection{Graph Neural Networks}
 
