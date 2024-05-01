@@ -181,16 +181,17 @@ Note that this opens up to complex architectures that may contain feedbacks, mem
 \subsection{Gradient-based learning}
 
 % See Bengio et al., Ch. 6.2
-Because NNs are inherently differentiable, the cost (or empirical risk) minimization problem \eqref{eq:cost-minimization} can be naturally solved by gradient-based optimization, as long as the loss function is chosen to be differentiable.
-The gradient-descent method is one of the oldest algorithms to finding local minima of function~\cite{cauchy1847}.
-Such algorithm takes successive steps of the form
+Because of the inherent nonlinearities of NNs, the cost (or empirical risk) minimization problem \eqref{eq:cost-minimization} becomes nonconvex under the most common loss functions~\cite{Goodfellow-et-al-2016}.
+As NNs are, by definition, differentiable, they are usually trained by using gradient-based optimizers.
+The gradient-descent method is one of the oldest algorithms to finding local minima of a function~\cite{cauchy1847}.
+Such algorithms take successive steps of the form
 \begin{equation}\label{eq:grad-step}
     \theta \gets \theta - \lambda\, \nabla \mathcal{L}(\theta)
 ,\end{equation}
 such that with a sufficiently small \emph{learning rate} $\lambda>0$, the parameter vector is always modified such that the cost function is minimized.
 
-A practical problem of gradient descent is that large training sets are often necessary to achieve low generalization errors, and this can make the computational cost of the gradient prohibitively large.
-An alternative is to breakdown the parameter vector update step \eqref{eq:grad-step} stochastically, in an algorithm called stochastic gradient descent (SGD).
+A practical problem of gradient descent is that large training sets are often necessary to achieve low generalization errors, which, in turn, increases the computational cost of calculating the gradient.
+A solution is to breakdown the parameter vector update step \eqref{eq:grad-step} stochastically, in an algorithm called stochastic gradient descent (SGD).
 This is intuitively sound because the gradient of the empirical risk is already an expectation of the gradient of the actual risk. 
 Thus, instead of approximating the gradient using the entire training dataset, it is possible to approximate the gradient by sampling a limited number of examples from it.
 In other words, instead of computing the gradient as \[
@@ -208,12 +209,11 @@ Differently from the traditional optimization paradigm, in which the performance
 Therefore, achieving local or global optima is not as relevant for machine learning as it is for the field of optimization.
 In fact, local optima can be a source of overfitted parameter vectors.
 
-Several strategies have been proposed to tackle the shortcomings of SGD learning.
-
-
-- Adam introduction
- - moment
- - etc
+% Nevertheless, SGD has several shortcomings, which have been addressed plentifully over the last decades.
+A prominent problem of SGD is that it can become very slow in face of flat regions, saddle points, and noisy gradients, all of which are abundant in deep learning~\cite{goodfellowQualitativelyCharacterizingNeural2015,Goodfellow-et-al-2016}.
+To counter-act such effects, one can add a \emph{momentum} to the computation of the gradient estimate, akin to the physical intuition~\cite{nesterovMethodSolvingConvex1983,polyakAccelerationStochasticApproximation1992}.
+Another approach is to use an \emph{adaptive learning rate}, which is dynamically adjusted based on the values of the computed gradient~\cite{jacobsIncreasedRatesConvergence1988}.
+The Adam optimizer~\cite{kingma2014adam} combines both momentum and adaptive learning rates, with its name actually deriving from "adaptive moments".
 
 \subsection{Graph Neural Networks}
 
