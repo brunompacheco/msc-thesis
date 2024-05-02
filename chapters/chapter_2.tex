@@ -164,11 +164,11 @@ An NN model can be written as
 in which each $f^{(l)}_\theta$, $l=1,\ldots,L$, is a \emph{layer} of the network, and $L$, the number of layers.
 All layers except the last one are called \emph{hidden} layers of the network.
 The last one is called the \emph{output} layer.
-A simple layer of an NN can a linear combination of its inputs followed by a nonlinear function $\phi : \R^{d} \longrightarrow \R^{d}$, as in \[
-f^{(l)}_\theta = \phi\left( W^{(l)} x + c^{(l)} \right) 
+A simple layer of an NN can a linear combination of its inputs followed by a nonlinear function $\sigma : \R^{d} \longrightarrow \R^{d}$, as in \[
+f^{(l)}_\theta = \sigma\left( W^{(l)} x + c^{(l)} \right) 
 .\] 
 Note that an NN's parameter vector can be seen as the concatenation of the parameters of all layers, i.e., $\theta = (W^{(1)},c^{(1)},W^{(2)},c^{(2)},\ldots,W^{(L)},c^{(L)})$.
-In the hidden layers, the default choice for $\phi$, the \emph{activation function}, is the rectified linear unit, or ReLU~\cite{Goodfellow-et-al-2016}, defined element-wise as $\phi(z)=\max\{0,z\}$.
+In the hidden layers, the default choice for $\sigma$, the \emph{activation function}, is the rectified linear unit, or ReLU~\cite{Goodfellow-et-al-2016}, defined element-wise as $\sigma(z)=\max\{0,z\}$.
 The activation function of the output layer is application-dependent.
 
 % The number of layers, or \emph{depth}, of NNs is what characterizes deep learning.
@@ -216,5 +216,62 @@ Another approach is to use an \emph{adaptive learning rate}, which is dynamicall
 The Adam optimizer~\cite{kingma2014adam} combines both momentum and adaptive learning rates, with its name actually deriving from "adaptive moments".
 
 \subsection{Graph Neural Networks}
+
+% Graphs are a widely used data structure, but their ingestion by neural networks is non-trivial.
+% NNs usually take real-valued vectors as inputs, so a naïve approach would be to find a vector encoding of a graph and feed such encoding to the model.
+% If there exists a limit to the number of edges of the graphs that constitute the domain of the model, a straightforward encoding could be through the adjacency matrix.
+
+A Graph Neural Network (GNNs) are a particular kind of DNN that is optimized for taking graphs as inputs~\cite{sanchez-lengelingGentleIntroductionGraph2021}.
+Note that this is not trivial.
+For example, NNs are usually defined over real-valued vector spaces, which would require a vector encoding of a graph to be able to ingest them.
+Such an encoding could be achieved through the adjacency matrix, but that would not respect the graph symmetries, as distinct adjacency matrices can represent the same graph\footnote{In fact, any permutation (row- or column-wise) of an adjacency matrix results in the same graph}.
+
+A GNN takes as input a graph with feature vectors associated to each node.
+GNNs are also feedforward networks, i.e., they can be represented by a stacking of layers.
+Each layer of the GNN works by propagating feature information between neighboring nodes, which can be seen as \emph{message-passing}~\cite{gilmerNeuralMessagePassing2017}.
+More specifically, a layer computes messages that each node emits to its neighbors based on their feature vectors.
+Then, the layer's output graph's feature vectors will be computed based on each node's features and the messages emitted by their neighbors.
+% Each node's features along with the messages emitted by its neighbors is the information used to compute the feature vector associated to that node in the layer's output graph.
+% The feature update can also be seen as a graph \emph{convolution} due to its similarities to the operations in convolutional neural networks~\cite{daigavaneUnderstandingConvolutionsGraphs2021}.
+
+Let $G=(V,E)$ be a graph, $H =\left\{ h_v\in \R^{d}: v\in V \right\} $ be an associated set of node feature vectors, and $f_\theta$ be a GNN with $L$ layers.
+Each layer of the GNN has two major components: a message function $M(\cdot)$ and an update function $U(\cdot)$.
+The message function computes the messages emitted by each node, while the update function feeds on these messages to update each node's feature vector.
+Putting it into terms, each layer $f^{(l)}_\theta$ of the GNN transforms the previous layer's feature vectors $H^{(l-1)}=\left\{ h^{(l-1)}_v : v \in V \right\}$ through \[
+h^{(l)}_v = U^{(l)}\left( h^{(l-1)}_v , \left\{ M^{(l)}(h^{(l-1)}_u):u\in \mathcal{N}(v) \right\}  \right) , \forall v \in V
+,\] where $\mathcal{N}(v)$ denotes the set of neighbors of $v$.
+
+As each node can have an arbitrary number of neighbors, it is reasonable for update functions to contain some sort of aggregation, or \emph{pooling}, mechanism, i.e., a way to compute a fixed-size representation of the messages received.
+A common choice is to sum all messages element-wise, as each message is a vector of the image of $M^{(l)}$ and, thus, has the same dimension.
+Other possibilities are to aggregate through element-wise averaging, maximum, or use some sort of attention mechanism that can be learned along the model parameters~\cite{veličković2018graph}.
+Furthermore, a message function can easily be extended to consider edge weights (or even edge features) along with feature vectors of the neighbors.
+
+An example of GNN architecture can be taken from the work by \citeonline{kipfSemiSupervisedClassificationGraph2017}.
+The authors use a linear combination of the node features as the messages and weigh them by the number of neighbors of both the emitter and the receiver.
+Their update function aggregates the messages by summing them and then feeds the result to a single-layer NN with ReLU activation.
+More precisely,
+\begin{equation}\label{eq:graph-conv-kipf-2017}
+\begin{aligned}
+    % M_l(h_u^{(l-1)}) &= \frac{1}{c_{vu}}W^{(l)}h_u^{(l-1)} \\
+    % \bm{m}_{u,v}^{(l)} &= \frac{1}{c_{vu}}W^{(l)}\bm{h}_u^{(l-1)},\, u\in \mathcal{N}(v) \\
+    h^{(l)}_v &= U^{(l)}\left( h^{(l-1)}_v, \left\{ \frac{1}{c_{v,u}}M^{(l)}(h^{(l-1)}_u):u\in \mathcal{N}(v) \right\}  \right)  \\
+    &= \text{ReLU}\left( B^{(l)}h^{(l-1)}_v + W^{(l)} \sum_{u\in \mathcal{N}(v)} \frac{h^{(l-1)}_u }{c_{v,u}} \right)
+    % \bm{h}_{v}^{(l)} &= \text{ReLU}\left(\bm{b}^{(l)} + \sum_{u \in \mathcal{N}(v)} \bm{m}_{u,v}^{(l)}\right) \\
+    %M^{(l)}(h^{(l-1)}_v) &= W^{(l)}h^{(l-1)}_v
+,\end{aligned}
+\end{equation}
+where $c_{v,u}=\sqrt{|\mathcal{N}(v)|} \sqrt{|\mathcal{N}(u)|} $, and the matrices $W^{(l)}$ and $B^{(l)}$ are trainable parameters of layer $l$~\cite{sanchez-lengelingGentleIntroductionGraph2021}.
+
+Another example of a GNN is the SAGE (SAmple and aGgrEgate) model by \citeonline{hamiltonInductiveRepresentationLearning2017}.
+The authors also propose to use a single-layer NN to generate the new feature vectors, but they use the identity as the message function and aggregate them with more complex functions, such as an LSTM (Long Short-Term Memory network).
+In such case, the GNN could be written
+\begin{equation}\label{eq:graph-sage}
+\begin{aligned}
+    h^{(l)}_v &= U^{(l)}\left( h^{(l-1)}_v, \left\{ h^{(l-1)}_u:u\in \mathcal{N}(v) \right\}  \right)  \\
+    &= \sigma\left( W^{(l)} \left[ \text{LSTM}\left( h^{(l-1)}_u \right)_{u\in \mathcal{N}(v)} , h^{(l-1)}_v \right]   \right)
+,\end{aligned}
+\end{equation}
+where square brackets indicate a vector concatenation~\cite{sanchez-lengelingGentleIntroductionGraph2021}.
+Note that the LSTM function could be replaced by any of the aggregation functions the authors propose.
 
 
