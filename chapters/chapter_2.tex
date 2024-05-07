@@ -272,8 +272,81 @@ A common choice is to sum all messages element-wise, as each message is a vector
 Other possibilities are to aggregate through element-wise averaging, maximum, or use some sort of attention mechanism that can be learned along the model parameters~\cite{veličković2018graph}.
 Furthermore, a message function can easily be extended to consider edge weights (or even edge features) along with feature vectors of the neighbors.
 
-An example of GNN architecture can be taken from the work by \citeonline{kipfSemiSupervisedClassificationGraph2017}.
-The authors use a linear combination of the node features as the messages and weigh them by the number of neighbors of both the emitter and the receiver.
+As an example, let the input space be the set of colored graphs and consider a handcrafted GNN, as illustrated in Fig.~\ref{fig:gnn-example}.
+A colored graph will be represented as an undirected graph $G=(V,E)$ paired with a set of node features $H^{(0)}$ such that for each node $v\in V$, there exists a feature vector $h_v^{(0)}\in H^{(0)}$ with an encoding of a color in cyan-magenta-yellow (CMY) format, i.e., $h_v^{(0)}\in [0,1]^3$.
+Let $f_\theta$ be a GNN with two layers ($L=2$), such that both layers perform the same operation ($f_\theta^{(1)}=f_\theta^{(2)}$).
+The message functions of both layers is the complementarity function, which maps each node's color to its complementary color ($M(h_v) = \bm{1}_3 - h_v$).  
+The update functions is a simple average between all messages received.
+In summary, the GNN will update each node with the average complementary color of all of its neighbors.
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+	\begin{scope}[local bounding box=l0,every node/.style={circle,draw}]
+	    \node[fill={rgb:cyan,1}] (l0n1) at (1,1) {$1$};
+	    \node[above right = 1cm of l0n1,fill={rgb:magenta,1}] (l0n2) {$2$};
+	    \node[below right = 1cm of l0n1,fill={rgb:yellow,1}] (l0n3) {$3$};
+	    \node[below left = 1cm of l0n3,fill={rgb:cyan,0.5;magenta,0.5;yellow,0.5}] (l0n4) {$4$};
+
+	    \path (l0n1) edge (l0n2);
+	    \path (l0n2) edge (l0n3);
+	    \path (l0n3) edge (l0n4);
+	    \path (l0n3) edge (l0n1);
+	\end{scope}
+
+	\node[left = 0cm of l0n1] (h0n1) {$h_1^{(0)}=(1,0,0)$};
+	\node[left = 0cm of l0n2] (h0n2) {$h_2^{(0)}=(0,1,0)$};
+	\node[left = 0cm of l0n3] (h0n3) {$h_3^{(0)}=(0,0,1)$};
+	\node[left = 0cm of l0n4] (h0n4) {$h_4^{(0)}=(0.5,0.5,0.5)$};
+
+	\node[fit=(l0n1) (l0n2) (l0n3) (l0n4)] (L0){};
+
+	\begin{scope}[local bounding box=l1,every node/.style={circle,draw}]
+	%\begin{scope}[shift={($(l0.east)+(2cm,0)$)},local bounding box=l1,every node/.style={circle,draw}]
+	    \node[right = 4 cm of l0n1,fill={rgb:cyan,1;magenta,0.5;yellow,0.5}] (l1n1) {$1$};
+	    \node[above right = 1cm of l1n1,fill={rgb:cyan,0.5;magenta,1;yellow,0.5}] (l1n2) {$2$};
+	    \node[below right = 1cm of l1n1,fill={rgb:cyan,0.5;magenta,0.5;yellow,0.83}] (l1n3) {$3$};
+	    \node[below left = 1cm of l1n3,fill={rgb:cyan,1;magenta,1;yellow,0}] (l1n4) {$4$};
+
+	    \path (l1n1) edge (l1n2);
+	    \path (l1n2) edge (l1n3);
+	    \path (l1n3) edge (l1n4);
+	    \path (l1n3) edge (l1n1);
+	\end{scope}
+
+	\node[left = 0cm of l1n1] (h1n1) {$h_1^{(1)}$};
+	\node[left = 0cm of l1n2] (h1n2) {$h_2^{(1)}$};
+	\node[left = 0cm of l1n3] (h1n3) {$h_3^{(1)}$};
+	\node[left = 0cm of l1n4] (h1n4) {$h_4^{(1)}$};
+
+	\node[fit=(l1n1) (l1n2) (l1n3) (l1n4)] (L1){};
+	\path [-latex,thick] (L0.north east) edge[bend left] node [above] {$H^{(1)}=f_\theta^{(1)}( H^{(0)} ) $} (L1.north west);
+
+	\begin{scope}[local bounding box=l2,every node/.style={circle,draw}]
+	    \node[right = 4cm of l1n1,fill={rgb:cyan,0.5;magenta,0.25;yellow,0.33}] (l2n1) {$1$};
+	    \node[above right = 1cm of l2n1,fill={rgb:cyan,0.25;magenta,0.5;yellow,0.33}] (l2n2) {$2$};
+	    \node[below right = 1cm of l2n1,fill={rgb:cyan,0.17;magenta,0.17;yellow,0.5}] (l2n3) {$3$};
+	    \node[below left = 1cm of l2n3,fill={rgb:cyan,0.5;magenta,0.5;yellow,0.17}] (l2n4) {$4$};
+
+	    \path (l2n1) edge (l2n2);
+	    \path (l2n2) edge (l2n3);
+	    \path (l2n3) edge (l2n4);
+	    \path (l2n3) edge (l2n1);
+	\end{scope}
+
+	\node[left = 0cm of l2n1] (h2n1) {$h_1^{(2)}$};
+	\node[left = 0cm of l2n2] (h2n2) {$h_2^{(2)}$};
+	\node[left = 0cm of l2n3] (h2n3) {$h_3^{(2)}$};
+	\node[left = 0cm of l2n4] (h2n4) {$h_4^{(2)}$};
+
+	\node[fit=(l2n1) (l2n2) (l2n3) (l2n4)] (L2){};
+	\path [-latex,thick] (L1.north east) edge[bend left] node [above] {$H^{(2)}=f_\theta^{(2)}(H^{(1)})$} (L2.north west);
+    \end{tikzpicture}
+    \caption{Example of a GNN application to a colored graph. The node features are color in CMY format. Each layer of the model updates the node features with the average complementary color of all of its neighbors.}
+    \label{fig:gnn-example}
+\end{figure}
+
+\citeonline{kipfSemiSupervisedClassificationGraph2017} have proposed a GNN architecture, in which they use a linear combination of the node features as the messages and weigh them by the number of neighbors of both the emitter and the receiver.
 Their update function aggregates the messages by summing them and then feeds the result to a single-layer NN with ReLU activation.
 More precisely,
 \begin{equation}\label{eq:graph-conv-kipf-2017}
@@ -288,7 +361,7 @@ More precisely,
 \end{equation}
 where $c_{v,u}=\sqrt{|\mathcal{N}(v)|} \sqrt{|\mathcal{N}(u)|} $, and the matrices $W^{(l)}$ and $B^{(l)}$ are trainable parameters of layer $l$~\cite{sanchez-lengelingGentleIntroductionGraph2021}.
 
-Another example of a GNN is the SAGE (SAmple and aGgrEgate) model by \citeonline{hamiltonInductiveRepresentationLearning2017}.
+Another relevant GNN architecture is the one proposed by \citeonline{hamiltonInductiveRepresentationLearning2017} with the SAGE (SAmple and aGgrEgate) model.
 The authors also propose to use a single-layer NN to generate the new feature vectors, but they use the identity as the message function and aggregate them with more complex functions, such as an LSTM (Long Short-Term Memory network).
 In such case, the GNN could be written
 \begin{equation}\label{eq:graph-sage}
@@ -299,5 +372,6 @@ In such case, the GNN could be written
 \end{equation}
 where square brackets indicate a vector concatenation~\cite{sanchez-lengelingGentleIntroductionGraph2021}.
 Note that the LSTM function could be replaced by any of the aggregation functions the authors propose.
+
 
 

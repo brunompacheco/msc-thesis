@@ -904,7 +904,7 @@
 \usepackage{cancel}
 
 \usepackage{tikz}
-\usetikzlibrary{positioning}
+\usetikzlibrary{positioning,fit,calc}
 \usetikzlibrary{arrows.meta}
 
 % Please tutor the usage of patchcmd and xpatch
