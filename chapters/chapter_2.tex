@@ -37,7 +37,7 @@
 % https://tex.stackexchange.com/questions/5076/is-it-possible-to-keep-my-translation-together-with-original-text
 \chapter{Deep Learning}\label{chap:deep-learning}
 
-The advent of deep learning has revolutionized numerous fields, offering unprecedented capabilities in pattern recognition, decision-making, and problem-solving~\cite{Goodfellow-et-al-2016}.
+The advent of deep learning has revolutionized several fields, offering unprecedented capabilities in pattern recognition, decision-making, and problem-solving~\cite{Goodfellow-et-al-2016}.
 In the realm of combinatorial optimization, particularly MILP, traditional methods often encounter computational bottlenecks when solving large-scale instances.
 However, recent strides in deep learning have opened up exciting avenues for developing effective primal heuristics.
 This chapter delves into the background of deep learning, focusing on the fundamental principles of supervised learning and neural network architectures.
@@ -54,14 +54,18 @@ This section's approach to supervised learning will be that of statistical learn
 \subsection{Supervised learning algorithm}
 
 Supervised learning will be defined here as a problem of estimating a function that minimizes the risk.
-Let $\mathcal{X}$ and $\mathcal{Y}$ be the input and output space, and $\mathcal{P}$ be a joint probability distribution over $\mathcal{X}\times \mathcal{Y}$.
-To evaluate a function $f: \mathcal{X} \longrightarrow \mathcal{Y}$ with respect to its capacity to perform the right association between an input $x\in \mathcal{X}$ and an output $y\in \mathcal{Y}$, one measure's the discrepancy, or the \emph{loss}, $\ell(y,f(x))$.
+Let $\mathcal{X}$ and $\mathcal{Y}$ be the input and output space, and $\mathcal{P}$ be a joint probability distribution~\footnote{Or a joint probability density function, in the case of continuous spaces.} over $\mathcal{X}\times \mathcal{Y}$.
+To evaluate a function $f: \mathcal{X} \longrightarrow \mathcal{Y}$ with respect to its capacity to perform the correct association between an input $x\in \mathcal{X}$ and an output $y\in \mathcal{Y}$, one measure's the discrepancy, or the \emph{loss}, $\ell(y,f(x))$.
 In this context, the \emph{risk} associated to $f$ over the joint distribution $\mathcal{P}$ is the expected value of the loss function, or \[
     R(\mathcal{P},f) = \int_{\mathcal{X}\times \mathcal{Y}} \ell(y,f(x))\mathcal{P}(x,y)
     %R(f) = \mathbb{E}_{(x,y)\sim \mathcal{P}} \ell(y,f(x))
 .\] 
 
-The machine learning paradigm is that the joint probability function is fixed, but unknown, and one only has access to a finite number of samples~\cite{vapnikNatureStatisticalLearning2000}.
+% \color{red}
+  % [COMMENT: I didn't quite understand the definition  above. Let $x$ and $y$ be two continuous random variables with a joint density function $g(x,y)$. Then wouldn't the expected value of the loss function be $\int_{X\times Y} \ell(y,f(x))\cdot g(x,y)\cdot dx\cdot dy$?]
+% \color{black}
+
+The machine learning paradigm is that the joint probability function is fixed but unknown, and one only has access to a finite number of samples~\cite{vapnikNatureStatisticalLearning2000}.
 This idea is best represented through a \emph{dataset}, which is a finite set $\mathcal{D}$ of independent and identically distributed (i.i.d.) samples drawn according to $\mathcal{P}$.
 In this context, the \emph{empirical risk} associated to a function $f$ over a dataset $\mathcal{D}$ is \[
     R_\textrm{emp}(\mathcal{D},f) = \frac{1}{|\mathcal{D}|} \sum_{(x,y)\in \mathcal{D}} \ell(y, f(x))
@@ -78,14 +82,16 @@ where
     \mathcal{L}(\theta) = \frac{1}{|\mathcal{D}|} \sum_{(x,y)\in \mathcal{D}} \ell(y, f_\theta(x))
 \end{equation}
 is an alternate, commonly found notation for the empirical risk, which often carries the name \emph{cost function}~\cite{murphyMachineLearningProbabilistic2013,Goodfellow-et-al-2016}.
-Both "empirical risk" and "cost function" will be used interchangeably throughout this dissertation, although the former has a stronger connection to learning theory, while the latter is more related to practical matters.
+Both ``empirical risk'' and ``cost function'' will be used interchangeably throughout this dissertation, although the former has a stronger connection to learning theory, while the latter is more related to practical matters.
 
 A supervised learning algorithm is essentially an algorithm to optimize a cost function given a model and a dataset.
 In fact, it is possible to define a supervised learning algorithm as a simple recipe: ``combine a speciﬁcation of a dataset, a cost function, an optimization procedure and a model''~\cite{Goodfellow-et-al-2016}.
 Many different algorithms exist that are suitable for different components of this recipe.
-For example, there are algorithms particular to decision tree models~\cite{breimanClassificationRegressionTrees2017}.
-The least squares algorithm (used in the example of Section~\ref{sec:generalization-overfitting}) can be seen as a supervised learning algorithm for polynomial models given and the squared error loss function.
+\textcolor{blue}{For example, there are algorithms which are tailored for the synthesis of decision-tree models~\cite{breimanClassificationRegressionTrees2017}.}
+The least squares algorithm (used in the example of Section~\ref{sec:generalization-overfitting}) can be seen as a supervised learning algorithm for polynomial models and the squared error loss function.
 
+
+%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Generalization and overfitting}\label{sec:generalization-overfitting}
 
 Blindly minimizing the empirical risk can lead to a problem named \emph{overfitting}.
@@ -101,7 +107,7 @@ These models are adjusted using least squares algorithm, resulting in parameter 
 The performance of these models is illustrated in Fig.~\ref{fig:overfitting-example}.
 
 Note that model $f^{(3)}$ achieves the lowest empirical risk on $\mathcal{D}$.
-However, $f^{(2)}$ is the one that seems to best associates inputs to outputs, considering a visual intuition of the underlying data distribution.
+However, $f^{(2)}$ is the one that seems to best associate inputs to outputs, considering a visual intuition of the underlying data distribution.
 One could say that $f^{(3)}$ is \emph{too complex} for the underlying distribution, which leads to it being more tightly adjusted to the noise present in the dataset rather than on the underlying data distribution~\cite{murphyMachineLearningProbabilistic2013}.
 On the other hand of the spectrum is the $f^{(1)}$ model, which is not complex enough to model the desired behavior.
 While $f^{(3)}$ is overfitting the data, $f^{(1)}$ is underfitting it.
@@ -109,7 +115,7 @@ While $f^{(3)}$ is overfitting the data, $f^{(1)}$ is underfitting it.
 \begin{figure}[h]
     \centering
     \includegraphics{pictures/overfitting.pdf}
-    \caption{Example of overfitting. The three models shown ($f^{(1)},f^{(2)},f^{(3)}$) are families of polynomials of degree 1, 3 and 10, respectively. The optimal parameter vectors $\theta_1^*,\theta_2^*$ and $\theta_3^*$ were optimized to the dataset $\mathcal{D}$ using a least squares algorithm. The empirical risks are $\mathcal{L}(\theta_1^*)=79.67$, $\mathcal{L}(\theta_2^*)=7.64$, and $\mathcal{L}(\theta_3^*)=5.48$.}
+    \caption{Example of overfitting. The three models shown ($f^{(1)},f^{(2)},f^{(3)}$) are families of polynomials of degree 1, 3 and 15, respectively. The optimal parameter vectors $\theta_1^*,\theta_2^*$ and $\theta_3^*$ were optimized to the dataset $\mathcal{D}$ using a the least squares algorithm. The empirical risks are $\mathcal{L}(\theta_1^*)=79.67$, $\mathcal{L}(\theta_2^*)=7.64$, and $\mathcal{L}(\theta_3^*)=5.48$.}
     \label{fig:overfitting-example}
 \end{figure}
 
@@ -126,36 +132,40 @@ Finally, the generalization gap can be estimated as  \[
 
 Hyperparameters are the settings that modify the behavior of a supervised learning algorithm~\cite{Goodfellow-et-al-2016}.
 These hyperparameters can be configurations of the optimization algorithm or parameters of the model that are not adjusted by the algorithm.
-Hyperparameter adjustment is impactful both in the runtime of the algorithm, and in the quality of the function returned.
+Hyperparameter adjustment is impactful both in the runtime of the algorithm and in the quality of the function returned.
 
 In the polynomial fitting example above (illustrated in Fig.~\ref{fig:overfitting-example}), the polynomial degree is a hyperparameter.
 Different values for this hyperparameter result in totally different parameter spaces $\Theta$ over which the optimizer will search for a risk minimizer.
 If a ridge regression algorithm is used instead of the least squares to find the optimal function, then a hyperparameter is the weight of the $\ell_2$-norm of $\theta$.
-Such hyperparameter does not alter the function space associated to $\Theta$, but guides the optimizer towards different optima.
+Such hyperparameter does not alter the function space associated with $\Theta$ but guides the optimizer towards different optima.
 
 Given the impact of the hyperparameters in the function space, another way of looking at hyperparameters is as a means to encode prior beliefs of the underlying data distribution~\cite{murphyMachineLearningProbabilistic2013}.
 Again on the polynomial fitting example, if one believes that the outputs are approximately related to the inputs through a 5-th degree polynomial, then this information can be directly encoded in the hyperparameters of the algorithm.
-Another example: the belief that the output has a seasonal component with respect to a given input could be used to restrict the parameter space to periodic functions.
+Another example is the belief that the output has a seasonal component with respect to a given input, which could be used to restrict the parameter space to periodic functions.
 
 Unfortunately, and mainly for complex, high-dimensional spaces, the existence of strong and sufficient prior beliefs is rarely assumed in supervised learning problems.
 On the contrary, the tuning, or optimization, of hyperparameters is a common step in machine learning projects.
-To compare between different choices of hyperparameter values, a new hold-out set is necessary.
+A new hold-out set is necessary to compare different choices of hyperparameter values.
 This is because hyperparameters that control model capacity are always biased towards greater capacity~\cite{Goodfellow-et-al-2016}.
 In other words, if the impact of different hyperparameter values is evaluated on the training dataset $\mathcal{D}_\textrm{train}$, it will likely lead to choosing the value that implies a greater model capacity, which leads to overfitting.
-As it is assumed that the test dataset $\mathcal{D}_\textrm{test}$ is not available during training to avoid a biased estimation of the generalization error~\cite{murphyMachineLearningProbabilistic2013}, a second held-out set is necesary.
+As it is assumed that the test dataset $\mathcal{D}_\textrm{test}$ is not available during training to avoid a biased estimation of the generalization error~\cite{murphyMachineLearningProbabilistic2013}, a second held-out set is necessary.
 
 In practice, the available data $\mathcal{D}$ is partitioned into three disjoint sets:
 \begin{itemize}
     \item[$\mathcal{D}_\textrm{train}$] the training set, which is used for fitting the model, i.e., the best parameter vector $\theta^*$ is chosen such that the cost function over $\mathcal{D}_\textrm{train}$ is minimized;
+    
     \item[$\mathcal{D}_\textrm{val}$] the validation set, which is used to measure the impact of different values for the hyperparameters; and
-    \item[$\mathcal{D}_\textrm{test}$] the test set, which is used to estimate the generalization error (empirical risk) of the function returned by the supervised learning with the best hyperparameter values found.
+    
+    \item[$\mathcal{D}_\textrm{test}$] the test set, which is used to estimate the generalization error (empirical risk) of the function returned by the supervised learning algorithm with the best hyperparameter values found.
 \end{itemize}
 A usual ratio is to set apart 50\% of the samples in $\mathcal{D}$ for the training set, 25\% for the validation set, and 25\% for the test set~\cite{hastieElementsStatisticalLearning2009}.
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Deep Neural Networks}
 
 Deep feedforward neural networks ``are the quintessential deep learning models''~\cite{Goodfellow-et-al-2016}.
-Feedforward neural networks (NNs) are compositions of differentiable functions such that the information flows without any sort of feedback connections.
+Feedforward neural networks (NNs) are compositions of differentiable functions such that the information flows without any sort of feedback connection.
 An NN model can be written as
 \begin{align*}
     f_\theta: \R^{n} &\longrightarrow \R^{m} \\
@@ -164,7 +174,7 @@ An NN model can be written as
 in which each $f^{(l)}_\theta$, $l=1,\ldots,L$, is a \emph{layer} of the network, and $L$, the number of layers.
 All layers except the last one are called \emph{hidden} layers of the network.
 The last one is called the \emph{output} layer.
-A simple layer of an NN can a linear combination of its inputs followed by a nonlinear function $\sigma : \R^{d} \longrightarrow \R^{d}$, as in \[
+A simple layer of an NN can be a linear combination of its inputs followed by a nonlinear function $\sigma : \R^{d} \longrightarrow \R^{d}$, as in \[
 f^{(l)}_\theta = \sigma\left( W^{(l)} x + c^{(l)} \right) 
 .\] 
 Note that an NN's parameter vector can be seen as the concatenation of the parameters of all layers, i.e., $\theta = (W^{(1)},c^{(1)},W^{(2)},c^{(2)},\ldots,W^{(L)},c^{(L)})$.
@@ -175,15 +185,15 @@ The activation function of the output layer is application-dependent.
 % While traditional machine learning models require substantial manual engineering effort to generate features that are able to provide to ML models sufficient, and high-quality information
 
 Deep neural networks (DNNs) are a larger family of models.
-Although DNNs are also composed by differentiable functions, these functions are assembled in any form of directed acyclic graph~\cite{murphyMachineLearningProbabilistic2013}.
-Note that this opens up to complex architectures that may contain feedbacks, memory, convolutions, etc~\cite{Goodfellow-et-al-2016}.
+Although DNNs are also composed of differentiable functions, these functions are assembled in any form of directed acyclic graphs~\cite{murphyMachineLearningProbabilistic2013}.
+Note that this opens up complex architectures that may contain feedback, memory, convolutions, etc.~\cite {Goodfellow-et-al-2016}.
 
 \subsection{Gradient-based learning}
 
 % See Bengio et al., Ch. 6.2
 Because of the inherent nonlinearities of NNs, the cost (or empirical risk) minimization problem \eqref{eq:cost-minimization} becomes nonconvex under the most common loss functions~\cite{Goodfellow-et-al-2016}.
 As NNs are, by definition, differentiable, they are usually trained by using gradient-based optimizers.
-The gradient-descent method is one of the oldest algorithms to finding local minima of a function~\cite{cauchy1847}.
+The gradient-descent method is one of the oldest algorithms for finding local minima of a function~\cite{cauchy1847}.
 Such algorithms take successive steps of the form
 \begin{equation}\label{eq:grad-step}
     \theta \gets \theta - \lambda\, \nabla \mathcal{L}(\theta)
@@ -191,7 +201,7 @@ Such algorithms take successive steps of the form
 such that with a sufficiently small \emph{learning rate} $\lambda>0$, the parameter vector is always modified such that the cost function is minimized.
 
 A practical problem of gradient descent is that large training sets are often necessary to achieve low generalization errors, which, in turn, increases the computational cost of calculating the gradient.
-A solution is to breakdown the parameter vector update step \eqref{eq:grad-step} stochastically, in an algorithm called stochastic gradient descent (SGD).
+A solution is to break down the parameter vector update step \eqref{eq:grad-step} stochastically in an algorithm called stochastic gradient descent (SGD).
 This is intuitively sound because the gradient of the empirical risk is already an expectation of the gradient of the actual risk. 
 Thus, instead of approximating the gradient using the entire training dataset, it is possible to approximate the gradient by sampling a limited number of examples from it.
 In other words, instead of computing the gradient as \[
@@ -203,7 +213,8 @@ In other words, instead of computing the gradient as \[
 .\] 
 The set $\mathcal{B}$ is called a \emph{minibatch} and it is usually sampled uniformly from the training set~\cite{Goodfellow-et-al-2016}.
 
-Although gradient descent (and, as a consequence, SGD) does not provide any sort of convergence guarantees for nonconvex functions, is has been empirically shown to be a reliable method to achieving sufficiently small cost function values~\cite{Goodfellow-et-al-2016}
+Although gradient descent can provide convergence guarantees to local optima of nonconvex functions under mild conditions, it has been regarded as a slow and unreliable optimization method.
+However, deep learning applications stand out, as it has been empirically shown that SGD is a reliable method to achieving sufficiently small cost function values~\cite{Goodfellow-et-al-2016}.
 Arguably, this can be traced back to the generalization problem.
 Differently from the traditional optimization paradigm, in which the performance is evaluated on the function being optimized, a learning algorithm optimizes indirectly, i.e., the performance metric of interest (generalization error) is not directly optimized.
 Therefore, achieving local or global optima is not as relevant for machine learning as it is for the field of optimization.
@@ -213,33 +224,48 @@ In fact, local optima can be a source of overfitted parameter vectors.
 A prominent problem of SGD is that it can become very slow in face of flat regions, saddle points, and noisy gradients, all of which are abundant in deep learning~\cite{goodfellowQualitativelyCharacterizingNeural2015,Goodfellow-et-al-2016}.
 To counter-act such effects, one can add a \emph{momentum} to the computation of the gradient estimate, akin to the physical intuition~\cite{nesterovMethodSolvingConvex1983,polyakAccelerationStochasticApproximation1992}.
 Another approach is to use an \emph{adaptive learning rate}, which is dynamically adjusted based on the values of the computed gradient~\cite{jacobsIncreasedRatesConvergence1988}.
-The Adam optimizer~\cite{kingma2014adam} combines both momentum and adaptive learning rates, with its name actually deriving from "adaptive moments".
+The Adam optimizer~\cite{kingma2014adam} combines both momentum and adaptive learning rates, with its name actually deriving from ``adaptive moments.''
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Graph Neural Networks}
 
 % Graphs are a widely used data structure, but their ingestion by neural networks is non-trivial.
 % NNs usually take real-valued vectors as inputs, so a naïve approach would be to find a vector encoding of a graph and feed such encoding to the model.
 % If there exists a limit to the number of edges of the graphs that constitute the domain of the model, a straightforward encoding could be through the adjacency matrix.
 
-A Graph Neural Network (GNNs) are a particular kind of DNN that is optimized for taking graphs as inputs~\cite{sanchez-lengelingGentleIntroductionGraph2021}.
+Graph Neural Networks (GNNs) are a particular kind of DNN that is optimized for taking graphs as inputs~\cite{sanchez-lengelingGentleIntroductionGraph2021}.
 Note that this is not trivial.
-For example, NNs are usually defined over real-valued vector spaces, which would require a vector encoding of a graph to be able to ingest them.
-Such an encoding could be achieved through the adjacency matrix, but that would not respect the graph symmetries, as distinct adjacency matrices can represent the same graph\footnote{In fact, any permutation (row- or column-wise) of an adjacency matrix results in the same graph}.
+For example, NNs are usually defined over real-valued vector spaces, which would require a vector encoding of a graph to be able to represent them.
+Such an encoding could be achieved through the adjacency matrix, but that would not account for graph symmetries, as distinct adjacency matrices can represent the same graph\footnote{In fact, any permutation (row- or column-wise) of an adjacency matrix results in the same graph}.
+
+\color{red}
+COMMENTS:
+\begin{itemize}
+\item GNN is a pivotal concept of your research and dissertation. Being abstract, the introduction of a concrete, illustrative GNN would greatly help the reader to understand. The features and operators could be concretely illustrated in the example.
+
+\item The understanding of GNN will also benefit its application in primal heuristics.
+\end{itemize}
+\color{black}
 
 A GNN takes as input a graph with feature vectors associated to each node.
 GNNs are also feedforward networks, i.e., they can be represented by a stacking of layers.
 Each layer of the GNN works by propagating feature information between neighboring nodes, which can be seen as \emph{message-passing}~\cite{gilmerNeuralMessagePassing2017}.
 More specifically, a layer computes messages that each node emits to its neighbors based on their feature vectors.
-Then, the layer's output graph's feature vectors will be computed based on each node's features and the messages emitted by their neighbors.
+Then, each node's output feature vector is computed based on the input feature vector and the messages emitted by the node neighbors.
 % Each node's features along with the messages emitted by its neighbors is the information used to compute the feature vector associated to that node in the layer's output graph.
 % The feature update can also be seen as a graph \emph{convolution} due to its similarities to the operations in convolutional neural networks~\cite{daigavaneUnderstandingConvolutionsGraphs2021}.
 
-Let $G=(V,E)$ be a graph, $H =\left\{ h_v\in \R^{d}: v\in V \right\} $ be an associated set of node feature vectors, and $f_\theta$ be a GNN with $L$ layers.
+Let $G=(V,E)$ be a graph, $H =\left\{ h_v\in \R^{d}: v\in V \right\} $ be an associated set of node feature vectors, and $f_\theta = f_\theta^{(L)} \circ \cdots \circ f_\theta^{(1)}$ be a GNN with $L$ layers.
 Each layer of the GNN has two major components: a message function $M(\cdot)$ and an update function $U(\cdot)$.
 The message function computes the messages emitted by each node, while the update function feeds on these messages to update each node's feature vector.
-Putting it into terms, each layer $f^{(l)}_\theta$ of the GNN transforms the previous layer's feature vectors $H^{(l-1)}=\left\{ h^{(l-1)}_v : v \in V \right\}$ through \[
-h^{(l)}_v = U^{(l)}\left( h^{(l-1)}_v , \left\{ M^{(l)}(h^{(l-1)}_u):u\in \mathcal{N}(v) \right\}  \right) , \forall v \in V
+Putting it into terms, each layer $f^{(l)}_\theta$, $l=1,\ldots,L$, of the GNN transforms the previous layer's feature vectors $H^{(l-1)}=\left\{ h^{(l-1)}_v : v \in V \right\}$ through 
+\[
+% Eduardo Camponogara: Will each layer (l) have an entry (neuron) for each "v"? Does it mean that a  node "v" appears multiple times in the NN, once in each layer?
+     h^{(l)}_v = U^{(l)}\left( h^{(l-1)}_v , \left\{ M^{(l)}(h^{(l-1)}_u):u\in \mathcal{N}(v) \right\}  \right) , \forall v \in V
 ,\] where $\mathcal{N}(v)$ denotes the set of neighbors of $v$.
+Note that each layer maps feature vectors into features vectors, i.e., $f_\theta^{(l)}: H^{(l-1)} \mapsto H^{(l)}$.
+The structure of the graph is embedded into this computation by the neighbors function $\mathcal{N}(\cdot)$.
 
 As each node can have an arbitrary number of neighbors, it is reasonable for update functions to contain some sort of aggregation, or \emph{pooling}, mechanism, i.e., a way to compute a fixed-size representation of the messages received.
 A common choice is to sum all messages element-wise, as each message is a vector of the image of $M^{(l)}$ and, thus, has the same dimension.
