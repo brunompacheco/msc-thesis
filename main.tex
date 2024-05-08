@@ -109,7 +109,7 @@ english				% o último idioma é o principal do documento
 \usepackage{cancel}
 
 \usepackage{tikz}
-\usetikzlibrary{positioning}
+\usetikzlibrary{positioning,calc,fit}
 \usetikzlibrary{arrows.meta}
 
 %----------------------------------------------------------------------
@@ -224,13 +224,13 @@ english				% o último idioma é o principal do documento
 % Controla quais elementos serão compilados (útil para desenvolvimento)
 % ---
 \includeonly{%
-% beforetext/agradecimentos,
-% beforetext/epigrafe,
-% beforetext/fichacatalografica,
-% beforetext/folhadeaprovacao,
-% beforetext/resumos,
-% beforetext/siglas,
-% beforetext/simbolos,
+beforetext/agradecimentos,
+beforetext/epigrafe,
+beforetext/fichacatalografica,
+beforetext/folhadeaprovacao,
+beforetext/resumos,
+beforetext/siglas,
+beforetext/simbolos,
 chapters/intro,
 chapters/chapter_1,
 chapters/chapter_2,
@@ -239,7 +239,7 @@ chapters/chapter_4,
 chapters/chapter_5,
 chapters/chapter_6,
 chapters/conclusion,
-% aftertext/apendice_a,
+aftertext/apendice_a,
 % aftertext/anexo_a,
 % aftertext/anexo_b,
 }
@@ -320,7 +320,7 @@ chapters/conclusion,
 	% ---
 	% Agradecimentos
 	% ---
-	\include{beforetext/agradecimento}
+	\include{beforetext/agradecimentos}
 	% ---
 	
 	% ---
@@ -445,7 +445,7 @@ chapters/conclusion,
        	
  		% Imprime uma página indicando o início dos apêndices
  		\partapendices
- 		\include{aftertext/appendice_a}
+ 		\include{aftertext/apendice_a}
        	
  	\end{apendicesenv}
 % 	% ---
