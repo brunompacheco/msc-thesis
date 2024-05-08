@@ -1,40 +1,124 @@
-%https://github.com/SublimeText/LaTeXTools/issues/1439
-%!TEX output_directory=latexcache
+%--------------------------------------------------------------------
 
-% You can build this using the command:
-% latexmk -pdf -jobname=output -output-directory=cache -aux-directory=cache -pdflatex="pdflatex -interaction=nonstopmode" -use-make main.tex
+\documentclass[
+% -- opções da classe memoir --
+12pt,				% tamanho da fonte
+openright,			% capítulos começam em pág ímpar (insere página vazia)
+twoside,			% para impressão em verso e anverso. Oposto a oneside
+a4paper,			% tamanho do papel. 
+oldfontcommands,
+% -- opções da classe abntex2 --
+chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+% -- opções do pacote babel --
+french,				% idioma adicional para hifenização
+spanish,			% idioma adicional para hifenização
+brazil, 
+english				% o último idioma é o principal do documento
+]{abntex2}
 
-% When the bibliography includes a cyclic reference to another bibliography,
-% you need to run `pdflatex` 5 times on the following order:
-% 1. `pdflatex`,
-% 2. `biber`,
-% 3. `pdflatex`
-% 4. `pdflatex`
-% 5. `pdflatex`
-% 6. `biber`
-% 7. `pdflatex`
+% \setlength {\marginparwidth }{2cm}
+% \usepackage{todonotes}
+% ---
+% Pacotes básicos 
+% ---
+%\usepackage{lmodern}% Usa a fonte Latin Modern	
+\usepackage{rotating}
+\usepackage{times}
+\usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
+\usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
+\usepackage{lastpage}			% Usado pela Ficha catalográfica
+\usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
+\usepackage{color}				% Controle das cores
+\usepackage{graphicx}			% Inclusão de gráficos
+\usepackage{microtype} 			% para melhorias de justificação
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{bigstrut}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{comment}
+\usepackage{pdflscape}
+\usepackage{verbatimbox}
+\usepackage{makecell}
+\usepackage{pbox}
+\usepackage{comment}
+\usepackage{bm}
 
-% Monograph LaTeX Template for UFSC based on:
-% 1. https://github.com/royertiago/tcc
-% 2. http://portal.bu.ufsc.br/normalizacao/
-% 3. https://github.com/evandrocoan/ufscthesisx
-% 4. http://www.latextemplates.com/template/simple-sectioned-essay
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
 
-% Initially translated from Portuguese with help of https://github.com/omegat-org/omegat <Computer Assisted Translation of LaTeX document>
-% https://tex.stackexchange.com/questions/313732/computer-assisted-translation-of-latex-document
+\urlstyle{same}
 
-% Allows you to write your thesis both in English and Portuguese
-% https://tex.stackexchange.com/questions/5076/is-it-possible-to-keep-my-translation-together-with-original-text
-\newif\ifenglish\englishfalse
-\newif\ifadvisor\advisorfalse
 
-% Uncomment the line `\englishtrue` to set the document default language to English
-\englishtrue
-\advisortrue
+%----------------------------------------------------------------------
+% Estilo de cores para códigos
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.98,0.98,0.95}
 
-% https://tex.stackexchange.com/questions/131002/how-to-expand-ifthenelse-so-that-it-can-be-used-in-parshape
-\newcommand{\lang}[2]{\ifenglish#1\else#2\fi}
-\newcommand{\advisor}[2]{\ifadvisor#1\else#2\fi}
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+
+\lstset{style=mystyle}
+
+%----------------------------------------------------------------------
+% Pacotes usados especificamente neste documento
+\usepackage{amsfonts, amsmath, amsthm, amsbsy,amssymb,bm,mathtools} % For math fonts, symbols and environments %
+\usepackage{graphicx} 		% Required for including images
+\usepackage{transparent}	% may be required for inkscape pdf figures (http://bit.ly/18i5Oga)
+\usepackage{pdfpages}
+\newsubfloat{figure}		% Allow subfloats in figure environment (http://bit.ly/1C20NAj)
+\graphicspath{{pictures/}}
+% \usepackage[short, nocomma]{optidef}
+\usepackage[ruled,vlined,english]{algorithm2e}
+\usepackage{siunitx} % units package
+\let\DeclareUSUnit\DeclareSIUnit
+\let\US\SI
+\let\us\si
+\DeclareUSUnit\inch{in}
+\sisetup{detect-all}  %it may be necessary to load it after loading the font package
+\usepackage{cancel}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows.meta}
+
+%----------------------------------------------------------------------
+% Comandos criados pelo usuário
+\newcommand{\afazer}[1]{{\color{red}{#1}}} % Para destacar uma parte a ser trabalhada
+\DeclareMathOperator*{\argmin}{\arg\!\min}
+\DeclareMathOperator*{\argmax}{\arg\!\max}
+\newcommand{\normp}[2]{\left\lVert#1\right\rVert_{#2}}
+\allowdisplaybreaks
 
 % Number sets
 \newcommand{\R}{\mathbb{R}}
@@ -42,294 +126,348 @@
 
 \newcommand{\conv}{\mathrm{conv}}
 
-% https://tex.stackexchange.com/questions/385895/how-to-make-passoptionstopackage-add-the-option-as-the-last
-% https://tex.stackexchange.com/questions/484400/changing-the-cleveref-package-language-conjunction-definition
-% https://tex.stackexchange.com/questions/516058/why-isnt-my-biblatex-language-changing-when-passing-the-language-on-my-document
-\ifenglish
-    \PassOptionsToPackage{brazil,main=english,spanish,french}{babel}
-\else
-    \PassOptionsToPackage{main=brazil,english,spanish,french}{babel}
-\fi
+% ---
+% Pacotes de citações
+% ---
+% \usepackage[brazilian,hyperpageref]{backref}	 % Paginas com as citações na bibl
+\usepackage[alf]{abntex2cite}	% Citações padrão ABNT
 
-% Simple alias for English and Portuguese words
-% https://tex.stackexchange.com/questions/513019/argument-of-bbltempd-has-an-extra
-\newcommand{\brazilword}[1]{\protect\foreignlanguage{brazil}{#1}}
-\newcommand{\englishword}[1]{\protect\foreignlanguage{english}{#1}}
+% --- 
+% CONFIGURAÇÕES DE PACOTES
+% --- 
 
-% Allow you to write `Evandro's house` in latex as `Evandro\s house` instead of `Evandro\textquotesingle{}s house`
-% https://tex.stackexchange.com/questions/31091/space-after-latex-commands
-\newcommand{\s}[0]{\textquotesingle{}s\xspace}
-\newcommand{\q}[0]{\textquotesingle{}\xspace}
+% ---
+% Configurações do pacote backref
+% % Usado sem a opção hyperpageref de backref
+% \renewcommand{\backrefpagesname}{Citado na(s) página(s):~}
+% % Texto padrão antes do número das páginas
+% \renewcommand{\backref}{}
+% % Define os textos da citação
+% \renewcommand*{\backrefalt}[4]{
+% 	\ifcase #1 %
+% 		Nenhuma citação no texto.%
+% 	\or
+% 		Citado na página #2.%
+% 	\else
+% 		Citado #1 vezes nas páginas #2.%
+% 	\fi}%
+% % ---
 
-% Uncomment the following line if you want to use other biblatex settings
-% \PassOptionsToPackage{style=numeric,repeatfields=true,backend=biber,backref=true,citecounter=true}{biblatex}
-\documentclass[
-\lang{english}{brazilian,brazil}, % https://tex.stackexchange.com/questions/484400/changing-the-cleveref-package-language-conjunction-definition
-12pt, % Padrão UFSC para versão final
-a4paper, % Padrão UFSC para versão final
-oneside, % Impressão nos dois lados da folha
-chapter=TITLE, % Título de capítulos em caixa alta
-section=TITLE, % Título de seções em caixa alta
-]{setup/ufscthesisx}
+% ---
+% Informações de dados para CAPA e FOLHA DE ROSTO
+% ---
 
-% Utilize o arquivo aftertext/references.bib para incluir sua bibliografia.
-% http://tug.ctan.org/tex-archive/macros/latex/contrib/cleveref/cleveref.pdf
-\addbibresource{aftertext/references.bib}
+\titulo{Deep-learning-based Primal Heuristics for MILP:\protect\\Supervised Solution-prediction Models}
 
-% https://www.overleaf.com/learn/latex/Inserting_Images
-\graphicspath{{pictures/}}
+\autor{Bruno Machado Pacheco}
+\local{Florianópolis}
+\data{2024}
+\orientador{Prof. Eduardo Camponogara, Ph.D.}
+\coorientador{Prof. Laio Oriel Seman, Ph.D.}
 
-% Preencha com seus dados
-\autor{\brazilword{Bruno Machado Pacheco}}
-\titulo{\lang{Deep-learning-based Primal Heuristics for MILP:\protect\\Supervised Solution-prediction Models}{Título do trabalho\protect\\Pode ser Quebrado em duas linhas}}
-
-% Se houver subtítulo, descomente a linha abaixo
-% \subtitulo{\lang{Subtitle}{Subtítulo}}
-
-% Siglas para grau de formação Dr./Dra., Me./Ma, Bel. Bela. (inglês: PhD., MSc., Bs.)
-\orientador[\lang{Supervisor}{Orientador(a)}]{\brazilword{Eduardo Camponogara}, \lang{PhD.}{Dr.}}
-
-% Se houver coorientador, descomente a linha abaixo
-\coorientador[\lang{Co-supervisor}{Coorientador(a)}]{\brazilword{Laio Oriel Seman}, \lang{PhD.}{Dr.}}
-
-% FIXME: Preencher com o nome do Coordenador de TCCs/Teses do seu curso
-    \coordenador[\lang{Coordinator}{Coordenador(a)}]{\brazilword{Nome do Coordenador(a)}, \lang{PhD.}{Dr.}}
-
-% FIXME: Local da sua defesa
-\local{\brazilword{Florianópolis, Santa Catarina} -- \lang{Brazil}{Brasil}}
-
-% Ano da sua defesa
-\ano{2024}
-\biblioteca{\lang{University Library}{Biblioteca Universitária}}
-
-% Sigla da sua instituição
-\instituicaosigla{UFSC}
-\instituicao{\brazilword{Universidade Federal de Santa Catarina}}
-
-% Preencha com Tese, Dissertação, Monografia ou Trabalho de Conclusão de Curso, Bachelor's Thesis, etc
-\tipotrabalho{\lang{Master\s Thesis}{Trabalho de Conclusão de Curso}}
-
-% FIXME: Se houver Área de Concentração, descomente a linha abaixo
-% \area{\lang{Formal Languages}{Linguagens Formais}}
-
-% FIXME: Preencha com Doutor, Bacharel ou Mestrando
-\formacao{\lang
-    {Master\s degree in Systems and Automation Engineering}
-    {Bacharel em Ciências da Computação}%
-}
-\programa{\lang
-    {Graduate Program in Automation and Systems Engineering}
-    {Programa de Graduação em Ciências da Computação}%
-}
-
-% Preencha com Departamento de XXXXXX, Centro de XXXXXX
-\centro{\lang
-    {DAS -- Systems and Automation Department, CTC -- Technological Center}
-    {INE -- Departamento de Informática e Estatística, CTC -- Centro Tecnológico}%
-}
-
-% Preencha com Campus XXXXXX     ou     Centro de XXXXXX
-\campus{\brazilword{Campus Reitor João David Ferreira Lima}}
-
-% FIXME: Data da sua defesa
-\data{\lang{30 of march of}{30 de março de} 2019}
-
-% O preambulo deve conter tipo do trabalho, objetivo, nome da instituição e a área de concentração.
-\preambulo{\lang%
-    {%
-        \imprimirtipotrabalho~submitted to the \imprimirprograma~of
-        \imprimirinstituicao~for degree acquirement in \imprimirformacao.%
-    }{%
-        \imprimirtipotrabalho~submetido ao \imprimirprograma~da
-        \imprimirinstituicao~para a obtenção do Grau de \imprimirformacao.%
-    }%
-}
-
-% Allows you to use ~= instead of `\hyp{}`
-% https://tex.stackexchange.com/questions/488008/how-to-create-an-alternative-to-shortcut-or-hyp
-% https://tex.stackexchange.com/questions/405718/depending-on-babel-language-setting-i-get-biblatex-error-argument-of-language
-% https://tex.stackexchange.com/questions/340661/argument-of-languageactivearg-has-an-extra-i-use-includegraphics-and-r
-\useshorthands{~}\defineshorthand{~=}{\hyp{}}
-
-% FIXME: Keywords of the thesis
-\palavraschaveufsc{palavraschaveingles}   {Keyword 1}
-\palavraschaveufsc{palavraschaveportugues}{Palavra~=Chave 1}
-
-\palavraschaveufsc{palavraschaveingles}   {Keyword 2}
-\palavraschaveufsc{palavraschaveportugues}{Palavra~=Chave 2}
-
-\palavraschaveufsc{palavraschaveingles}   {Keyword 3}
-\palavraschaveufsc{palavraschaveportugues}{Palavra~=Chave 3}
+\instituicao{%
+	Universidade Federal de Santa Catarina -- UFSC
+	\par
+	Centro Tecnológico
+	\par
+	Programa de Pós-Graduação em Engenharia de Automação e Sistemas}
+\tipotrabalho{Dissertação Mestrado}
+% O preambulo deve conter o tipo do trabalho, o objetivo, 
+% o nome da instituição e a área de concentração 
+\preambulo{Dissertação submetida ao Programa de Pós-Graduação em Engenharia de Automação e Sistemas da Universidade Federal de Santa Catarina para a obtenção do título de Mestre em Engenharia de Automação e Sistemas}
+% ---
 
 
-\hypersetup
-{
-    pdfsubject={Thesis' Abstract},
-    pdfcreator={LaTeX with abnTeX2 for UFSC},
-    pdftitle={\imprimirtitulo},
-    pdfauthor={\imprimirautor},
-    pdfkeywords={\lang{\palavraschaveinglessemitem}{\palavraschaveportuguessemitem}},
-}
+% ---
+% Configurações de aparência do PDF final
 
-% Altere o arquivo 'settings.tex' para incluir customizações de aparência da sua tese
-\input{settings.tex}
+% alterando o aspecto da cor azul
+\definecolor{blue}{RGB}{41,5,195}
 
-% When writing a large document, it is sometimes useful to work on selected sections of the document
-% to speed up compilation time: https://en.wikibooks.org/wiki/TeX/includeonly
-\newif\ifforcedinclude\forcedincludefalse
-
-\addtoincludeonly{beforetext/agradecimentos}
-\addtoincludeonly{beforetext/epigrafe}
-\addtoincludeonly{beforetext/fichacatalografica}
-\addtoincludeonly{beforetext/folhadeaprovacao}
-\addtoincludeonly{beforetext/resumos}
-\addtoincludeonly{beforetext/siglas}
-\addtoincludeonly{beforetext/simbolos}
-
-% Part 1
-\addtoincludeonly{chapters/introduction}
-\addtoincludeonly{chapters/motivation}
-\addtoincludeonly{chapters/beautifiers}
-
-% Part 2
-\addtoincludeonly{chapters/object_beautifier}
-\addtoincludeonly{chapters/conclusion}
-\addtoincludeonly{aftertext/aftertext}
-
-% Control whether the full document will be generated
-% Note: It will also generate severals errors like the following, which can be ignored
-%       Latexmk: Missing input file: 'chapters/test.aux'
-%
-% You can make latex stop generate these errors, if you generate a full version
-% of the document, before uncommenting these lines.
-%
-% Uncomment these two lines, to only partially generate the document
-% \doincludeonly
-% \forcedincludetrue
-
-
-% https://tex.stackexchange.com/questions/85113/xrightarrow-text
+% informações do PDF
 \makeatletter
-\newcommand{\xRightarrow}[2][]{\ext@arrow 0359\Rightarrowfill@{#1}{#2}}
-\newcommand{\xLeftarrow}[2][]{\ext@arrow 0359\Leftarrowfill@{#1}{#2}}
+\hypersetup{
+	%pagebackref=true,
+	pdftitle={\@title}, 
+	pdfauthor={\@author},
+	pdfsubject={\imprimirpreambulo},
+	pdfcreator={Bruno Machado Pacheco},
+	pdfkeywords={abnt}{latex}{abntex}{abntex2}{trabalho acadêmico}, 
+	colorlinks=false,       		% false: boxed links; true: colored links
+	linkcolor=blue,          	% color of internal links
+	citecolor=blue,        		% color of links to bibliography
+	filecolor=magenta,      		% color of file links
+	urlcolor=blue,
+	bookmarksdepth=4,
+	hidelinks
+}
 \makeatother
+% --- 
 
-% https://tex.stackexchange.com/questions/32208/footnote-runs-onto-second-page
-\interfootnotelinepenalty=10000
+% --- 
+% Espaçamentos entre linhas e parágrafos 
+% --- 
 
-% Disable the empty pages automatically put by memoir class, except the ones by \cleardoublepage
-\ifforcedinclude\openany\else\fi
+% O tamanho do parágrafo é dado por:
+\setlength{\parindent}{1.3cm}
 
-% https://tex.stackexchange.com/questions/171999/overfull-hbox-in-biblatex
-% https://tex.stackexchange.com/questions/499457/why-my-document-is-not-hyphenation-on-words-starting-with-upper-case-letter-i
-\emergencystretch=5em
+% Controle do espaçamento entre um parágrafo e outro:
+\setlength{\parskip}{0.2cm}  % tente também \onelineskip
 
-% https://tex.stackexchange.com/questions/23313/how-can-i-reduce-padding-after-figure
-% https://tex.stackexchange.com/questions/499580/how-to-keep-my-default-floating-environment-spacing-before-them-while-reducing
-% \xpretocmd{\figure}{\setlength{\belowcaptionskip}{-10pt}}{}{}
+% ---
+% compila o indice
+% ---
+\makeindex
+% ---
+
+% ---
+% Controla quais elementos serão compilados (útil para desenvolvimento)
+% ---
+\includeonly{%
+% beforetext/agradecimentos,
+% beforetext/epigrafe,
+% beforetext/fichacatalografica,
+% beforetext/folhadeaprovacao,
+% beforetext/resumos,
+% beforetext/siglas,
+% beforetext/simbolos,
+chapters/intro,
+chapters/chapter_1,
+chapters/chapter_2,
+chapters/chapter_3,
+chapters/chapter_4,
+chapters/chapter_5,
+chapters/chapter_6,
+chapters/conclusion,
+% aftertext/apendice_a,
+% aftertext/anexo_a,
+% aftertext/anexo_b,
+}
 
 
+% ----
+% Início do documento
+% ----
 \begin{document}
-    % FIXME: Comment this after finishing the thesis, so you can start fixing the \flushbottom vs \raggedbottom
-    % https://tex.stackexchange.com/questions/65355/flushbottom-vs-raggedbottom
-    \raggedbottom
+	\selectlanguage{english}
+	% Retira espaço extra obsoleto entre as frases.
+	\frenchspacing 
+	
+	% ----------------------------------------------------------
+	% ELEMENTOS PRÉ-TEXTUAIS
+	% ----------------------------------------------------------
+	% \pretextual
+	
+	% ---
+	% Capa
+	% ---
+	\imprimircapa
+	% ---
+	
+	% ---
+	% Folha de rosto
+	% (o * indica que haverá a ficha bibliográfica)
+	% ---
+	\imprimirfolhaderosto*
+	% ---
+	
+	% ---
+	% Inserir a ficha bibliografica
+	% ---
+	
+	% Isto é um exemplo de Ficha Catalográfica, ou ``Dados internacionais de
+	% catalogação-na-publicação''. Você pode utilizar este modelo como referência. 
+	% Porém, provavelmente a biblioteca da sua universidade lhe fornecerá um PDF
+	% com a ficha catalográfica definitiva após a defesa do trabalho. Quando estiver
+	% com o documento, salve-o como PDF no diretório do seu projeto e substitua todo
+	% o conteúdo de implementação deste arquivo pelo comando abaixo:
+	%
+	\include{beforetext/fichacatalografica}
 
-    % https://tex.stackexchange.com/questions/4705/double-space-between-sentences
-    \frenchspacing
+	
+	% ---
+	% Inserir errata
+	% ---
+	% \include{beforetext/errata}
+	% ---
+	
+	% ---
+	% Inserir folha de aprovação
+	% ---
+	
+	% Isto é um exemplo de Folha de aprovação, elemento obrigatório da NBR
+	% 14724/2011 (seção 4.2.1.3). Você pode utilizar este modelo até a aprovação
+	% do trabalho. Após isso, substitua todo o conteúdo deste arquivo por uma
+	% imagem da página assinada pela banca com o comando abaixo:
+	%
+	% \includepdf{folhadeaprovacao_final.pdf}
+	%
+	\include{beforetext/folhadeaprovacao}
 
-    % Uncomment this to put a ←← | ← (Go To Top/Go Back) on each section header
-    \advisor{}{\addGoToSummary}
+	% ---
+	
+	% ---
+	% Dedicatória
+	% ---
+	%\begin{dedicatoria}
+	%	\vspace*{\fill}
+	%	\centering
+	%	\noindent
+	%	\textit{Dedicatoria} \vspace*{\fill}
+	%\end{dedicatoria}
+	% ---
+	
+	% ---
+	% Agradecimentos
+	% ---
+	\include{beforetext/agradecimento}
+	% ---
+	
+	% ---
+	% Epígrafe
+	% ---
+	\include{beforetext/epigrafe}
+% 	% ---
+	
+	% ---
+	% RESUMOS
+	% ---
+	
+	\include{beforetext/resumos}
+	
+	% ---
+	% inserir lista de ilustrações
+	% ---
+	% TODO: uncomment for final version
+	% \pdfbookmark[0]{\listfigurename}{lof}
+	% \listoffigures*
+	% \cleardoublepage
+	% ---
+	
+	% ---
+	% inserir lista de tabelas
+	% ---
+	% TODO: uncomment for final version
+	% \pdfbookmark[0]{\listtablename}{lot}
+	% \listoftables*
+	% \cleardoublepage
+	% ---
+	
+	% ---
+	% inserir lista de abreviaturas e siglas
+	% ---
+	\include{beforetext/siglas}
+	% ---
+	
+	% ---
+	% inserir lista de símbolos
+	% ---
+%	\begin{simbolos}
+%		\item[$ \alpha_B $] Benders Decomposition master problem variable
+%		\item[$ \alpha_{OA} $] Outer Approximation master problem variable
+%		\item[$ \mathcal{C} $] Convex set
+%%		\item[$ \mathcal{F} $] Set of Feasibility Cuts
+%		\item[$ \mathcal{M} $] Subsystems set
+%		\item[$ \mathcal{N} $] Prediction Horizon set
+%		\item[$ \mathcal{N}_u $] Control Horizon set
+%		\item[$ N_1 $] Prediction Horizon start value
+%		\item[$ N_2 $] Prediction Horizon final value
+%%%		\item[$ \mathcal{R} $] Set of resources 
+%		\item[$ \mathbf{R} $] Set of real numbers
+%		\item[$ \mathbf{Z} $] Set of integer numbers
+%item[$s_{r,m}$] Rate of consumption by subsystem $m$.
+ %       \item[$\delta_m$] Activation/deactivation variable on control of subsystem $m$
+%	\end{simbolos}
+	% ---
+	
+	% ---
+	% inserir o sumario
+	% ---
+	\pdfbookmark[0]{\contentsname}{toc}
+	\tableofcontents*
+	\cleardoublepage
+	% ---
+	
+	% ----------------------------------------------------------
+	% ELEMENTOS TEXTUAIS
+	% ----------------------------------------------------------
+	\textual
 
-    % ELEMENTOS PRÉ-TEXTUAIS
-    \input{beforetext/beforetext.tex}
+	\include{chapters/intro}
 
-    % ELEMENTOS TEXTUAIS
-    \textual
-    \setlength\beforechapskip{50pt}
-    \setlength\midchapskip{20pt}
-    \setlength\afterchapskip{20pt}
+	\part{Background}\label{background}
 
-    % PARTE
-    \ifforcedinclude\else\part{Background}\fi
-    \label{primeira_parte}
+	\include{chapters/chapter_1}
+	\include{chapters/chapter_2}
 
-    % Introdução (exemplo de capítulo sem numeração, mas presente no Sumário)
-    \include{chapters/intro}
+	\part{Materials and Methods}{materials-and-methods}
 
-    \include{chapters/chapter_1}
+	\include{chapters/chapter_3}
+	\include{chapters/chapter_4}
+	\include{chapters/chapter_5}
 
-    \include{chapters/chapter_2}
+	\part{Experiments and Results}\label{experiments-and-results}
 
-    \include{chapters/chapter_3}
+	\include{chapters/chapter_6}
 
-    % PARTE
-    \ifforcedinclude\else\part{Materials and Methods}\fi
-    \label{segunda_parte}
+	% \phantompart
 
-    \include{chapters/chapter_4}
-
-    \include{chapters/chapter_5}
-
-    % Finaliza a parte no bookmark do PDF para que se inicie o bookmark na raiz
-    % e adiciona espaço de parte no Sumário
-    \phantompart
-
-    \ifforcedinclude\else\part{Experiments and Results}\fi
-
-    \include{chapters/chapter_6}
-
-    % Conclusão (outro exemplo de capítulo sem numeração e presente no sumário)
-    \include{chapters/conclusion}
-
-    % ELEMENTOS PÓS-TEXTUAIS
-    \postextual
-    \setlength\beforechapskip{0pt}
-    \setlength\midchapskip{15pt}
-    \setlength\afterchapskip{15pt}
-
-    % Referências bibliográficas
-    \begingroup
-        % https://tex.stackexchange.com/questions/163559/how-to-modify-line-spacing-per-entry-of-bibliography
-        % https://tex.stackexchange.com/questions/19105/how-can-i-put-more-space-between-bibliography-entries-biblatex
-        \setlength\bibitemsep{\baselineskip}
-        \advisor{}{\linespread{1.18}\selectfont}
-
-        % https://tex.stackexchange.com/questions/17128/using-bibtex-to-make-a-list-of-references-without-having-citations-in-the-body
-        % \nocite{*}
-        \printbibliography[title=\lang{REFERENCES}{REFERÊNCIAS}]
-    \endgroup
-
-    % Glossário, consulte o manual da classe abntex2 para orientações sobre o glossário.
-    % \ifforcedinclude\else\glossary\fi
-
-    % Inicia os apêndices
-    \begin{apendicesenv}
-        % Imprime uma página indicando o início dos apêndices
-        \ifforcedinclude\else\partapendices\fi
-        \setlength\beforechapskip{50pt}
-        \setlength\midchapskip{20pt}
-        \setlength\afterchapskip{20pt}
-
-        \include{aftertext/apendice_a}
-    \end{apendicesenv}
-
-    % Inicia os anexos
-    \begin{anexosenv}
-        % Imprime uma página indicando o início dos anexos
-        \ifforcedinclude\else\partanexos\fi
-        \setlength\beforechapskip{50pt}
-        \setlength\midchapskip{20pt}
-        \setlength\afterchapskip{20pt}
-
-        \include{aftertext/anexo_a}
-        \include{aftertext/anexo_b}
-    \end{anexosenv}
-
-    % INDICE REMISSIVO
-    \ifforcedinclude\else
-        \phantompart
-        \printindex
-    \fi
-
+	\include{chapters/conclusion}
+	
+	% ----------------------------------------------------------
+	% ELEMENTOS PÓS-TEXTUAIS
+	% ----------------------------------------------------------
+	\postextual
+	% ----------------------------------------------------------
+	
+	% ----------------------------------------------------------
+	% Referências bibliográficas
+	% ----------------------------------------------------------
+	\bibliographystyle{abntex2-alf}
+	\bibliography{aftertext/references.bib}
+	
+	% ----------------------------------------------------------
+	% Glossário
+	% ----------------------------------------------------------
+	%
+	% Consulte o manual da classe abntex2 para orientações sobre o glossário.
+	%
+	%\glossary
+	
+	% ----------------------------------------------------------
+	% Apêndices
+	% ----------------------------------------------------------
+	
+	% ---
+	% Inicia os apêndices
+% 	% ---
+ 	\begin{apendicesenv}
+       	
+ 		% Imprime uma página indicando o início dos apêndices
+ 		\partapendices
+ 		\include{aftertext/appendice_a}
+       	
+ 	\end{apendicesenv}
+% 	% ---
+	
+	% ----------------------------------------------------------
+	% Anexos
+	% ----------------------------------------------------------
+	
+	% ---
+	% Inicia os anexos
+	% ---
+	% \begin{anexosenv}
+	%     \include{aftertext/anexo_a}
+	%     \include{aftertext/anexo_b}
+	% 
+	% \end{anexosenv}
+	
+	%---------------------------------------------------------------------
+	% INDICE REMISSIVO
+	%---------------------------------------------------------------------
+	% \phantompart
+	\printindex
+	%---------------------------------------------------------------------
+	
 \end{document}
-

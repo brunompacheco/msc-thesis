@@ -44,10 +44,11 @@
 \phantomsection
 
 % https://tex.stackexchange.com/questions/5076/is-it-possible-to-keep-my-translation-together-with-original-text
-\chapter{\lang{Introduction}{Introdução}}\label{chap:intro}
+\chapter*{Introduction}\label{chap:intro}
+\addcontentsline{toc}{chapter}{Introduction}
 \phantomsection
 
-Integer programming stands as a cornerstone in addressing complex decision-making problems, offering a powerful framework for modeling combinatorial optimization problems~\cite{wolseyFormulations2020}.
+Integer programming stands as a cornerstone in addressing complex decision-making problems, offering a powerful framework for modeling combinatorial optimization problems \cite{wolseyFormulations2020}.
 In particular, Mixed Integer Linear Programming (MILP) significance stems from its ability to represent combinatorial optimization tasks with linear objectives and constraints.
 Although apparently limiting, the linear requirements allow it to model many problems~\cite{nemhauserScopeIntegerCombinatorial1988} and arbitrarily approximate most problems, e.g., through piecewise-linear approximations of the nonlinearities~\cite{camponogaraModelsAlgorithmsOptimal2015}.
 On top of that, due to the linearity of the constraints and objective functions, we have reliable algorithms to solve MILP problems.
@@ -79,7 +80,8 @@ More specifically, this work focuses on deep learning models trained with superv
     \label{fig:scopus-trend}
 \end{figure}
 
-\section{Objectives}\label{chap:objectives}
+\section*{Objectives}\label{chap:objectives}
+\addcontentsline{toc}{section}{Objectives}
 
 In the topic of this dissertation, three research questions are of fundamental importance in the development of heuristic approaches:
 \begin{itemize}

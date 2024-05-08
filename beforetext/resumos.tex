@@ -1,232 +1,60 @@
 
+% resumo em português
+\setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
+\begin{resumo}
+    % TODO
+\noindent
+% Redes de distribuição de água (RDA) potável são responsáveis por levar a água das estações de tratamento ou poços para os consumidores finais. São redes compostas por dutos, bombas, tanques e válvulas, cujo custo de operação predominante é a energia elétrica de bombeamento \cite{article:denig-chakroff-2008}. As bombas elevam a água ou pressurizam a rede de forma a atender as demandas dos consumidores dentro de certos parâmetros como pressão hidráulica na entrega. Se esta pressão é alta, gasta-se energia elétrica e há mais perda com vazamentos \cite{article:vieira-2020}; se a pressão é baixa o consumidor é prejudicado e pode haver infiltração nos dutos. Configura-se assim um problema mono-objetivo de redução de custo de energia elétrica de bombeio restrito pelas características físicas da rede, parâmetros de entrega como pressões hidráulicas e inventário nos tanques. Este trabalho propõe um modelo MINLP (Programação Inteira Mista Não Linear) baseado no software de simulação hidráulica de RDAs EPANET 2.2 \cite{inbook:epanet-2}. A literatura da área detalhada em \citeonline{article:mala-jetmarova-2017} é estendida pelo presente trabalho com a inclusão de elementos que até então não eram considerados nos modelos de programação matemática: bombas com velocidade variável e válvulas de alívio de pressão PRV e sustentação de pressão PSV. Para validação deste modelo, realizou-se uma comparação entre os resultados do MINLP contra o EPANET em vários cenários especialmente desenhados para estressar as diversas equações de hidráulica e energia elétrica da RDA. Para viabilizar a solução computacional de instâncias maiores, o MILNLP foi linearizado por partes formando um MILP que passou pelo mesmo processo de validação. O modelo proposto apresentou as características de acurácia esperadas, ainda que com elevado custo computacional. Trabalhos futuros que viabilizem a solução para instâncias maiores teriam o potencial de transformá-lo em uma ferramenta de otimização para operadores de RDAs.
 
-\newcommand{\imprimirbrazilabstract}{%
-    \cleardoublepage\phantomsection
-    \addtotextpreliminarycontent{Resumo em Português}
-    \begin{otherlanguage*}{brazil}
-    \begin{resumo}[Resumo]
+\vspace{\onelineskip}
+	
+% TODO
+\noindent\textbf{Palavras-chaves}: Redes de Distribuição de Água, Economia de Energia, Otimização de Pressão, MILP, EPANET. 
+\end{resumo}
 
-        Segundo a \textcite[3.1-3.2]{NBR6028:2003}, o resumo deve ressaltar o
-        objetivo, o método, os resultados e as conclusões do documento. A ordem e a extensão
-        destes itens dependem do tipo de resumo (informativo ou indicativo) e do
-        tratamento que cada item recebe no documento original. O resumo deve ser
-        precedido da referência do documento, com exceção do resumo inserido no
-        próprio documento. (\ldots) As palavras-chave devem figurar logo abaixo do
-        resumo, antecedidas da expressão Palavras-chave:, separadas entre si por
-        ponto e finalizadas também por ponto.
+\begin{resumo}[Resumo Expandido]
+% TODO
 
-        Além disso, na UFSC o texto do resumo deve ser digitado, em um único bloco, sem espaço de parágrafo. O resumo deve
-        ser significativo, composto de uma sequência de frases concisas, afirmativas e não de uma
-        enumeração de tópicos. Não deve conter citações. Deve usar o verbo na voz passiva. Abaixo do
-        resumo, deve-se informar as palavras-chave (palavras ou expressões significativas retiradas do
-        texto) ou, termos retirados de thesaurus da área. \englishword{\showfont}
+\noindent\textbf{\large Introdução}\newline
+{\noindent}
+% Redes de distribuição de água (RDA) potável são responsáveis por levar a água das estações de tratamento ou poços para os consumidores finais. São redes compostas por dutos, bombas, tanques e válvulas. A pesquisa em otimização de operação de RDAs divide-se em duas grandes áreas: operação das bombas e qualidade química e biológica da água. Este trabalho é focado na primeira área. Se por um lado a otimização da operação das RDAs é complicada porque as redes são extensas e formadas por elementos não-lineares, a quantidade de restrições impostas pelas características físicas e legislação é muito numerosa; por outro lado os ganhos podem ser enormes, estima-se que 4\% da energia elétrica dos Estados Unidos seja usado para suprir, transportar e tratar água e esgoto. Deste montante, uma RDA típica consume entre 80\% e 85\% com bombeamento \cite{article:denig-chakroff-2008}. A formulação do problema de otimização tem como objetivo minimizar o custo de bombeamento. Qualquer possível redução de bombeamento, no entanto, tem impacto no inventário, ou seja, nos níveis dos tanques da RDA que devem se manter ao longo do tempo; outro fator é a pressão hidráulica de entrega nos consumidores que devem respeitar um limite mínimo estipulado pela legislação; a pressão nos pontos intermediários da RDA também obdece limites, pois se esta for demasiadamente alta, gasta-se energia elétrica e há mais perda com vazamentos \cite{article:vieira-2020}; se esta for baixa o consumidor é prejudicado e pode haver infiltração nos dutos. Configura-se assim um problema mono-objetivo de redução de custo de energia elétrica de bombeio restrito pelas características físicas da rede, parâmetros de entrega como pressões hidráulicas e inventário nos tanques.
 
-        \imprimirpalavraschave{Palavras-chaves}{\begin{inparaitem}[]\palavraschaveportugues\end{inparaitem}}
+\noindent\textbf{\large Objetivos}\newline
+{\noindent}
+% Na vasta literatura da área encontra-se as mais diversas técnicas de modelagem e soluções para o problema de otimização de operação de bombas em RDAs \cite{article:mala-jetmarova-2017}. Neste trabalho optou-se por formulá-lo como um problema de programação matemática. Os trabalhos apresentados até então, que a usam, não modelam alguns equipamentos físicos que têm relação direta com o consumo de energia elétrica das RDAs. São eles: bombas com velocidade variável e válvulas de alívio de pressão (PRV) e sustentação de pressão (PSV). A redução de consumo de energia elétrica pela velocidade da bomba se dá pelo ajuste do ponto de maior eficiência da bomba dadas condições de pressão, inventário e consumo. PRVs e PSVs são elementos muito presentes nas RDAs. Elas contribuem com o gerenciamento de pressão da rede através de ajuste mecânico individual. Embora não tenham relação direta com o consumo, elas determinam a pressão da rede e por extensão todo seu estado. A desatenção dos trabalhos presentes na literatura à esses elementos impactam diretamente na tentativa de usá-los em RDAs reais.
+% Na linha de tornar o modelo o mais próximo possível de redes reais, o presente trabalho se dispôs a formular o problema MINLP (Programação Inteira Mista Não Linear) com rigor, validá-lo em RDAs especialmente projetadas para estressar as restrições e detalhes de cada equipamento. Uma vez validado o MINLP, o modelo é aproximado por um MILP (Programação Inteira Mista Linear) via funções lineares por partes, o que possibilita o uso do estado da arte em \emph{solvers}. Por se tratar de um problema complexo, o custo computacional de solução é elevado. Neste cenário, a dissertação apresenta uma decomposição MILP-NLP dentro de uma técnica de horizonte deslizante com o objetivo de resolver o problema mais conhecido da literatura proposto por \citeonline{article:vanzyl-2004}.
 
-    \end{resumo}
-    \end{otherlanguage*}
-}
+\noindent\textbf{\large Metodologia}\newline
+{\noindent} 
+% EPANET 2.2 \cite{inbook:epanet-2} é uma ferramenta de simulação de RDAs desenvolvida pela Agência de Proteção Ambiental dos Estados Unidos (EPA). Com mais de 1500 citações em artigos científicos e centenas de milhares de downloads, o EPANET pode ser considerado o software de referência para análise e projeto de redes de distribuição de água pressurizadas, sobretudo na academia. A partir das equações de simulação do EPANET, o presente trabalho monta um problema matemático conceitual de otimização que, embora não seja solúvel pelos algoritmos presentes em \emph{solvers}, é etapa fundamental do processo de desenvolvimento que transforma conhecimento físico e de simulação em matemática. A formulação cobre muitas das funcionalidades do EPANET tais como: fonte de água como reservatórios, armazenamento em tanques, consumo variável ao longo do tempo em consumidores, perda de carga em dutos, válvulas de retenção, válvulas de alívio de pressão (PRV) e sustentação de pressão (PSV), bombas com velocidade variável e curva de eficiência. É a partir do problema conceitual que o problema MINLP é formulado. A função objetivo e restrições são reescritas em AMPL, uma linguagem algébrica para modelagem em programação matemática. O problema é então posto à prova em uma batelada de cenários teste especialmente projetados para estressar cada restrição e suas variantes definidas por variáveis binárias. Como o problema é complexo e com elevado grau de correlação entre as variáveis de decisão, dividiu-se os cenários por equipamento e por fim um cenário simples mas composto por muitos equipamentos demonstra a integração entre os equipamentos. Para RDAs maiores ou horizontes de tempo maior que uma ou duas horas, o MINLP mostrou-se custoso computacionalmente, por isso linearizamos-no através de funções lineares por partes de forma a obter um MILP que pode ser resolvido com \emph{solvers} mais poderosos. Para este o mesmo processo de validação por cenários de equipamentos foi aplicado. Para problemas ainda maiores, seja por número de bombas ou extensão do horizonte propôs-se o uso de um algoritmo de horizonte rolante usando decomposição MILP-NLP. Todos os objetivos específicos mencionados até então são partes de um objetivo geral que é desenvolver uma ferramenta capaz de extrair ganhos de consumo de energia elétrica em RDAs reais em horizontes de tempo representativos da operação da rede. A seção seguinte discute os resultados específicos e gerais alcançados.
 
+\noindent\textbf{\large Resultados e Discussão}\newline
+% Considerando os objetivos específicos da seção anterior, o trabalho tem um sucesso relativo. Não há como medir a adequação da formulação do problema conceitual, somente o reflexo no MINLP. Sobre este, é fácil demonstrar a sua adequação através da acurácia dos valores das variáveis de decisão obtidos do \emph{solver} contra o EPANET. Neste sentido, os resultados foram tão semelhantes que a medida do erro tem pouco significado do ponto de vista de modelagem, sobrando predominantemente erro numérico de computação. Alta acurácia foi desde sempre objetivada por dois motivos: primeiro, porque em modelos muito detalhados erros de modelagem são facilmente interpretados como erro numérico ou imprecisão do \emph{solver}; segundo, porque erros pequenos podem ter efeitos significativos em RDAs grandes, sobretudo porque erros de inventário em tanques se acumulam ao longo do horizonte de tempo. Com um MINLP preciso, a qualidade do MILP é determinada somente pelo número de \emph{breakpoints} das funções lineares por partes. Tal qual o MINLP, o MILP, ainda que com relativamente poucos \emph{breakpoints}, demonstrou-se muito acurado, o credenciando para uso em RDAs reais. Do ponto de vista de desempenho computacional, entretanto, ambas formulações demonstraram-se muito custosas. Um objetivo intermediário que objetivava demonstrar a utilidade do modelo em relação seus pares da literatura era resolver o problema proposto por \citeonline{article:vanzyl-2004}. Muitos trabalhos já usaram-no, e como o modelo desta dissertação é mais completo, esperava-se conseguir demonstrar os ganhos contra um \emph{benchmarking}. Contudo isso não foi possível até então por limites computacionais e técnica de solução. Um passo adiante no sentido de decomposição temporal com algoritmos de horizonte rolante (RHH) foi realizada sem sucesso. Algoritmos RHH resolvem subproblemas mais curtos que o original e colam os resultados de forma que a solução final faça sentido para o problema original. Eles podem ser eficientes em alguns tipos de problemas, mas neste caso as melhores soluções da literatura tiram proveito das 24 horas como um todo, de modo que combinar o resultado de 8 em 8 horas, por exemplo, deteriora a solução. Em suma, vemos que: primeiro, o resultado das formulações MINLP e MILP servem de base para uma ferramenta de otimização útil, mas que, segundo, é necessária mais pesquisa na direção de torná-los eficientes em instâncias maiores.
 
-\newcommand{\imprimirenglishabstract}{%
-    % https://tex.stackexchange.com/questions/20987/changing-babel-package-inside-a-single-chapter
-    % https://tex.stackexchange.com/questions/36526/multiple-language-document-babel-selectlanguage-vs-begin-endotherlanguage
-    \cleardoublepage\phantomsection
-    \addtotextpreliminarycontent{English's Abstract}
-    \begin{otherlanguage*}{english}
-    \begin{resumo}[Abstract]
+\noindent\textbf{\large Considerações Finais}\newline
+% A maioria dos trabalhos da área propõe modelos tão simplificados, quanto se podem resolver, ou seja, o que determina a extensão do modelo é a capacidade de solução. Este trabalho, entretanto, segue na direção de formar um modelo otimizável muito completo para operações de RDAs. As soluções podem vir da continuidade das pesquisas, dos computadores e dos \emph{solvers}. O fato de se aproximar do que pode se chamar de completo, dispensa a necessidade de pesquisa na produção do modelo em si, efetivamente desacoplando o modelo de solução. Nesse sentido acreditamos que o trabalho é de contribuição significativa e precisa continuar com a colaboração da comunidade científica, haja vista o potencial de ganhos econômicos e sociais de uma solução final.
 
-        This is the English abstract.
+\vspace{\onelineskip}
 
-        \imprimirpalavraschave{Keywords}{\begin{inparaitem}[]\palavraschaveingles\end{inparaitem}}
+% TODO
+\noindent\textbf{Palavras-chaves}: Redes de Distribuição de Água, Economia de Energia, MINLP, MILP, RHH, EPANET.
+\end{resumo}
 
-    \end{resumo}
-    \end{otherlanguage*}
-}
-
-
-% \newcommand{\imprimirfrenchabstract}{%
-%     \addtotextpreliminarycontent{Français Résumé}
-%     \begin{resumo}[Résumé]
-%       \begin{otherlanguage*}{french}
-%           Il s'agit d'un résumé en français.
-
-%           \imprimirpalavraschave{Mots-clés}{latex. abntex. publication de textes.}
-%       \end{otherlanguage*}
-%     \end{resumo}
-% }
+% resumo em inglês
+\begin{resumo}[Abstract]
+% TODO
+\begin{otherlanguage*}{english}
+	
+\noindent
+\noindent
+% Potable water distribution networks (WDN) transport water from the water treatment stations or wells to the final consumers. Their components are pipes, pumps, tanks, and valves, and the prevailing cost of operation comes from electric energy drawn by the pumps \cite{article:denig-chakroff-2008}. Pumps convey water from reservoirs and wells and pressurize the pipes so delivery pressure to the final customers is within regulatory parameters. If the pressure is too high, electric energy is wasted, and more water is lost in leaks \cite{article:vieira-2020}; if the pressure is too low, the consumers may be harmed, and there may be infiltration in pipes. Optimizing the operations of WDNs can be stated as a mono-objective electric energy pumping cost constrained by the physical behavior, delivery pressure, and tank inventory. This work proposes a MINLP (Mixed-integer nonlinear programming) model based on the WDN hydraulic simulation software EPANET 2.2 \cite{inbook:epanet-2}. The field literature detailed in \citeonline{article:mala-jetmarova-2017} is extended by the present work by the addition of elements that have not been considered yet in mathematical programming models, such as pumps with variable speed, pressure relief valves (PRV) and pressure sustain valves (PSV). In order to validate the formulation, the MINLP went through a batch of test scenarios specially designed to stress the individual equipment's hydraulic and energy constraints and to be comparable to EPANET. Aiming at turning the solution for larger instances viable, the MINLP is linearized, forming an MILP using piecewise-linear functions and validated likewise. The results in terms of accuracy were excellent despite the high computational cost. Future works that make possible the solution of real-life scale WDNs could turn it into an optimization tool usable by WDNs' operators.
 
 
-% \newcommand{\imprimirspanishabstract}{%
-%     \addtotextpreliminarycontent{Español Resumen}
-%     \begin{resumo}[Resumen]
-%       \begin{otherlanguage*}{spanish}
-%           Este es el resumen en español.
+\vspace{\onelineskip}
 
-%           \imprimirpalavraschave{Palabras clave}{latex. abntex. publicación de textos.}
-%       \end{otherlanguage*}
-%     \end{resumo}
-% }
-
-
-\makeatletter
-\ifenglish
-    \@ifundefined{imprimirbrazilabstract}{}{\imprimirbrazilabstract}
-
-    % https://tex.stackexchange.com/questions/331108/times-new-roman-in-latex-just-some-text
-    % https://tex.stackexchange.com/questions/11707/how-to-force-output-to-a-left-or-right-page
-    % https://tex.stackexchange.com/questions/132966/do-not-display-chapter-title-in-memoir-class
-    \cleardoublepage\phantomsection
-    \pretextualchapter{Resumo Expandido}
-    \addtotextpreliminarycontent{Resumo Expandido}
-
-    \begin{otherlanguage*}{brazil}
-        \setlength{\parskip}{0.2cm}
-        \setlength{\parindent}{0.0cm}
-        \fontfamily{ptm}\selectfont
-
-        \section*{Introdução}
-        O resumo expandido é previsto na Resolução Normativa nº 95/CUn/2017, Art. 55, § 2, de 4 de
-        abril de 2017, e exigido para teses e dissertações escritas em idiomas estrangeiros (com
-        exceção dos cursos pertinentes ao estudo de idiomas estrangeiros – Programa de Pós-Graduação
-        em Estudos da Tradução e Programa de Pós-Graduação em Inglês: Estudos Linguísticos e
-        Literários).
-
-        O resumo expandido é considerado um elemento pré-textual e deverá ser incluído no trabalho
-        após o resumo e antes do abstract. Deverá iniciar em página impar (no anverso de uma folha)
-        continuando no verso da folha. O texto deverá seguir o formato A5, com margens espelhadas:
-        superior 2,0 cm, inferior 1,5 cm, interna 2,5 cm e externa 1,5. Deve ser empregada a fonte
-        Time New Roman.  Todo o texto deve ser digitado em tamanho 10,5. O espaçamento entre as
-        linhas deverá ser simples. A expressão “resumo expandido” deve seguir a mesma tipografia das
-        demais sessões primárias do trabalho.
-
-        O texto do resumo expandido deve ser redigido em português e conter as seguintes seções (ver
-        modelo): Introdução, Objetivos, Metodologia, Resultados e Discussão e Considerações Finais.
-        Deve apresentar no mínimo duas (02) e, no máximo, cinco (05) páginas contendo a mesma
-        formatação em A5 do resumo e do abstract, bem como palavras-chave. \englishword{\showfont}
-
-        \section*{Objetivos}
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae dolor lacus. Ut
-        accumsan vitae felis nec porttitor. Integer interdum fringilla feugiat. Nullam pulvinar sit
-        amet tellus eget maximus. Donec sit amet magna eget justo semper fermentum vel eget velit.
-        In iaculis imperdiet mauris, ac ornare libero placerat non. Nulla libero lectus, ullamcorper
-        ac ornare eget, pulvinar ac nulla. Curabitur vestibulum non nisl eget sagittis. Proin
-        gravida lacus id eros bibendum interdum. Mauris ullamcorper elementum tortor sed consequat.
-        Integer tempus, est a lobortis vehicula, nisi mi fringilla augue, non semper leo metus in
-        quam. Etiam in leo maximus, pulvinar mi eget, vehicula risus. Donec sed dui semper, dictum
-        eros at, suscipit felis.
-
-        Nam sagittis vel orci at tempus. Nulla non pellentesque eros.
-        Quisque cursus leo massa, eu ultricies nisl lacinia a. Nulla sit amet elementum ligula.
-        Proin sodales venenatis dictum. Ut et est cursus, vulputate velit et, viverra odio. Interdum
-        et malesuada fames ac ante ipsum primis in faucibus. Maecenas purus diam, tempor a semper
-        et, finibus a ex. Cras sagittis felis urna, et consequat arcu lacinia ut. Praesent blandit
-        venenatis ante nec porta. Duis rutrum, tellus vitae ullamcorper auctor, lectus ex laoreet
-        est, ac tristique ipsum arcu vitae nibh. Nam efficitur felis ut mi consectetur, nec auctor
-        odio ornare. In tempor vulputate urna, vitae cursus enim egestas eu. Proin diam augue,
-        dignissim vitae ligula eget, lobortis ornare odio. Duis quis elit augue. Fusce quis rhoncus
-        tortor. Donec hendrerit at massa a mattis. Sed ipsum neque, aliquam ut sem sed, ultrices
-        varius ligula. Suspendisse blandit, dolor ac rhoncus lacinia, dolor purus cursus purus, et
-        accumsan orci neque a leo.
-
-        \section*{Metodologia}
-        Quisque efficitur dolor in lectus dapibus elementum. Nam ultrices blandit consectetur.
-        Nullam ultricies sit amet odio quis placerat. Aenean eget est elit. Maecenas et nulla dolor.
-        Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In
-        pulvinar velit sed mi sagittis ornare. Aenean rutrum suscipit egestas. Phasellus pharetra
-        eget ex in volutpat. Quisque eu arcu nunc. Vivamus arcu ligula, pharetra at rhoncus sit
-        amet, pulvinar sed eros. Sed porta ipsum ipsum, et fermentum magna volutpat sed. Vivamus
-        pharetra facilisis orci, sit amet luctus nisl pretium id. Sed consequat, arcu et congue
-        pulvinar, risus enim aliquet purus, eget venenatis libero leo sit amet metus. Maecenas vitae
-        elit sapien. Fusce mollis libero et gravida placerat. Proin ut quam quis justo aliquam
-        dictum. Donec volutpat convallis suscipit. Vivamus metus nisl, placerat ac enim vitae,
-        tempus ultricies odio.
-
-        Aliquam ac vehicula arcu, non bibendum nulla. Morbi libero sem,
-        imperdiet vel quam et, posuere tempus nunc. Maecenas dictum magna sit amet ligula facilisis
-        commodo. Aliquam tellus diam, ornare vel elementum in, dignissim id purus. Ut at tortor non
-        sem molestie euismod non at turpis. Phasellus vitae bibendum tellus. Suspendisse odio enim,
-        faucibus eget congue quis, semper sit amet tortor. Sed ac lectus est. Pellentesque nec
-        mattis mi, et varius dolor. Aliquam quis massa ac tellus malesuada sollicitudin. Maecenas
-        ultrices risus massa, nec auctor risus sagittis id. Praesent a sapien nulla. Donec
-        tincidunt, metus quis hendrerit facilisis, enim augue convallis elit, sed consequat lacus
-        odio vitae magna.
-
-        \section*{Resultados e Discussão}
-        Nullam sed cursus leo. Donec commodo volutpat hendrerit. Fusce et tempus lectus, feugiat
-        consequat est. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-        inceptos himenaeos. Nam quis cursus mauris, non tempus orci. Phasellus lobortis et mauris at
-        vulputate. Sed nec nisl elementum lorem commodo gravida non a enim. Phasellus neque erat,
-        aliquet ac ligula ac, maximus vestibulum sem. Vestibulum vel tincidunt turpis. Donec lacinia
-        rutrum dolor dapibus bibendum. Mauris pharetra nibh nec tincidunt iaculis. Vivamus pharetra
-        bibendum nisl eget blandit. In lobortis diam non justo eleifend, id lobortis ante fringilla.
-        Donec libero tortor, suscipit vestibulum vestibulum id, rutrum accumsan turpis. Phasellus
-        sollicitudin luctus tincidunt. Suspendisse potenti. Nam semper metus et mi pharetra, in
-        pretium ligula fermentum. Integer consectetur, orci non placerat feugiat, dui ex gravida
-        augue, vel placerat ligula augue vel velit. Aliquam sollicitudin pellentesque congue. Donec
-        vitae turpis in ante posuere posuere. Pellentesque eu justo leo. Donec quis elit vitae leo
-        varius luctus quis eget justo.
-
-        Vestibulum elementum ex neque, quis commodo tortor porttitor
-        mattis. Mauris vel sagittis turpis. Aenean ligula turpis, eleifend at felis sed, cursus
-        condimentum orci. Fusce accumsan est odio, eu venenatis massa sodales in. Curabitur a tempor
-        nisl. Quisque consequat sed arcu a congue. In viverra, ex ut hendrerit condimentum, urna sem
-        euismod eros, nec suscipit turpis dolor eget augue. Aenean posuere tellus et consectetur
-        condimentum. Mauris et massa et nulla fringilla interdum. Duis quis posuere elit. Donec at
-        ex non arcu faucibus rutrum et vel lectus. Vivamus pellentesque vestibulum rutrum. Sed
-        pretium, purus sed efficitur feugiat, nisi justo eleifend nibh, id suscipit nunc massa nec
-        lectus. In euismod enim eu sapien dictum sodales. Fusce sit amet vulputate orci. Nulla
-        rutrum mauris at purus aliquet, ac sollicitudin leo laoreet. Etiam elementum posuere
-        feugiat. Maecenas sed libero non augue fermentum ultricies eget at mi. Aenean auctor
-        bibendum lacus, dignissim aliquet est tempus eget. Maecenas tempus, nulla id rhoncus
-        suscipit, augue leo auctor mi, eget tincidunt magna mi quis dui. Maecenas ut elit in turpis
-        tincidunt ultrices. Nulla id nulla aliquet, porttitor eros quis, egestas justo. Nunc nisi
-        quam, egestas a accumsan fermentum, ultricies ac elit.
-
-        Nulla porta auctor vestibulum. Sed
-        consectetur lacus molestie iaculis ullamcorper. Proin porta posuere massa a lacinia. Nunc a
-        lacinia orci, non vehicula ante. Vestibulum ipsum velit, congue et neque aliquam, imperdiet
-        ornare augue. Donec et congue sapien. Pellentesque consequat consectetur neque ut varius. In
-        aliquam ex quis ante venenatis dapibus. Vivamus et imperdiet urna. Vestibulum quis nibh
-        magna. In a congue lectus, eu sodales nunc. Suspendisse id.
-
-        \section*{Considerações Finais}
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae dolor lacus. Ut
-        accumsan vitae felis nec porttitor. Integer interdum fringilla feugiat. Nullam pulvinar sit
-        amet tellus eget maximus. Donec sit amet magna eget justo semper fermentum vel eget velit.
-        In iaculis imperdiet mauris, ac ornare libero placerat non. Nulla libero lectus, ullamcorper
-        ac ornare eget, pulvinar ac nulla. Curabitur vestibulum non nisl eget sagittis. Proin
-        gravida lacus id eros bibendum interdum. Mauris ullamcorper elementum tortor sed consequat.
-        Integer tempus, est a lobortis vehicula, nisi mi fringilla augue, non semper leo metus in
-        quam. Etiam in leo maximus, pulvinar mi eget, vehicula risus. Donec sed dui semper, dictum
-        eros at, suscipit felis.
-
-        Nam sagittis vel orci at tempus. Nulla non pellentesque eros.
-        Quisque cursus leo massa, eu ultricies nisl lacinia a. Nulla sit amet elementum ligula.
-        Proin sodales venenatis dictum. Ut et est cursus, vulputate velit et, viverra odio. Interdum
-        et malesuada fames ac ante ipsum primis in faucibus. Maecenas purus diam, tempor a semper
-        et, finibus a ex. Cras sagittis felis urna, et consequat arcu lacinia ut. Praesent blandit
-        venenatis ante nec porta. Duis rutrum, tellus vitae ullamcorper auctor, lectus ex laoreet
-        est, ac tristique ipsum arcu vitae nibh. Nam efficitur felis ut mi consectetur, nec auctor
-        odio ornare. In tempor vulputate urna, vitae cursus enim egestas eu. Proin diam augue,
-        dignissim vitae ligula eget, lobortis ornare odio. Duis quis elit augue. Fusce quis rhoncus
-        tortor. Donec hendrerit at massa a mattis. Sed ipsum neque, aliquam ut sem sed, ultrices
-        varius ligula. Suspendisse blandit, dolor ac rhoncus lacinia, dolor purus cursus purus, et
-        accumsan orci neque a leo.
-
-
-        \imprimirpalavraschave{Palavras-chaves}{\begin{inparaitem}[]\palavraschaveportugues\end{inparaitem}}
-
-    \end{otherlanguage*}
-
-    \@ifundefined{imprimirenglishabstract}{}{\imprimirenglishabstract}
-
-\else
-    \@ifundefined{imprimirbrazilabstract}{}{\imprimirbrazilabstract}
-    \@ifundefined{imprimirenglishabstract}{}{\imprimirenglishabstract}
-\fi
-
-\@ifundefined{imprimirfrenchabstract}{}{\imprimirfrenchabstract}
-\@ifundefined{imprimirspanishabstract}{}{\imprimirspanishabstract}
-\makeatother
+\noindent 
+% TODO
+\textbf{Key-words}: Water Distribution Networks, Energy Saving, MINLP, MILP, RHH, EPANET.
+\end{otherlanguage*}
+\end{resumo}
 
