@@ -6,11 +6,24 @@
 
 \chapter{Solution Prediction Models for MILP Problems}\label{chap:solution-prediction}
 
+
+This chapter introduces the methods available for training deep learning models for predicting solutions of MILP problems.
+The ability to efficiently predict solutions plays a pivotal role in the development of learning-based heuristics.
+In other words, this chapter is a bridge between Chapters \ref{chap:integer-programming} and \ref{chap:deep-learning} with a focus on (mat)heuristics.
+
+This chapter begins by discussing the process of embedding of MILP problems, which involves transforming problem instances into a suitable format for deep learning models.
+Within this context, feature engineering and graph approaches are explored to represent the intricate relationships between the components of MILP problems.
+Moving forwards, the methodologies employed in training deep learning models fed with embeddings of MILP problem instances are presented, highlighting the challenges and opportunities posed by the availability of multiple feasible solutions.
+The chapter ends with the approaches one can use to create primal (mat)heuristics from solution prediction models.
+
+
 \section{Embedding Optimization Problems}
 
-\subsection{Vectorization}
+% TODO: see SatGNN paper
 
-\subsection{Bi-partite Graph}
+\subsection{Feature Engineering}
+
+\subsection{Graph Embedding}
 
 \section{Training Under Supervision}
 
