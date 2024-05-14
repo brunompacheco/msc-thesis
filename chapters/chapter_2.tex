@@ -228,7 +228,7 @@ The Adam optimizer~\cite{kingma2014adam} combines both momentum and adaptive lea
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Graph Neural Networks}
+\subsection{Graph Neural Networks}\label{sec:gnns}
 
 % Graphs are a widely used data structure, but their ingestion by neural networks is non-trivial.
 % NNs usually take real-valued vectors as inputs, so a naïve approach would be to find a vector encoding of a graph and feed such encoding to the model.
@@ -269,7 +269,7 @@ The structure of the graph is embedded into this computation by the neighbors fu
 
 As each node can have an arbitrary number of neighbors, it is reasonable for update functions to contain some sort of aggregation, or \emph{pooling}, mechanism, i.e., a way to compute a fixed-size representation of the messages received.
 A common choice is to sum all messages element-wise, as each message is a vector of the image of $M^{(l)}$ and, thus, has the same dimension.
-Other possibilities are to aggregate through element-wise averaging, maximum, or use some sort of attention mechanism that can be learned along the model parameters~\cite{veličković2018graph}.
+Other possibilities are to aggregate through element-wise averaging, maximum, or use some sort of attention mechanism that can be learned along the model parameters~\cite{velickovic2018graph}.
 Furthermore, a message function can easily be extended to consider edge weights (or even edge features) along with feature vectors of the neighbors.
 
 As an example, let the input space be the set of colored graphs and consider a handcrafted GNN, as illustrated in Fig.~\ref{fig:gnn-example}.
