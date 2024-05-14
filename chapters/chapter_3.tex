@@ -21,9 +21,72 @@ The chapter ends with the approaches one can use to create primal (mat)heuristic
 
 % TODO: see SatGNN paper
 
+The first requirement that needs to be satisfied for training deep learning models to predict solutions to MILP problems is to be able to feed instances of MILP problems to such models.
+For this, it is necessary to convert an instance to a numerical format that the model can handle.
+
+Naturally, an instance can be specified by a tuple $\left( \bm{c}, \bm{b}, A, n \right)$, as discussed in Sec.~\ref{sec:milp-definition}, which could be vectorized an be fed to a vanilla NN.
+This form of embedding, which is going to be referred to as \emph{naïve} embedding, has several shortcomings.
+First, it does not represent the \emph{symmetries} of the formulation, which are operations applied to the parameters that do not alter its solutions.
+For example, changing the order of the constraints, which can be seen as permutations of rows of $\left[ A\, | \,\bm{b} \right] $, does not affect in any way the feasible space nor the objectives associated to feasible solutions, but generates different embeddings.
+
+Furthermore, the naïve embedding can easily be an over-parametrization of the instance distribution, which often are sampled from a lower-dimensional space.
+For example, take the MILP formulation of the TSP by \citeonline{millerIntegerProgrammingFormulation1960}
+\begin{align*}
+    \min_{\bm{u},\bm{x}} \quad & \sum_{\substack{i,j=0 \\ i\neq j}}^{n} d_{ij} x_{ij} & \\
+    \textrm{s.t.} \quad & \sum_{\substack{i=0\\i\neq j}}^{n} x_{ij} = 1, &\, j=1,\ldots,n \\
+			& \sum_{\substack{j=0\\j\neq i}}^{n} x_{ij} = 1, &\, i=1,\ldots,n \\
+			& u_i - u_j + n \cdot x_{ij} \le n - 1, &\, i,j=1,\ldots,n,\, i\neq j\\
+			& x_{ij} \in \left\{ 0,1 \right\}, &\, i,j=0,\ldots,n  \\
+			& \bm{u} \in \R^{n} &
+\end{align*}
+and suppose one wants to solve it for instance $I\in \mathcal{I}$ over the same graph but with varying edge costs $d_{ij}$.
+Of course, embedding such instances naïvely would encode all the static parameters of the constraints, i.e., the information that does not change between the instances of interest, which do not carry relevant information for the model.
+
+
 \subsection{Feature Engineering}
 
+One way to mitigate the shortcomings of the naïve embedding is to extract \emph{features} that well represent the instance with respect to their solutions.
+This approach is based on the hypothesis that, for a given application, the instances are sampled from a lower-dimensional space, i.e., that there exists a mapping $g: X\subseteq\R^{d} \longrightarrow \mathcal{I}$ that associates features $x\in X$ to instances $I\in \mathcal{I}$, and that $d$ is significantly smaller than the number of parameters (e.g., from the naïve embedding).
+
+Continuing with the TSP example from above, suppose that the goal is to solve the TSP for a given city (which fixes the graph over which the tours are to be found) but with different traffic conditions and, therefore, different edge costs $d_{ij}$.
+The cost vector $\bm{c}$ (which is a vectorization of the $d_{ij}$ parameters) can be said a feature vector for the instances, but calling this feature engineering would be controversial statement.
+However, one could investigate what are the variables that influence the traffic conditions, e.g., hour of the day, day of the week, gas price, weather.
+Ideally, then, it would be possible to use these variables to define a feature space $X$, such that a mapping $g: X \longrightarrow \mathcal{I}$ exists, and train models that are fed with $x\in X$.
+Note that, in practice, one does not need to know $g$ to be able to train a deep learning model, only its \emph{inverse}, i.e., it is only necessary to compute features given instances, and assume that the inverse is possible.
+
+Embedding MILP problem instances as feature vectors is an approach suitable for NNs, as they require vector-valued inputs.
+However, there is an underlying restriction that is a fixed number of features.
+Although it seems natural, it is not always the case that all instances of a problem have the same number of variables or constraints.
+If in the TSP example above the underlying graph changes over the instance space, then the instances will have varying numbers of variables and constraints.
+In the naïve embedding, this translates directly to vectors of varying size, which are not directly suitable for NNs.
+To generate features that are suitable for NNs even when the instances have varying size, the feature engineer must be able to translate the process that changes the size of the instances into a fixed number of features, which is not always easy or even feasible.
+
 \subsection{Graph Embedding}
+
+A well-used approach in the intersection between deep learning and combinatorial optimization is to embed MILP problem instances is through bipartite graphs~\cite{gasseExactCombinatorialOptimization2019,nairSolvingMixedInteger2021,dingAcceleratingPrimalSolution2020,khalilMIPGNNDataDrivenFramework2022,hanGNNGuidedPredictandSearchFramework2023}.
+Any instance of an LP problem can be represented as a weighted bipartite graph.
+Consider the problem
+\begin{equation}\label{eq:example-lp-graph}
+\begin{aligned}
+    \max_{\bm{x}} & \quad \bm{c}^T \bm{x} \\
+    \text{s.t.:} & \quad A\bm{x} \le\bm{b} 
+,\end{aligned}
+\end{equation}
+where $\bm{x}\in X \subseteq\mathbb{R}^n$ and $\bm{b}\in \mathbb{R}^m$.
+It is possible to build a bipartite graph $G=(V_{\textrm{var}}\cup V_{\textrm{con}}, E)$, in which $v_{\textrm{con},i}\in V_{\textrm{con}}$ is the node associated to the $i$-th constraint, $v_{\textrm{var},j}\in V_{\textrm{var}}$ is the node associated to $x_j$, and $E=\{(v_{{\rm con},i},v_{{\rm var},j}) : A_{i,j} \neq 0\}$.
+Furthermore, a weight function $w: V_{\textrm{var}}\cup V_\textrm{con}\cup E \longrightarrow \R$ such that $w(v_{\textrm{var},i}) = c_j$, $w(v_{\textrm{con},j}) = b_j$, and $w(e_{i,j}=(v_{\textrm{con},i},v_{\textrm{var},j})) = A_{i,j}$, renders the weighted graph $(G,w)$ a complete representation of any instance of the LP, i.e., the original LP instance can be reconstructed using solely the information in such weighted graph.
+
+The extension to MILP problems requires solely the distinction between continuous and integer variables.
+This can be done, for example, by extending the weight function to a vector-valued function such that $w(v_{\textrm{var},j}) = (c_j,0)$ if the $j$-th variable is continuous or $w(v_{\textrm{var},j}) = (c_j,1)$ if $x_j$ is an integer variable.
+In practice, however, the graph fed to a GNN is usually "weighted" with feature vectors $\bm{h}_v^{(0)}, \forall v\in V$ of arbitrary size, as seen in Sec.~\ref{sec:gnns}.
+In other words, the information contained in the weights (feature vectors) provided to the network is a design choice.
+It can contain the weights described above, but many other features might also help the model learn the graph-related task (see, for example, \citeonline{gasseExactCombinatorialOptimization2019} and \citeonline{nairSolvingMixedInteger2021}).
+
+The graph embedding is perfectly suitable for GNNs.
+In comparison to the feature engineering approach, the graph embedding requires no effort from an human expert, and provides an effective result in terms of representation power and scalability.
+First, because the resulting graph contains all of the information present in the instance while being invariant to constraint and variable permutations.
+On top of that, the size of the GNN does no scale with the size of the graph, but solely with the dimension of the weight (feature vector) associated to each node.
+
 
 \section{Training Under Supervision}
 
