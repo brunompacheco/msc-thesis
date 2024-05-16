@@ -46,13 +46,13 @@ Of course, embedding such instances naïvely would encode all the static paramet
 \subsection{Feature Engineering}
 
 One way to mitigate the shortcomings of the naïve embedding is to extract \emph{features} that well represent the instance with respect to their solutions.
-This approach is based on the hypothesis that, for a given application, the instances are sampled from a lower-dimensional space, i.e., that there exists a mapping $g: X\subseteq\R^{d} \longrightarrow \mathcal{I}$ that associates features $x\in X$ to instances $I\in \mathcal{I}$, and that $d$ is significantly smaller than the number of parameters (e.g., from the naïve embedding).
+This approach is based on the hypothesis that, for a given application, the instances are sampled from a lower-dimensional space, i.e., that there exists a mapping $g^{-1}: X\subseteq\R^{d} \longrightarrow \mathcal{I}$ that associates features $x\in X$ to instances $I\in \mathcal{I}$, and that $d$ is significantly smaller than the number of parameters (e.g., from the naïve embedding).
+The mapping is written as the \emph{inverse} of a function $g$ because, in practice, it is not necessary to know $g^{-1}$ to be able to train a deep learning model, only $g$, i.e., it is only necessary to compute features given instances, and assume that the inverse is possible.
 
 Continuing with the TSP example from above, suppose that the goal is to solve the TSP for a given city (which fixes the graph over which the tours are to be found) but with different traffic conditions and, therefore, different edge costs $d_{ij}$.
 The cost vector $\bm{c}$ (which is a vectorization of the $d_{ij}$ parameters) can be said a feature vector for the instances, but calling this feature engineering would be controversial statement.
 However, one could investigate what are the variables that influence the traffic conditions, e.g., hour of the day, day of the week, gas price, weather.
-Ideally, then, it would be possible to use these variables to define a feature space $X$, such that a mapping $g: X \longrightarrow \mathcal{I}$ exists, and train models that are fed with $x\in X$.
-Note that, in practice, one does not need to know $g$ to be able to train a deep learning model, only its \emph{inverse}, i.e., it is only necessary to compute features given instances, and assume that the inverse is possible.
+Ideally, then, it would be possible to use these variables to define a feature space $X$, such that a mapping $g^{-1}: X \longrightarrow \mathcal{I}$ exists, and train models that are fed with $x\in X$.
 
 Embedding MILP problem instances as feature vectors is an approach suitable for NNs, as they require vector-valued inputs.
 However, there is an underlying restriction that is a fixed number of features.
@@ -89,6 +89,28 @@ On top of that, the size of the GNN does no scale with the size of the graph, bu
 
 
 \section{Training Under Supervision}
+
+Ideally, a solution prediction model is capable of predicting the \emph{bias} of the integer variables in the optimal solutions of a given instance of an MILP problem~\cite{khalilMIPGNNDataDrivenFramework2022}.
+Intuitively, the bias of a variable towards a value indicates how likely that variable is to assume the value in an optimal solution.
+As the problem is linear over the continuous variables, their optimal value value can be determined in polynomial time given an optimal assignment for the integer variables, as the resulting problem is an LP.
+Therefore, the focus of solution prediction models for MILP is on the integer variables.
+More precisely, given an embedding $x\in \mathcal{X}$\footnote{Here, $\mathcal{X}$ is used to denote a more general embedding space, that can that of feature vectors or of graph embeddings.} associated to an instance of an optimization problem, a solution prediction deep learning model $f_{\theta}: \mathcal{X} \longrightarrow \left[ 0,1 \right]^n$ will be such that, for $\bm{z}=f(x)$, it will be denoted that $z_{j,k}$ will be the learned bias of the $j$-th variable towards value $k$ in an optimal solution.
+Another property of a bias vector $\bm{z}_{j}$ is that all its elements sum to 1, such that it can also be interpreted as a probability estimate that 
+In the particular case of binary MILPs, it can be written $\mathcal{Y}=[0,1]^n$, such that $z_{i}\in [0,1]$ is the learned bias of the $i$-th variable towards assuming value 1 in an optimal solution.
+
+Given an embedding function and a suitable deep learning model (e.g., naïve embedding or engineered features and a NN, graph embedding and GNN), the usual training algorithms for supervised learning apply.
+In other words, following a match between instance embedding and model architectures, the algorithmic approach presented in Sec.~\ref{sec:supervised-learning} applies.
+Therefore, the dataset required for training is composed of embeddings of instances associated to optimal solutions.
+Let $\bm{y}^{*}_I$\footnote{Note that, implicitly, $y$ is now used to represent the variables of the optimization problems to avoid a confusion with the input space of the deep learning model.} denote an optimal solution for instance $I\in \mathcal{I}$ of the MILP problem at hand, and let $g: \mathcal{I} \longrightarrow \mathcal{X}$ be a suitable embedding function.
+Then, the dataset necessary for training can be written as a set \[
+    \mathcal{D} = \left\{ (x, \bm{y}^{*}_I) : x = g(I) \right\} 
+.\] 
+
+Given such dataset, the training algorithm can be defined by picking any loss function that penalizes the distance between the predicted bias and the actual value.
+For example, following the classification task paradigm~\cite{goodfellowQualitativelyCharacterizingNeural2015} for a problem solely with binary variables, the binary cross-entropy loss can be applied such that
+\begin{equation}
+    \ell(\bm{y}^*, \bm{z}) = \sum_{j=1}^{n} y_j \log z_j + (1-y_j) \log (1 - z_j)
+.\end{equation}
 
 \subsection{Multiple Targets}
 
