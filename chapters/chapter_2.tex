@@ -44,7 +44,7 @@ This chapter delves into the background of deep learning, focusing on the fundam
 The understanding of such concepts is essential for exploring the design and implementation of deep-learning-based solution prediction models tailored to MILP instances.
 
 
-\section{Supervised Learning}
+\section{Supervised Learning}\label{sec:supervised-learning}
 
 Supervised learning can be seen as the problem of finding a function that best associates inputs $x$ to outputs $y$ given a \emph{training set} with finitely many examples of such inputs and outputs~\cite{Goodfellow-et-al-2016}.
 Although the machine learning (ML) area has attracted plenty of attention in the last decade, this learning problem is not new.
@@ -87,8 +87,12 @@ Both ``empirical risk'' and ``cost function'' will be used interchangeably throu
 A supervised learning algorithm is essentially an algorithm to optimize a cost function given a model and a dataset.
 In fact, it is possible to define a supervised learning algorithm as a simple recipe: ``combine a speciﬁcation of a dataset, a cost function, an optimization procedure and a model''~\cite{Goodfellow-et-al-2016}.
 Many different algorithms exist that are suitable for different components of this recipe.
-\textcolor{blue}{For example, there are algorithms which are tailored for the synthesis of decision-tree models~\cite{breimanClassificationRegressionTrees2017}.}
+For example, there are algorithms which are tailored for the synthesis of decision-tree models~\cite{breimanClassificationRegressionTrees2017a}.
 The least squares algorithm (used in the example of Section~\ref{sec:generalization-overfitting}) can be seen as a supervised learning algorithm for polynomial models and the squared error loss function.
+
+Although the loss function can be seen as part of the specification of the problem, such "ideal" function may not be suitable for the algorithm.
+For example, a \emph{surrogate} loss function is necessary when the original loss function is not differentiable and the learning will be performed through gradient-based optimization, as will be discussed in Sec.~\ref{sec:gradient-based-learning}.
+More generally, the cost function can be seen as a design choice, as the goal of learning is to achieve \emph{generalization}, as presented in the following.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -188,7 +192,7 @@ Deep neural networks (DNNs) are a larger family of models.
 Although DNNs are also composed of differentiable functions, these functions are assembled in any form of directed acyclic graphs~\cite{murphyMachineLearningProbabilistic2013}.
 Note that this opens up complex architectures that may contain feedback, memory, convolutions, etc.~\cite {Goodfellow-et-al-2016}.
 
-\subsection{Gradient-based learning}
+\subsection{Gradient-based learning}\label{sec:gradient-based-learning}
 
 % See Bengio et al., Ch. 6.2
 Because of the inherent nonlinearities of NNs, the cost (or empirical risk) minimization problem \eqref{eq:cost-minimization} becomes nonconvex under the most common loss functions~\cite{Goodfellow-et-al-2016}.
