@@ -32,11 +32,11 @@ For example, changing the order of the constraints, which can be seen as permuta
 Furthermore, the naïve embedding can easily be an over-parametrization of the instance distribution, which often are sampled from a lower-dimensional space.
 For example, take the MILP formulation of the TSP by \citeonline{millerIntegerProgrammingFormulation1960}
 \begin{align*}
-    \min_{\bm{u},\bm{x}} \quad & \sum_{\substack{i,j=0 \\ i\neq j}}^{n} d_{ij} x_{ij} & \\
-    \textrm{s.t.} \quad & \sum_{\substack{i=0\\i\neq j}}^{n} x_{ij} = 1, &\, j=1,\ldots,n \\
-			& \sum_{\substack{j=0\\j\neq i}}^{n} x_{ij} = 1, &\, i=1,\ldots,n \\
-			& u_i - u_j + n \cdot x_{ij} \le n - 1, &\, i,j=1,\ldots,n,\, i\neq j\\
-			& x_{ij} \in \left\{ 0,1 \right\}, &\, i,j=0,\ldots,n  \\
+    \min_{\bm{u},\bm{y}} \quad & \sum_{\substack{i,j=0 \\ i\neq j}}^{n} d_{ij} y_{ij} & \\
+    \textrm{s.t.} \quad & \sum_{\substack{i=0\\i\neq j}}^{n} y_{ij} = 1, &\, j=1,\ldots,n \\
+			& \sum_{\substack{j=0\\j\neq i}}^{n} y_{ij} = 1, &\, i=1,\ldots,n \\
+			& u_i - u_j + n \cdot y_{ij} \le n - 1, &\, i,j=1,\ldots,n,\, i\neq j\\
+			& y_{ij} \in \left\{ 0,1 \right\}, &\, i,j=0,\ldots,n  \\
 			& \bm{u} \in \R^{n} &
 \end{align*}
 and suppose one wants to solve it for instance $I\in \mathcal{I}$ over the same graph but with varying edge costs $d_{ij}$.
@@ -68,12 +68,12 @@ Any instance of an LP problem can be represented as a weighted bipartite graph.
 Consider the problem
 \begin{equation}\label{eq:example-lp-graph}
 \begin{aligned}
-    \max_{\bm{x}} & \quad \bm{c}^T \bm{x} \\
-    \text{s.t.:} & \quad A\bm{x} \le\bm{b} 
+    \max_{\bm{y}} & \quad \bm{c}^T \bm{y} \\
+    \text{s.t.:} & \quad A\bm{y} \le\bm{b} 
 ,\end{aligned}
 \end{equation}
-where $\bm{x}\in X \subseteq\mathbb{R}^n$ and $\bm{b}\in \mathbb{R}^m$.
-It is possible to build a bipartite graph $G=(V_{\textrm{var}}\cup V_{\textrm{con}}, E)$, in which $v_{\textrm{con},i}\in V_{\textrm{con}}$ is the node associated to the $i$-th constraint, $v_{\textrm{var},j}\in V_{\textrm{var}}$ is the node associated to $x_j$, and $E=\{(v_{{\rm con},i},v_{{\rm var},j}) : A_{i,j} \neq 0\}$.
+where $\bm{y}\in Y \subseteq\mathbb{R}^n$ and $\bm{b}\in \mathbb{R}^m$.
+It is possible to build a bipartite graph $G=(V_{\textrm{var}}\cup V_{\textrm{con}}, E)$, in which $v_{\textrm{con},i}\in V_{\textrm{con}}$ is the node associated to the $i$-th constraint, $v_{\textrm{var},j}\in V_{\textrm{var}}$ is the node associated to $y_j$, and $E=\{(v_{{\rm con},i},v_{{\rm var},j}) : A_{i,j} \neq 0\}$.
 Furthermore, a weight function $w: V_{\textrm{var}}\cup V_\textrm{con}\cup E \longrightarrow \R$ such that $w(v_{\textrm{var},i}) = c_j$, $w(v_{\textrm{con},j}) = b_j$, and $w(e_{i,j}=(v_{\textrm{con},i},v_{\textrm{var},j})) = A_{i,j}$, renders the weighted graph $(G,w)$ a complete representation of any instance of the LP, i.e., the original LP instance can be reconstructed using solely the information in such weighted graph.
 
 The extension to MILP problems requires solely the distinction between continuous and integer variables.
@@ -95,28 +95,39 @@ Intuitively, the bias of a variable towards a value indicates how likely that va
 As the problem is linear over the continuous variables, their optimal value value can be determined in polynomial time given an optimal assignment for the integer variables, as the resulting problem is an LP.
 Therefore, the focus of solution prediction models for MILP is usually the integer variables.
 
-More precisely, let $I\in \mathcal{I}$ be an instance of an MILP problem of which $y_j$, $j=1,\ldots,n$ are its integer variables.
+More precisely, let $I\in \mathcal{I}$ be an instance of an MILP problem as in \eqref{eq:general-milp}.
 The \emph{bias} of variable $y_j$ towards value $k\in \Z$ in the optimal solution will be denoted $p(y_j^*=k|I)$, in an allusion to its \emph{probability} of taking said value in an optimal solution $\bm{y}^*$, which also implies that it is expected that $\sum_{k} p(y_j^*=k|I) = 1$, $\forall j$.
-Therefore, given an embedding $x\in \mathcal{X}$\footnote{Here, $\mathcal{X}$ is used to denote a more general embedding space, that can that of feature vectors or of graph embeddings.} associated to an instance of an optimization problem, a solution prediction deep learning model $f_{\theta}: \mathcal{X} \longrightarrow \mathcal{Z}$ will ideally be such that, for $\bm{z}=f(x)$, it is expected that $z_{j,k}\approx p(y_j^*=k|I)$.
+Therefore, given an embedding $x\in \mathcal{X}$\footnote{Here, $\mathcal{X}$ is used to denote a more general embedding space, that can that of feature vectors or of graph embeddings.} associated to an instance of an optimization problem, a solution prediction deep learning model $f_{\theta}: \mathcal{X} \longrightarrow \mathcal{P}$ will ideally be such that, for $\hat{\bm{p}}=f(x)$, it is expected that $\hat{p}_{j,k}\approx p(y_j^*=k|I)$.
 
 Given an embedding function and a suitable deep learning model (e.g., naïve embedding or engineered features and a NN, graph embedding and GNN), the usual training algorithms for supervised learning apply.
 In other words, following a match between instance embedding and model architectures, the algorithmic approach presented in Sec.~\ref{sec:supervised-learning} applies.
 Therefore, the dataset required for training is composed of embeddings of instances associated to optimal solutions.
-Let $\bm{y}^{*}_I$\footnote{Note that, implicitly, $y$ is now used to represent the decision variables of the optimization problems to avoid a confusion with the input space of the deep learning model.} denote an optimal solution for instance $I\in \mathcal{I}$ of the MILP problem at hand, and let $g: \mathcal{I} \longrightarrow \mathcal{X}$ be a suitable embedding function.
+Let $\bm{y}^{*}_I$ denote an optimal solution for instance $I\in \mathcal{I}$ of the MILP problem at hand, and let $g: \mathcal{I} \longrightarrow \mathcal{X}$ be a suitable embedding function.
 Then, the dataset necessary for training can be written as a set \[
-    \mathcal{D} = \left\{ (x, \bm{y}^{*}_I) : x = g(I) \right\} 
+    \mathcal{D} = \left\{ (x_I, \bm{y}^{*}_I) : x_I = g(I), \bm{y}^*_I\text{ is an optimal solution of }I \right\} 
 .\] 
 
 Given such dataset, the training algorithm can be defined by picking any loss function that penalizes the distance between the predicted bias and the actual value.
 For example, following a maximum likelihood estimation approach~\cite{goodfellowQualitativelyCharacterizingNeural2015} for a problem solely with binary variables, the binary cross-entropy loss can be applied to a model $f_{\theta}: \mathcal{X} \longrightarrow \left[ 0,1 \right]^n$ such that
-\begin{equation}
-    \ell(\bm{y}^*, \bm{z}) = \sum_{j=1}^{n} y_j \log z_j + (1-y_j) \log (1 - z_j)
+\begin{equation}\label{eq:bce-loss}
+    \ell(\bm{y}, \hat{\bm{p}}) = \sum_{j=1}^{n} y_j \log \hat{p}_j + (1-y_j) \log (1 - \hat{p}_j)
 .\end{equation}
-Note that, because there are only binary variables, the model is designed with output only for the bias towards $k=1$, as $z_j\approx p(y_j^*=1|I) \iff 1-z_j\approx p(y_j^*=0|I)$.
+Note that, because there are only binary variables, the model is designed with output only for the bias towards $k=1$, as $\hat{p}_j\approx p(y_j^*=1|I) \iff 1-\hat{p}_j\approx p(y_j^*=0|I)$.
 
 
 \subsection{Multiple Targets}
 
+Instead of approximating the bias of the optimal solution, \citeonline{nairSolvingMixedInteger2021} proposed to approximate the bias of the \emph{near}-optimal solutions.
+Intuitively, this approach provides the model with more information on the feasible region of the problem, and empirical results suggest that it has improved performance in the construction of heuristics~\cite{khalilMIPGNNDataDrivenFramework2022,hanGNNGuidedPredictandSearchFramework2023}.
+A proper definition of what will be referred to as a \emph{multiple targets} training follows.
+
+Given an instance of an optimization problem $I\in \mathcal{I}$\footnote{In the following, the reference to $I$ is omitted to ease the notation, but the definitions are specific to an instance.}, let $Y_\epsilon = \left\{ \bm{y} \in Y: \bm{c}^T\bm{y} \le (1+\epsilon) \bm{c}^T\bm{y}^*_{I} \right\}$ be the set of $\epsilon$-optimal solutions, that is, the set of feasible solutions that are within $\epsilon$ distance (in relative terms of the cost) of the optimal solution $\bm{y}^*$.
+The multiple targets approach implies that the output of a solution prediction deep learning model $f_{\theta}$ approximates the bias of the variables in the solutions in a set $Y_\epsilon$, i.e., $\hat{p}_{j,k} \approx p(y_j = k | \bm{y} \in Y_\epsilon)$.
+For that, \citeonline{nairSolvingMixedInteger2021} propose to weight a loss function such as \eqref{eq:bce-loss} by the cost associated to each solution in $Y_\epsilon$.
+Therefore, the dataset $\mathcal{D}$ necessary for training will contain pairs of the form $(x,Y_\epsilon)$ associated to instances of an MILP problem.
+In other words, the cost function becomes \[
+    \mathcal{L}(\theta) = \frac{1}{|\mathcal{D}|} \sum_{(x,Y_\epsilon)\in \mathcal{D}} \sum_{\bm{y}\in Y_\epsilon}  \frac{e^{-\bm{c}^T \bm{y}}}{\sum_{\bm{y}'\in Y_\epsilon} e^{-\bm{c}^T \bm{y}'}} \ell(\bm{y},f_\theta(x))
+.\] 
 
 
 \section{Learning-based Heuristics}\label{sec:learning-based-heuristics}
