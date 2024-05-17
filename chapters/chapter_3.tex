@@ -91,28 +91,33 @@ On top of that, the size of the GNN does no scale with the size of the graph, bu
 \section{Training Under Supervision}
 
 Ideally, a solution prediction model is capable of predicting the \emph{bias} of the integer variables in the optimal solutions of a given instance of an MILP problem~\cite{khalilMIPGNNDataDrivenFramework2022}.
-Intuitively, the bias of a variable towards a value indicates how likely that variable is to assume the value in an optimal solution.
+Intuitively, the bias of a variable towards a value indicates how likely that variable is to assume that value in an optimal solution.
 As the problem is linear over the continuous variables, their optimal value value can be determined in polynomial time given an optimal assignment for the integer variables, as the resulting problem is an LP.
-Therefore, the focus of solution prediction models for MILP is on the integer variables.
-More precisely, given an embedding $x\in \mathcal{X}$\footnote{Here, $\mathcal{X}$ is used to denote a more general embedding space, that can that of feature vectors or of graph embeddings.} associated to an instance of an optimization problem, a solution prediction deep learning model $f_{\theta}: \mathcal{X} \longrightarrow \left[ 0,1 \right]^n$ will be such that, for $\bm{z}=f(x)$, it will be denoted that $z_{j,k}$ will be the learned bias of the $j$-th variable towards value $k$ in an optimal solution.
-Another property of a bias vector $\bm{z}_{j}$ is that all its elements sum to 1, such that it can also be interpreted as a probability estimate that 
-In the particular case of binary MILPs, it can be written $\mathcal{Y}=[0,1]^n$, such that $z_{i}\in [0,1]$ is the learned bias of the $i$-th variable towards assuming value 1 in an optimal solution.
+Therefore, the focus of solution prediction models for MILP is usually the integer variables.
+
+More precisely, let $I\in \mathcal{I}$ be an instance of an MILP problem of which $y_j$, $j=1,\ldots,n$ are its integer variables.
+The \emph{bias} of variable $y_j$ towards value $k\in \Z$ in the optimal solution will be denoted $p(y_j^*=k|I)$, in an allusion to its \emph{probability} of taking said value in an optimal solution $\bm{y}^*$, which also implies that it is expected that $\sum_{k} p(y_j^*=k|I) = 1$, $\forall j$.
+Therefore, given an embedding $x\in \mathcal{X}$\footnote{Here, $\mathcal{X}$ is used to denote a more general embedding space, that can that of feature vectors or of graph embeddings.} associated to an instance of an optimization problem, a solution prediction deep learning model $f_{\theta}: \mathcal{X} \longrightarrow \mathcal{Z}$ will ideally be such that, for $\bm{z}=f(x)$, it is expected that $z_{j,k}\approx p(y_j^*=k|I)$.
 
 Given an embedding function and a suitable deep learning model (e.g., naïve embedding or engineered features and a NN, graph embedding and GNN), the usual training algorithms for supervised learning apply.
 In other words, following a match between instance embedding and model architectures, the algorithmic approach presented in Sec.~\ref{sec:supervised-learning} applies.
 Therefore, the dataset required for training is composed of embeddings of instances associated to optimal solutions.
-Let $\bm{y}^{*}_I$\footnote{Note that, implicitly, $y$ is now used to represent the variables of the optimization problems to avoid a confusion with the input space of the deep learning model.} denote an optimal solution for instance $I\in \mathcal{I}$ of the MILP problem at hand, and let $g: \mathcal{I} \longrightarrow \mathcal{X}$ be a suitable embedding function.
+Let $\bm{y}^{*}_I$\footnote{Note that, implicitly, $y$ is now used to represent the decision variables of the optimization problems to avoid a confusion with the input space of the deep learning model.} denote an optimal solution for instance $I\in \mathcal{I}$ of the MILP problem at hand, and let $g: \mathcal{I} \longrightarrow \mathcal{X}$ be a suitable embedding function.
 Then, the dataset necessary for training can be written as a set \[
     \mathcal{D} = \left\{ (x, \bm{y}^{*}_I) : x = g(I) \right\} 
 .\] 
 
 Given such dataset, the training algorithm can be defined by picking any loss function that penalizes the distance between the predicted bias and the actual value.
-For example, following the classification task paradigm~\cite{goodfellowQualitativelyCharacterizingNeural2015} for a problem solely with binary variables, the binary cross-entropy loss can be applied such that
+For example, following a maximum likelihood estimation approach~\cite{goodfellowQualitativelyCharacterizingNeural2015} for a problem solely with binary variables, the binary cross-entropy loss can be applied to a model $f_{\theta}: \mathcal{X} \longrightarrow \left[ 0,1 \right]^n$ such that
 \begin{equation}
     \ell(\bm{y}^*, \bm{z}) = \sum_{j=1}^{n} y_j \log z_j + (1-y_j) \log (1 - z_j)
 .\end{equation}
+Note that, because there are only binary variables, the model is designed with output only for the bias towards $k=1$, as $z_j\approx p(y_j^*=1|I) \iff 1-z_j\approx p(y_j^*=0|I)$.
+
 
 \subsection{Multiple Targets}
+
+
 
 \section{Learning-based Heuristics}\label{sec:learning-based-heuristics}
 
