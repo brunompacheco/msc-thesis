@@ -121,20 +121,156 @@ Instead of approximating the bias of the optimal solution, \citeonline{nairSolvi
 Intuitively, this approach provides the model with more information on the feasible region of the problem, and empirical results suggest that it has improved performance in the construction of heuristics~\cite{khalilMIPGNNDataDrivenFramework2022,hanGNNGuidedPredictandSearchFramework2023}.
 A proper definition of what will be referred to as a \emph{multiple targets} training follows.
 
-Given an instance of an optimization problem $I\in \mathcal{I}$\footnote{In the following, the reference to $I$ is omitted to ease the notation, but the definitions are specific to an instance.}, let $Y_\epsilon = \left\{ \bm{y} \in Y: \bm{c}^T\bm{y} \le (1+\epsilon) \bm{c}^T\bm{y}^*_{I} \right\}$ be the set of $\epsilon$-optimal solutions, that is, the set of feasible solutions that are within $\epsilon$ distance (in relative terms of the cost) of the optimal solution $\bm{y}^*$.
-The multiple targets approach implies that the output of a solution prediction deep learning model $f_{\theta}$ approximates the bias of the variables in the solutions in a set $Y_\epsilon$, i.e., $\hat{p}_{j,k} \approx p(y_j = k | \bm{y} \in Y_\epsilon)$.
-For that, \citeonline{nairSolvingMixedInteger2021} propose to weight a loss function such as \eqref{eq:bce-loss} by the cost associated to each solution in $Y_\epsilon$.
-Therefore, the dataset $\mathcal{D}$ necessary for training will contain pairs of the form $(x,Y_\epsilon)$ associated to instances of an MILP problem.
+Given an instance of an optimization problem $I\in \mathcal{I}$\footnote{In the following, the reference to $I$ is omitted to ease the notation, but the definitions are specific to an instance.}, let $Y_\varepsilon = \left\{ \bm{y} \in Y: \bm{c}^T\bm{y} \le (1+\varepsilon) \bm{c}^T\bm{y}^*_{I} \right\}$ be the set of $\varepsilon$-optimal solutions, that is, the set of feasible solutions that are within $\varepsilon$ distance (in relative terms of the cost) of the optimal solution $\bm{y}^*$.
+The multiple-targets approach implies that the output of a solution prediction deep learning model $f_{\theta}$ approximates the bias of the variables in the solutions in a set $Y_\varepsilon$, i.e., $\hat{p}_{j,k} \approx p(y_j = k | \bm{y} \in Y_\varepsilon)$.
+For that, \citeonline{nairSolvingMixedInteger2021} propose to weight a loss function such as \eqref{eq:bce-loss} by the cost associated to each solution in $Y_\varepsilon$.
+Therefore, the dataset $\mathcal{D}$ necessary for training will contain pairs of the form $(x,Y_\varepsilon)$ associated to instances of an MILP problem.
 In other words, the cost function becomes \[
-    \mathcal{L}(\theta) = \frac{1}{|\mathcal{D}|} \sum_{(x,Y_\epsilon)\in \mathcal{D}} \sum_{\bm{y}\in Y_\epsilon}  \frac{e^{-\bm{c}^T \bm{y}}}{\sum_{\bm{y}'\in Y_\epsilon} e^{-\bm{c}^T \bm{y}'}} \ell(\bm{y},f_\theta(x))
-.\] 
-
+    \mathcal{L}(\theta) = \frac{1}{|\mathcal{D}|} \sum_{(x,Y_\varepsilon)\in \mathcal{D}} \sum_{\bm{y}\in Y_\varepsilon}  \frac{e^{-\bm{c}^T \bm{y}}}{\sum_{\bm{y}'\in Y_\varepsilon} e^{-\bm{c}^T \bm{y}'}} \ell(\bm{y},f_\theta(x))
+.\] Note that multiple feasible solutions are taken into consideration for each instance of the MILP problem in our dataset, hence the name "multiple targets".
 
 \section{Learning-based Heuristics}\label{sec:learning-based-heuristics}
 
+Given a properly trained solution prediction deep learning model, there are many ways to generate a primal heuristic.
+The most naïve heuristic, perhaps, would be to take the model's output directly.
+However, it is very unlikely that, even for models trained extensively on large datasets, the output will have a high feasibility rate on realistic problems of a reasonable size.
+That is so because the characteristics of the feasible region usually make so that a single deviation (i.e., a single bit flip) can render an optimal solution infeasible.
+Therefore, the probabilistic nature of deep learning makes it very difficult to achieve a reasonable feasibility rate on problems with many variables, as ensuring output constraints on deep learning models is a difficult challenge (see, e.g., \citeonline{chamonConstrainedLearningInference2020}).
+
+An alternative to balance the speed of solution prediction models with better feasibility (and optimality) expectations is to explore matheuristics.
+In this section, three structures of matheuristics that use solution prediction models are presented.
+
+\subsection{Warm-starting MILP Solvers}
+
+A straightforward approach to is to use the output of a solution prediction model to provide (partial) solutions to a solver, warm-starting the optimization.
+For example, the SCIP solver~\cite{bestuzhevaSCIPOptimizationSuite2021} accepts complete and partial solutions, which are used to guide the inner heuristics of the optimization algorithm.
+We use the output of the model to determine which variables will compose the partial solution provided to the solver based on the \emph{confidence} of the model's prediction.
+Such confidence is based on how strong the predicted bias is, i.e., the probability of the predicted value.
+In other words, the closer the model's output $\hat{p}_{j,k}$ is to 1, the more confident the model is that the $y_j$ variable should take value $k$ in an optimal solution.
+
+Formally, given an instance $I\in \mathcal{I}$ for which $x\in X$ is an adequate embedding, we have $\hat{\bm{p}} = f_\theta(x)$ the output of the model.
+The model's predicted solution is a vector $\hat{\bm{y}}$ such that \[
+    \hat{y}_j = \arg\max_{k} \hat{p}_{j,k},\, j=1,\ldots,n
+.\] 
+A partial solution based on the model's confidence is a set
+\begin{equation}\label{eq:partial-solution}
+    \overline{\bm{y}}^{(\alpha)} = \left\{ (j,\hat{y}_j) : \hat{p}_{j,k} \ge  \alpha \right\}
+,\end{equation}
+in which $\alpha \in [0,1]$ is the \emph{confidence threshold}.
+The diagram of Fig.~\ref{fig:warm-starting-diagram} illustrate the building blocks of a warm-start based on a solution prediction deep learning model.
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+	\node (I) {$I$};
+	\begin{scope}[every node/.style={draw}, align = center, minimum height = 1cm, minimum width = 1cm]
+	    \node[right = of I] (g) {$g$};
+	    \node[right = 1.5cm of g] (f) {$f_{\theta}$};
+	    \node[right = 1.5cm of f] (conf) {Confidence};
+	    \node[right = 1.5cm of conf] (solver) {MILP\\Solver};
+	\end{scope}
+	\node[right = of solver] (opt) {$\bm{y}^*$};
+
+	\path [-latex] (I) edge (g);
+	\path [-latex] (g) edge node [above] {$x$} (f);
+	\path [-latex] (f) edge node [above] {$\hat{\bm{p}}$} (conf);
+	\path [-latex] (conf) edge node [above] {$\overline{\bm{y}}^{(\alpha)}$} (solver);
+	\path [-latex] (solver) edge (opt);
+	\draw [-latex] (I.south) -- ++(0,-0.6cm) -| (solver.south);
+
+    \end{tikzpicture}
+    \caption{Warm-starting an MILP solver with the output of a solution prediction deep learning model. In the diagram,  $I$ is an instance of an MILP problem for which the model was trained. $g$ is an adequate embedding function. The "Confidence" block indicates the construction of a partial solution as described in Equation \eqref{eq:partial-solution}.}
+    \label{fig:warm-starting-diagram}
+\end{figure}
+
+Note that warm-starting does not fit the definition of a heuristic solution, as there is no guarantee that the optimal solution will be computed in a tractable manner.
+More precisely, warm starting a solver will only (potentially) change the order in which the nodes of the branch-and-bound tree are explored.
+Because of that, it also maintains the optimality (and feasibility) guarantees of the MILP solver used, even if the solution prediction model provides an infeasible (partial) solution.
+
+
 \subsection{Early-fixing Variable Assignments}
+
+Beyond merely indicating to the solver the partial solution that the deep learning model provides, it is possible to constrain the problem with that partial solution.
+This early-fixing approach, also called neural diving by \citeonline{nairSolvingMixedInteger2021}, can be interpreted, given an instance $I\in \mathcal{I}$ and a partial solution as in Equation~\eqref{eq:partial-solution}, as the addition of constraints
+\begin{equation}\label{eq:early-fixing-constraints}
+    y_{j} = \hat{y}_j,\,\forall (j,\hat{y}_j) \in \overline{\bm{y}}^{(\alpha)}
+\end{equation}
+to the optimization problem.
+Because such constraints limit those variables to assuming a single value, which is effectively the same as removing them from the poll of decision variables and treating them as parameters of the problem, the branch-and-bound tree gets significantly pruned.
+The diagram of Figure~\ref{fig:early-fixing-diagram} illustrates this process.
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+	\node (I) {$I$};
+	\begin{scope}[every node/.style={draw}, align = center, minimum height = 1cm, minimum width = 1cm]
+	    \node[right = of I] (g) {$g$};
+	    \node[right = 1.5cm of g] (f) {$f_{\theta}$};
+	    \node[right = 1.5cm of f] (conf) {Confidence};
+	    \node[right = 1.5cm of conf] (ef) {Early\\Fixing};
+	    \node[right = 1.5cm of ef] (solver) {MILP\\Solver};
+	\end{scope}
+	\node[right = of solver] (opt) {$\hat{\bm{y}}^*$};
+
+	\path [-latex] (I) edge (g);
+	\path [-latex] (g) edge node [above] {$x$} (f);
+	\path [-latex] (f) edge node [above] {$\hat{\bm{p}}$} (conf);
+	\path [-latex] (conf) edge node [above] {$\overline{\bm{y}}^{(\alpha)}$} (ef);
+	\path [-latex] (ef) edge node [above] {$\overline{I}$} (solver);
+	\path [-latex] (solver) edge (opt);
+	\draw [-latex] (I.south) -- ++(0,-0.6cm) -| (ef.south);
+
+    \end{tikzpicture}
+    \caption{Early-fixing integer variables based on the output of a solution prediction deep learning model. In the diagram,  $I$ is an instance of an MILP problem for which the model was trained. $g$ is an adequate embedding function. The "Confidence" block indicates the construction of a partial solution as described in Equation \eqref{eq:partial-solution}. The "Early Fixing" block indicates the addition of constraints \eqref{eq:early-fixing-constraints}, resulting in the early-fixed instance $\overline{I}$. The solver output is written $\hat{\bm{y}}^*$ to indicate it is an heuristic solution.}
+    \label{fig:early-fixing-diagram}
+\end{figure}
+
+Naturally, the addition of the early-fixed constraints implies that there are no guarantees that the solution found is optimal.
+In fact, the resulting problem instance (denoted $\overline{I}$, as in Fig.~\ref{fig:early-fixing-diagram}) might be infeasible, if the added constraints come from an infeasible assignment.
+However, by adjusting the parameter $\alpha$, which controls the size of the partial solution, it is possible to indirectly adjust the size of the resulting branch-and-bound tree, as a smaller value of $\alpha$ implies in more variables in the partial solution, thus, more fixing constraints, which result in a smaller tree. 
+In fact, $\alpha\to 0$ reduces the early-fixing matheuristic to the naïve use of the solution predicted by the deep learning model.
+Furthermore, it is easy to see that, instead of a fixed threshold $\alpha$, one can build partial solutions by picking the $n-n'$ ($n' < n$) variables that the model is most confident of, such that the resulting problem instance always has $n'$ variables and, thus, can be solved in a tractable manner.
+
 
 \subsection{Trust-region}
 
-\subsection{Warm-starting MILP Solvers}
+Instead of strictly fixing the variables based on the model's output, \citeonline{hanGNNGuidedPredictandSearchFramework2023} have proposed to allow a small deviation from that value.
+In other words, the solution prediction model's output is used to define a \emph{trust region} in which an MILP solver can search for the optimal solution.
+Instead of constraints like in Equation~\eqref{eq:early-fixing-constraints}, the instance is modified with the addition of constraints of the form
+\begin{equation}\label{eq:trust-region-constraint}
+    \sum_{(j,\hat{y}_j) \in \overline{\bm{y}}^{(\alpha)}} |y_{j} - \hat{y}_j| \le \Delta
+,\end{equation}
+where $\Delta \in \R_+$ defines the size of the trust region.
+Note how the above equation limits the space of feasible solutions to a neighborhood of the partial solution derived from the model's output.
+The diagram in Fig.~\ref{fig:trust-region-diagram} illustrates the trust region heuristic approach.
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}
+	\node (I) {$I$};
+	\begin{scope}[every node/.style={draw}, align = center, minimum height = 1cm, minimum width = 1cm]
+	    \node[right = of I] (g) {$g$};
+	    \node[right = 1.5cm of g] (f) {$f_{\theta}$};
+	    \node[right = 1.5cm of f] (conf) {Confidence};
+	    \node[right = 1.5cm of conf] (tr) {Trust\\Region};
+	    \node[right = 1.5cm of tr] (solver) {MILP\\Solver};
+	\end{scope}
+	\node[right = of solver] (opt) {$\hat{\bm{y}}^*$};
+
+	\path [-latex] (I) edge (g);
+	\path [-latex] (g) edge node [above] {$x$} (f);
+	\path [-latex] (f) edge node [above] {$\hat{\bm{p}}$} (conf);
+	\path [-latex] (conf) edge node [above] {$\overline{\bm{y}}^{(\alpha)}$} (tr);
+	\path [-latex] (tr) edge node [above] {$\overline{I}^{(\Delta)}$} (solver);
+	\path [-latex] (solver) edge (opt);
+	\draw [-latex] (I.south) -- ++(0,-0.6cm) -| (ef.south);
+
+    \end{tikzpicture}
+    \caption{Solving an instance of an MILP problem on a trust region based on the output of a solution prediction deep learning model. In the diagram,  $I$ is an instance of an MILP problem for which the model was trained. $g$ is an adequate embedding function. The "Confidence" block indicates the construction of a partial solution as described in Equation \eqref{eq:partial-solution}. The "Trust Region" block indicates the addition of the constraint \eqref{eq:trust-region-constraint}, resulting in the instance $\overline{I}^{(\Delta)}$ with limited solution space. The solver output is written $\hat{\bm{y}}^*$ to indicate it is an heuristic solution.}
+    \label{fig:trust-region-diagram}
+\end{figure}
+
+It is easy to see that picking $\Delta=0$ results in the early-fixing approach.
+A distinguishing feature of the trust region approach is that the parameter $\Delta$ can be adjusted to turn an infeasible instance into a feasible one, or, perhaps, to include a better solution in the feasible region.
+However, no optimality nor feasibility guarantees can be provided by this approach.
 

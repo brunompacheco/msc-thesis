@@ -18,6 +18,18 @@
   file = {/home/bruno/Zotero/storage/CAVDYZCL/Bengio et al. - 2021 - Machine learning for combinatorial optimization A.pdf;/home/bruno/Zotero/storage/DCDLVZKT/S0377221720306895.html}
 }
 
+@article{bestuzhevaSCIPOptimizationSuite2021,
+  title = {The {{SCIP Optimization Suite}} 8.0},
+  author = {Bestuzheva, Ksenia and Besan{\c c}on, Mathieu and Chen, Wei-Kun and Chmiela, Antonia and Donkiewicz, Tim and {van Doornmalen}, Jasper and Eifler, Leon and Gaul, Oliver and Gamrath, Gerald and Gleixner, Ambros and Gottwald, Leona and Graczyk, Christoph and Halbig, Katrin and Hoen, Alexander and Hojny, Christopher and {van der Hulst}, Rolf and Koch, Thorsten and L{\"u}bbecke, Marco and Maher, Stephen J. and Matter, Frederic and M{\"u}hmer, Erik and M{\"u}ller, Benjamin and Pfetsch, Marc E. and Rehfeldt, Daniel and Schlein, Steffan and Schl{\"o}sser, Franziska and Serrano, Felipe and Shinano, Yuji and Sofranac, Boro and Turner, Mark and Vigerske, Stefan and Wegscheider, Fabian and Wellner, Philipp and Weninger, Dieter and Witzig, Jakob},
+  year = {2021},
+  month = dec,
+  issn = {1438-0064},
+  urldate = {2024-05-20},
+  abstract = {The SCIP Optimization Suite provides a collection of software packages for mathematical optimization centered around the constraint integer programming framework SCIP. This paper discusses enhancements and extensions contained in version 8.0 of the SCIP Optimization Suite. Major updates in SCIP include improvements in symmetry handling and decomposition algorithms, new cutting planes, a new plugin type for cut selection, and a complete rework of the way nonlinear constraints are handled. Additionally, SCIP 8.0 now supports interfaces for Julia as well as Matlab. Further, UG now includes a unified framework to parallelize all solvers, a utility to analyze computational experiments has been added to GCG, dual solutions can be postsolved by PaPILO, new heuristics and presolving methods were added to SCIP-SDP, and additional problem classes and major performance improvements are available in SCIP-Jack.},
+  langid = {english},
+  file = {/home/bruno/Zotero/storage/48JSB8AB/Bestuzheva et al. - 2021 - The SCIP Optimization Suite 8.0.pdf}
+}
+
 @book{bishopPatternRecognitionMachine2006,
   title = {Pattern Recognition and Machine Learning},
   author = {Bishop, Christopher M.},
@@ -80,6 +92,35 @@
   pages = {536--538}
 }
 
+@phdthesis{chamonConstrainedLearningInference2020,
+  title = {Constrained {{Learning And Inference}}},
+  author = {Chamon, De Oliveira and Fernando, Luiz},
+  year = {2020},
+  month = jan,
+  number = {3818},
+  urldate = {2024-05-20},
+  abstract = {Data and learning have become core components of the information processing and autonomous systems upon which we increasingly rely on to select job applicants, analyze medical data, and drive cars. As these systems become ubiquitous, so does the need to curtail their behavior. Left untethered, they are susceptible to tampering (adversarial examples) and prone to prejudiced and unsafe actions. Currently, the response of these systems is tailored by leveraging domain expert knowledge to either construct models that embed the desired properties or tune the training objective so as to promote them. While effective, these solutions are often targeted to specific behaviors, contexts, and sometimes even problem instances and are typically not transferable across models and applications. What is more, the growing scale and complexity of modern information processing and autonomous systems renders this manual behavior tuning infeasible. Already today, explainability, interpretability, and transparency combined with human judgment are no longer enough to design systems that perform according to specifications. The present thesis addresses these issues by leveraging constrained statistical optimization. More specifically, it develops the theoretical underpinnings of constrained learning and constrained inference to provide tools that enable solving statistical problems under requirements. Starting with the task of learning under requirements, it develops a generalization theory of constrained learning akin to the existing unconstrained one. By formalizing the concept of probability approximately correct constrained (PACC) learning, it shows that constrained learning is as hard as its unconstrained learning and establishes the constrained counterpart of empirical risk minimization (ERM) as a PACC learner. To overcome challenges involved in solving such non-convex constrained optimization problems, it derives a dual learning rule that enables constrained learning tasks to be tackled by through unconstrained learning problems only. It therefore concludes that if we can deal with classical, unconstrained learning tasks, then we can deal with learning tasks with requirements. The second part of this thesis addresses the issue of constrained inference. In particular, the issue of performing inference using sparse nonlinear function models, combinatorial constrained with quadratic objectives, and risk constraints. Such models arise in nonlinear line spectrum estimation, functional data analysis, sensor selection, actuator scheduling, experimental design, and risk-aware estimation. Although inference problems assume that models and distributions are known, each of these constraints pose serious challenges that hinder their use in practice. Sparse nonlinear functional models lead to infinite dimensional, non-convex optimization programs that cannot be discretized without leading to combinatorial, often NP-hard, problems. Rather than using surrogates and relaxations, this work relies on duality to show that despite their apparent complexity, these models can be fit efficiently, i.e., in polynomial time. While quadratic objectives are typically tractable (often even in closed form), they lead to non-submodular optimization problems when subject to cardinality or matroid constraints. While submodular functions are sometimes used as surrogates, this work instead shows that quadratic functions are close to submodular and can also be optimized near-optimally. The last chapter of this thesis is dedicated to problems involving risk constraints, in particular, bounded predictive mean square error variance estimation. Despite being non-convex, such problems are equivalent to a quadratically constrained quadratic program from which a closed-form estimator can be extracted. These results are used throughout this thesis to tackle problems in signal processing, machine learning, and control, such as fair learning, robust learning, nonlinear line spectrum estimation, actuator scheduling, experimental design, and risk-aware estimation. Yet, they are applicable much beyond these illustrations to perform safe reinforcement learning, sensor selection, multiresolution kernel estimation, and wireless resource allocation, to name a few.},
+  langid = {english},
+  school = {University of Pennsylvania}
+}
+
+@article{chamonConstrainedLearningNonConvex2023,
+  title = {Constrained {{Learning With Non-Convex Losses}}},
+  author = {Chamon, Luiz F. O. and Paternain, Santiago and {Calvo-Fullana}, Miguel and Ribeiro, Alejandro},
+  year = {2023},
+  month = mar,
+  journal = {IEEE Transactions on Information Theory},
+  volume = {69},
+  number = {3},
+  pages = {1739--1760},
+  issn = {1557-9654},
+  doi = {10.1109/TIT.2022.3187948},
+  urldate = {2024-05-20},
+  abstract = {Though learning has become a core component of modern information processing, there is now ample evidence that it can lead to biased, unsafe, and prejudiced systems. The need to impose requirements on learning is therefore paramount, especially as it reaches critical applications in social, industrial, and medical domains. However, the non-convexity of most modern statistical problems is only exacerbated by the introduction of constraints. Whereas good unconstrained solutions can often be learned using empirical risk minimization, even obtaining a model that satisfies statistical constraints can be challenging. All the more so, a good one. In this paper, we overcome this issue by learning in the empirical dual domain, where constrained statistical learning problems become unconstrained and deterministic. We analyze the generalization properties of this approach by bounding the empirical duality gap---i.e., the difference between our approximate, tractable solution and the solution of the original (non-convex) statistical problem---and provide a practical constrained learning algorithm. These results establish a constrained counterpart to classical learning theory, enabling the explicit use of constraints in learning. We illustrate this theory and algorithm in rate-constrained learning applications arising in fairness and adversarial robustness.},
+  keywords = {Approximation algorithms,Complexity theory,Constrained learning,learning theory,machine learning,optimization,Optimization,Picture archiving and communication systems,Robustness,Statistical learning,Stochastic processes},
+  file = {/home/bruno/Zotero/storage/MLYHS5KZ/Chamon et al. - 2023 - Constrained Learning With Non-Convex Losses.pdf;/home/bruno/Zotero/storage/8GF46GVK/9813433.html}
+}
+
 @article{daigavaneUnderstandingConvolutionsGraphs2021,
   title = {Understanding {{Convolutions}} on {{Graphs}}},
   author = {Daigavane, Ameya and Ravindran, Balaraman and Aggarwal, Gaurav},
@@ -125,6 +166,22 @@
   abstract = {Mixed Integer Programming (MIP) is one of the most widely used modeling techniques for combinatorial optimization problems. In many applications, a similar MIP model is solved on a regular basis, maintaining remarkable similarities in model structures and solution appearances but differing in formulation coefficients. This offers the opportunity for machine learning methods to explore the correlations between model structures and the resulting solution values. To address this issue, we propose to represent a MIP instance using a tripartite graph, based on which a Graph Convolutional Network (GCN) is constructed to predict solution values for binary variables. The predicted solutions are used to generate a local branching type cut which can be either treated as a global (invalid) inequality in the formulation resulting in a heuristic approach to solve the MIP, or as a root branching rule resulting in an exact approach. Computational evaluations on 8 distinct types of MIP problems show that the proposed framework improves the primal solution finding performance significantly on a state-of-the-art open-source MIP solver.},
   keywords = {*,end-to-end,GNN,imitation learning},
   file = {/home/bruno/Zotero/storage/4V5ZTLET/Ding et al. - 2020 - Accelerating Primal Solution Findings for Mixed In.pdf}
+}
+
+@inproceedings{fiorettoLagrangianDualityConstrained2021,
+  title = {Lagrangian {{Duality}} for {{Constrained Deep Learning}}},
+  booktitle = {Machine {{Learning}} and {{Knowledge Discovery}} in {{Databases}}. {{Applied Data Science}} and {{Demo Track}}},
+  author = {Fioretto, Ferdinando and Van Hentenryck, Pascal and Mak, Terrence W. K. and Tran, Cuong and Baldo, Federico and Lombardi, Michele},
+  editor = {Dong, Yuxiao and Ifrim, Georgiana and Mladeni{\'c}, Dunja and Saunders, Craig and Van Hoecke, Sofie},
+  year = {2021},
+  pages = {118--135},
+  publisher = {Springer International Publishing},
+  address = {Cham},
+  doi = {10.1007/978-3-030-67670-4_8},
+  abstract = {This paper explores the potential of Lagrangian duality for learning applications that feature complex constraints. Such constraints arise in many science and engineering domains, where the task amounts to learning to predict solutions for constraint optimization problems which must be solved repeatedly and include hard physical and operational constraints. The paper also considers applications where the learning task must enforce constraints on the predictor itself, either because they are natural properties of the function to learn or because it is desirable from a societal standpoint to impose them.},
+  isbn = {978-3-030-67670-4},
+  langid = {english},
+  file = {/home/bruno/Zotero/storage/7PV2HWEN/Fioretto et al. - 2021 - Lagrangian Duality for Constrained Deep Learning.pdf}
 }
 
 @inbook{fischettiHeuristicsMixedInteger2011,
