@@ -243,15 +243,6 @@ Note that this is not trivial.
 For example, NNs are usually defined over real-valued vector spaces, which would require a vector encoding of a graph to be able to represent them.
 Such an encoding could be achieved through the adjacency matrix, but that would not account for graph symmetries, as distinct adjacency matrices can represent the same graph\footnote{In fact, any permutation (row- or column-wise) of an adjacency matrix results in the same graph}.
 
-\color{red}
-COMMENTS:
-\begin{itemize}
-\item GNN is a pivotal concept of your research and dissertation. Being abstract, the introduction of a concrete, illustrative GNN would greatly help the reader to understand. The features and operators could be concretely illustrated in the example.
-
-\item The understanding of GNN will also benefit its application in primal heuristics.
-\end{itemize}
-\color{black}
-
 A GNN takes as input a graph with feature vectors associated to each node.
 GNNs are also feedforward networks, i.e., they can be represented by a stacking of layers.
 Each layer of the GNN works by propagating feature information between neighboring nodes, which can be seen as \emph{message-passing}~\cite{gilmerNeuralMessagePassing2017}.
