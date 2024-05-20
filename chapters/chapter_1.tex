@@ -24,17 +24,17 @@ Mathematical programming is a language naturally suitable to formulate integer a
     \begin{split}
 	\min_{\bm{y}} \quad & f\left( \bm{y} \right) \\
 	\textrm{s.t.} \quad & \bm{g}\left( \bm{y} \right) \le \bm{0} \\
-	  & \bm{y} \in \Y^{n}\times \R^{p}
+	  & \bm{y} \in \Z^{n}\times \R^{p}
     ,\end{split}
 \end{equation}
 where $\bm{y}$ are the \emph{decision variables}, of which $y_1,\ldots,y_n$ are integer variables and $y_{n+1},\ldots,y_{n+p}$ are continuous variables.
-Furthermore, $\bm{g}: \Y^{n}\times \R^{p} \longrightarrow \R^{m}$,  and $\bm{0}$ is a null vector of dimension $m$.
+Furthermore, $\bm{g}: \Z^{n}\times \R^{p} \longrightarrow \R^{m}$,  and $\bm{0}$ is a null vector of dimension $m$.
 Note that maximizing a function is equivalent to minimizing its negative, and an equality constraint can be represented by two inequalities, which renders \eqref{eq:general-ip} a complete formulation.
 
 For an integer program formulated as in \eqref{eq:general-ip}, the set \[
-Y=\left\{ \bm{y}\in \Y^{n}\times \R^{p}: \bm{g}\left( \bm{y} \right) \le \bm{0}\right\} 
+Y=\left\{ \bm{y}\in \Z^{n}\times \R^{p}: \bm{g}\left( \bm{y} \right) \le \bm{0}\right\} 
 \] is named the \emph{feasible region} of the problem, and a vector $\bm{y}\in Y$ is a \emph{feasible solution}.
-A feasible solution $\bm{y}^{*}\in Y$ is \emph{optimal} if, and only if, there is no other feasible solution with a lower value of the \emph{objective function} $f: \Y^{n}\times \R^{p} \longrightarrow \R$, i.e., $\bm{y}^{*}$ is optimal $\iff f(\bm{y}^{*}) \le f(\bm{y}) ,\,\forall \bm{y}\in Y$.
+A feasible solution $\bm{y}^{*}\in Y$ is \emph{optimal} if, and only if, there is no other feasible solution with a lower value of the \emph{objective function} $f: \Z^{n}\times \R^{p} \longrightarrow \R$, i.e., $\bm{y}^{*}$ is optimal $\iff f(\bm{y}^{*}) \le f(\bm{y}) ,\,\forall \bm{y}\in Y$.
 
 Note that even if a problem is feasible ($Y\neq \varnothing$), it may not have an optimal solution, e.g., if the feasible region is unbounded and the objective function has no global minimum.
 Furthermore, if an optimal solution exists, it may no be unique.
