@@ -6,7 +6,19 @@
 
 \chapter{Evaluation of Primal Heuristics}\label{chap:evaluation}
 
-\section{Standard Evaluation Metrics}
+As discussed in Chapter\,\ref{chap:integer-programming}, Section\,\ref{sec:heuristics}, a primal heuristic abides from optimality guarantees to focus on a trade-off between solution quality and computational cost (speed).
+As a consequence, two primal heuristics for MILP problems can be compared with respect to how fast and how good they provide solutions, and whether the solutions are feasible or not.
+In this chapter, two approaches are discussed to evaluate primal heuristics.
+The first (Sec.~\ref{sec:standard-evaluation-metrics}) is based on standard evaluation metrics, therefore, it uses multiple metrics, one for each perspective in which an heuristic can be said superior to another.
+The second (Sec.\,\ref{sec:primal-dual-curve}) is specific to primal heuristics that improve the candidate solution over time, such as matheuristics.
+By tracing the progress of the candidate solution, it provides a single metric that takes into account the characteristic trade-off of primal heuristics.
+
+% - como discutido na sec XXX, ao abrir mão da garantia de otimalidade, uma heurística primal oferece a possibilidade de trocar qualidade da solução por velocidade de otimização.
+% - nesse sentido, duas heurísticas podem ser comparadas em função dessa relação
+% - neste capítulo, duas abordagens serão apresentadas para caracterizar a qualidade de heurísticas. a primeira, através de múltiplas métricas que são comumente para avaliar qualquer tipo de heurística
+% - a segunda, específica para matheuristics, que explora a sua característica de aprimorar a solução candidata ao longo do tempo
+
+\section{Standard Evaluation Metrics}\label{sec:standard-evaluation-metrics}
 
 \begin{itemize}
     \item Runtime
@@ -14,7 +26,9 @@
     \item Infeasibility\%
 \end{itemize}
 
-\section{Area Under the Primal-dual Curve}
+\section{The Primal-dual Curve}\label{sec:primal-dual-curve}
+
+% see https://www.ecole.ai/2021/ml4co-competition/#metrics
 
 - add illustration of the backwards-filling scheme for fairness
 
