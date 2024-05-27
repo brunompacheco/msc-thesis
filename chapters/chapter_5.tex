@@ -20,15 +20,43 @@ By tracing the progress of the candidate solution, it provides a single metric t
 
 \section{Standard Evaluation Metrics}\label{sec:standard-evaluation-metrics}
 
-\begin{itemize}
-    \item Runtime
-    \item GAP
-    \item Infeasibility\%
-\end{itemize}
+The value of the cost and the time taken to provide a solution are natural evaluation metrics.
+However, they have significant shortcomings.
+The value of the cost function (supposing a minimization problem) is hard to interpret in the absence of bounds.
+For example, it is difficult to judge how better one heuristic approach is with respect to the other just by knowing that the first provided a solution with cost 10, while the second provided a solution with cost 15.
+If the optimal solution has cost -1000 and a trivial solution has cost 20, then it can be said that both heuristics performed poorly.
+On the other hand, if the optimal solution has cost 9 and a trivial solution has cost 15, then it can be said that the first heuristic performed much better than the second.
+
+Therefore, to make a fair judgment with respect to the solution quality of a set of heuristics being evaluated, one needs to know both the cost of the solutions as well as upper and lower bounds for the problem.
+Beyond the difficulty of determining such bounds, having a multidimensional metric for the solution quality perspective can make it more challenging to compare the performance across different optimization problems and even across different instances of the same problem.
+An alternative to summarize all these values is to compute the cost of the heuristic solution normalized between the cost of the objective (0~\%) and the cost of the trivial solution (100~\%).
+Let $\hat{\bm{y}}$ be a heuristic solution, $\bm{y}^*$ be the optimal solution, and $\overline{\bm{y}}$ be a trivial solution for an instance of an optimization problem \eqref{eq:general-milp}.
+Then, \emph{relative cost} of $\hat{\bm{y}}$ can be defined as
+\begin{equation}
+    \text{RelCost}(\hat{\bm{y}}) = \frac{\bm{c}^{T} \hat{\bm{y}} - \bm{c}^{T} \bm{y}^*}{\overline{\bm{y}} - \bm{y}^*}
+.\end{equation}
+If solely the optimal solution is known, then it can be computed as
+\begin{equation}
+    \text{RelCost}(\hat{\bm{y}}) = \frac{\bm{c}^{T} \hat{\bm{y}} - \bm{c}^{T} \bm{y}^*}{\bm{y}^*}
+,\end{equation}
+although the latter is not ideally suitable for comparisons across different optimization problems, as discussed above.
+
+With respect to evaluating the efficiency of an approach, certain conditions must be met to ensure that the time taken to compute a solution (runtime) is meaningful and fair.
+One way to do so is to ensure that the computational resource are fairly available to all approaches.
+Usually, this implies in allowing all approaches to have plain access to a common hardware, i.e., that there are no other process using the resources during the time of execution.
+
+Still, there are a few caveats in this performance metric, of which, parallelization abilities is probably the most prominent.
+Comparing single-process with multi-process approaches is quite difficult, as a process that can compute its results in parallel uses more resources in the same runtime. 
+Furthermore, projecting empirical results to different setups is challenging when the processes being evaluated use parallel computation. 
+% An alternative would be to compute the total computational time, e.g., if a process is running 
+In this work, it is taken into consideration that parallelization is commonly supported in modern hardware configurations.
+Thus, the runtime is computed as the time between the heuristic receiving the instance and it providing a solution, in despite of whether parallelization was used or not.
 
 \section{The Primal-dual Curve}\label{sec:primal-dual-curve}
 
 % see https://www.ecole.ai/2021/ml4co-competition/#metrics
+
+- GAP
 
 - add illustration of the backwards-filling scheme for fairness
 
