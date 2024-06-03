@@ -20,6 +20,7 @@ plt.rcParams.update({
     'font.family': 'sans-serif',
     # 'figure.figsize' : (8, 6),
     'figure.dpi' : 300,
+    'hatch.linewidth' : 0.5,
 })
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
@@ -127,6 +128,70 @@ def overfitting():
         plt.show()
     else:
         plt.savefig('pictures/overfitting.pdf')
+
+def primal():
+    np.random.seed(33)
+
+    n = 100
+    T = np.linspace(0, 10, n)
+    Y = np.random.rand(n) * np.linspace(10, 1, n) + np.linspace(3, 1, n)
+
+    for i in range(n):
+        Y[i] = min(Y[:i+1])
+
+    start = np.random.randint(0, 10)
+    Y_area = Y
+    Y_area[:start] = 5
+
+    plt.step(T[start:], Y[start:], where='post', label=r"$c^T \hat{y}(t)$", zorder=100)
+    # plt.fill_between(T, Y_area, 1, step='post', fc='white', hatch='///', label="$Primal\\,Integral$")
+    plt.fill_between(T, Y_area, 1, step='post', fc='white', hatch='///', label=r"$\int c^T \hat{y}(t) dt$")
+    plt.hlines(1, 0, 10, colors='black', linestyles='--', linewidth=0.5)
+    plt.hlines(5, 0, 10, colors='black', linestyles='--', linewidth=0.5)
+    plt.xlim(0, 11)
+    plt.ylim(0, 6)
+
+    plt.xlabel("$t$")
+    plt.xticks([0, 10], ["$0$", "$T$"])
+    # plt.yticks([0, 1, 3, 5], ["$0$", "$c^T y^*$", "$c^T y$", "$c^T \\overline{y}$"])
+    plt.yticks([0, 1, 5], ["", "$c^T y^*$", "$c^T \\overline{y}$"])
+    # plt.ylabel("$c^T y$", rotation=0)
+
+    # formatting
+    plt.gca().spines[["left", "bottom"]].set_position(("data", 0))
+    plt.gca().spines[['right', 'top']].set_visible(False)
+    plt.gca().tick_params(
+        axis='both',
+        direction='inout',
+        which='major',
+        top=False,
+        right=False,
+        bottom=True,
+        left=True,
+    )
+    plt.gca().tick_params(
+        axis='both',
+        which='minor',
+        top=False,
+        right=False,
+        bottom=False,
+        left=False,
+    )
+    xlim = plt.xlim()
+    plt.gca().spines["bottom"].set_bounds(low=0, high=xlim[1])
+    ylim = plt.ylim()
+    plt.gca().spines["left"].set_bounds(low=0, high=ylim[1])
+    plt.plot(1, 0, ">k", markersize=2, transform=plt.gca().get_yaxis_transform(), clip_on=False)
+    plt.plot(0, 1, "^k", markersize=2, transform=plt.gca().get_xaxis_transform(), clip_on=False)
+    plt.gca().xaxis.set_label_coords(1.05, 0.04)
+    # plt.gca().yaxis.set_label_coords(0.00, 1.05)
+    plt.legend(loc=(0.4,0.5))
+
+    if debugger_is_active():
+        plt.show()
+        print('debugger')
+    else:
+        plt.savefig('pictures/primal.pdf')
 
 if __name__ == '__main__':
     try:

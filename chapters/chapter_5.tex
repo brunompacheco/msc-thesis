@@ -10,7 +10,7 @@ As discussed in Chapter\,\ref{chap:integer-programming}, Section\,\ref{sec:heuri
 As a consequence, two primal heuristics for MILP problems can be compared with respect to how fast and how good they provide solutions, and whether the solutions are feasible or not.
 In this chapter, two approaches are discussed to evaluate primal heuristics.
 The first (Sec.~\ref{sec:standard-evaluation-metrics}) is based on standard evaluation metrics, therefore, it uses multiple metrics, one for each perspective in which an heuristic can be said superior to another.
-The second (Sec.\,\ref{sec:primal-dual-curve}) is specific to primal heuristics that improve the candidate solution over time, such as matheuristics.
+The second (Sec.\,\ref{sec:primal-integral}) is specific to primal heuristics that improve the candidate solution over time, such as matheuristics.
 By tracing the progress of the candidate solution, it provides a single metric that takes into account the characteristic trade-off of primal heuristics.
 
 % - como discutido na sec XXX, ao abrir mão da garantia de otimalidade, uma heurística primal oferece a possibilidade de trocar qualidade da solução por velocidade de otimização.
@@ -52,11 +52,42 @@ Furthermore, projecting empirical results to different setups is challenging whe
 In this work, it is taken into consideration that parallelization is commonly supported in modern hardware configurations.
 Thus, the runtime is computed as the time between the heuristic receiving the instance and it providing a solution, in despite of whether parallelization was used or not.
 
-\section{The Primal-dual Curve}\label{sec:primal-dual-curve}
+\section{The Primal integral}\label{sec:primal-integral}
 
 % see https://www.ecole.ai/2021/ml4co-competition/#metrics
 
-- GAP
+Although the relative cost can be used to compare heuristics given a fixed time budget, it does not suit properly the cases where the time taken by an heuristic has a variable cost.
+For such cases, it is possible to use the integral of the relative cost over time, or the \emph{primal integral}, as used in \citeonline{gasseMachineLearningCombinatorial2022}.
+To see this, consider an heuristic that provides increasingly better solutions over time.
+One could define the cost at time $t$ as the cost associated to the best solution up to time $t$.
+Figure~\ref{fig:primal-curve} illustrates the evolution of the cost over time (orange curve).
+The primal integral is precisely the integral of such cost over time, which can be written \[
+    \int \bm{c}^T \hat{\bm{y}}(t) dt
+,\] where $\hat{\bm{y}}(t)$ is the best solution known (or candidate solution) at time $t$.
+It is called the primal integral because it computes the integral of the cost associated to primal solutions.
 
-- add illustration of the backwards-filling scheme for fairness
+\begin{figure}[h]
+    \centering
+    \includegraphics{primal.pdf}
+    \caption{Example of primal integral computation. $y^*$ and $\overline{y}$ are (sub-)optimal and trivial solutions, respectively. The orange curve represents the evolution of the candidate solution's cost over time. Note that the orange curve it is not defined at the very beginning of the runtime, indicating that a candidate solution is not provided at $t=0$. The hatched area is the primal integral, bounded by the two references ($y^*$ and $\overline{y}$).}
+    \label{fig:primal-curve}
+\end{figure}
+
+The straightforward integral of the primal curve, however, has two major limitations.
+First, it is not properly defined at $t \to 0$, as it is not expected that a heuristic starts with a candidate solution, i.e., $\hat{y}(0)$ is not defined.
+Furthermore, the length of this undefined region varies from heuristic to heuristic, which hinders fair comparisons.
+One way to circumvent this problem is to assume that $\hat{\bm{y}}(t) = \infty$ before the first candidate solution is provided, and compute the integral of the minimum between $\bm{c}^T \hat{\bm{y}}$ and $\bm{c}^T\overline{\bm{y}}$ (the cost of a trivial solution).
+This way, an heuristic approach is penalized for taking longer to provide a candidate solution.
+
+The second limitation is that the result is not comparable across different instances of a problem.
+This is because the cost of a candidate solution is meaningless, unless it is necessary to understand how close to the optimal and how far to the trivial that given solution is.
+One way to attenuate this problem is to normalize the integral with respect to the difference between the cost of the trivial solution and the cost of the optimal solution.
+This approach can be interpreted as normalizing the integrals with respect to the integral of the naïve heuristic, which is simply to guess the trivial solution.
+
+In summary, the practical primal integral of an heuristic $H$ that can provide candidate solutions over time $\hat{\bm{y}}_H(t)$ is defined as
+\begin{equation}\label{eq:primal-integral}
+    \text{PrimalIntegral}(H) = \frac{1}{T(\bm{c}^T \overline{\bm{y}} - \bm{c}^T \bm{y}^*)} \int_0^{T} \left( \min\left( \bm{c}^T \overline{\bm{y}}, \bm{c}^{T} \hat{\bm{y}}_H(t) \right)  - \bm{c}^{T} \bm{y}^* \right)  dt
+,\end{equation}
+where $\overline{\bm{y}}$ is a trivial solution and $\bm{y}^*$ is an optimal solution.
+Such is illustrated in Fig.~\ref{fig:primal-curve} through the hatched region.
 
