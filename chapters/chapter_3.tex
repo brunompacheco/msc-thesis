@@ -13,7 +13,7 @@ In other words, this chapter is a bridge between Chapters \ref{chap:integer-prog
 
 This chapter begins by discussing the process of embedding of MILP problems, which involves transforming problem instances into a suitable format for deep learning models.
 Within this context, feature engineering and graph approaches are explored to represent the intricate relationships between the components of MILP problems.
-Moving forwards, the methodologies employed in training deep learning models fed with embeddings of MILP problem instances are presented, highlighting the challenges and opportunities posed by the availability of multiple feasible solutions.
+Moving forward, the methodologies employed in training deep learning models fed with embeddings of MILP problem instances are presented, highlighting the challenges and opportunities posed by the availability of multiple feasible solutions.
 The chapter ends with the approaches one can use to create primal (mat)heuristics from solution prediction models.
 
 
@@ -24,13 +24,13 @@ The chapter ends with the approaches one can use to create primal (mat)heuristic
 The first requirement that needs to be satisfied for training deep learning models to predict solutions to MILP problems is to be able to feed instances of MILP problems to such models.
 For this, it is necessary to convert an instance to a numerical format that the model can handle.
 
-Naturally, an instance can be specified by a tuple $\left( \bm{c}, \bm{b}, A, n \right)$, as discussed in Sec.~\ref{sec:milp-definition}, which could be vectorized an be fed to a vanilla NN.
+Naturally, an instance can be specified by a tuple $\left( \bm{c}, \bm{b}, A, n \right)$, as discussed in Sec.~\ref{sec:milp-definition}, which could be vectorized and input to a vanilla NN.
 This form of embedding, which is going to be referred to as \emph{naïve} embedding, has several shortcomings.
 First, it does not represent the \emph{symmetries} of the formulation, which are operations applied to the parameters that do not alter its solutions.
 For example, changing the order of the constraints, which can be seen as permutations of rows of $\left[ A\, | \,\bm{b} \right] $, does not affect in any way the feasible space nor the objectives associated to feasible solutions, but generates different embeddings.
 
 Furthermore, the naïve embedding can easily be an over-parametrization of the instance distribution, which often are sampled from a lower-dimensional space.
-For example, take the MILP formulation of the TSP by \citeonline{millerIntegerProgrammingFormulation1960}
+For example, take the MILP formulation of the TSP by \citeonline{millerIntegerProgrammingFormulation1960},
 \begin{align*}
     \min_{\bm{u},\bm{y}} \quad & \sum_{\substack{i,j=0 \\ i\neq j}}^{n} d_{ij} y_{ij} & \\
     \textrm{s.t.} \quad & \sum_{\substack{i=0\\i\neq j}}^{n} y_{ij} = 1, &\, j=1,\ldots,n \\
@@ -50,9 +50,9 @@ This approach is based on the hypothesis that, for a given application, the inst
 The mapping is written as the \emph{inverse} of a function $g$ because, in practice, it is not necessary to know $g^{-1}$ to be able to train a deep learning model, only $g$, i.e., it is only necessary to compute features given instances, and assume that the inverse is possible.
 
 Continuing with the TSP example from above, suppose that the goal is to solve the TSP for a given city (which fixes the graph over which the tours are to be found) but with different traffic conditions and, therefore, different edge costs $d_{ij}$.
-The cost vector $\bm{c}$ (which is a vectorization of the $d_{ij}$ parameters) can be said a feature vector for the instances, but calling this feature engineering would be controversial statement.
+The cost vector $\bm{c}$ (which is a vectorization of the $d_{ij}$ parameters) can be said a feature vector for the instances, but calling this feature engineering would be a controversial statement.
 However, one could investigate what are the variables that influence the traffic conditions, e.g., hour of the day, day of the week, gas price, weather.
-Ideally, then, it would be possible to use these variables to define a feature space $X$, such that a mapping $g^{-1}: X \longrightarrow \mathcal{I}$ exists, and train models that are fed with $x\in X$.
+Ideally, then, it would be possible to use these variables to define a feature space $X$, such that a mapping $g^{-1}: X \longrightarrow \mathcal{I}$ exists, and train models that are input with $x\in X$.
 
 Embedding MILP problem instances as feature vectors is an approach suitable for NNs, as they require vector-valued inputs.
 However, there is an underlying restriction that is a fixed number of features.
@@ -74,18 +74,17 @@ Consider the problem
 \end{equation}
 where $\bm{y}\in Y \subseteq\mathbb{R}^n$ and $\bm{b}\in \mathbb{R}^m$.
 It is possible to build a bipartite graph $G=(V_{\textrm{var}}\cup V_{\textrm{con}}, E)$, in which $v_{\textrm{con},i}\in V_{\textrm{con}}$ is the node associated to the $i$-th constraint, $v_{\textrm{var},j}\in V_{\textrm{var}}$ is the node associated to $y_j$, and $E=\{(v_{{\rm con},i},v_{{\rm var},j}) : A_{i,j} \neq 0\}$.
-Furthermore, a weight function $w: V_{\textrm{var}}\cup V_\textrm{con}\cup E \longrightarrow \R$ such that $w(v_{\textrm{var},i}) = c_j$, $w(v_{\textrm{con},j}) = b_j$, and $w(e_{i,j}=(v_{\textrm{con},i},v_{\textrm{var},j})) = A_{i,j}$, renders the weighted graph $(G,w)$ a complete representation of any instance of the LP, i.e., the original LP instance can be reconstructed using solely the information in such weighted graph.
+Furthermore, a weight function $w: V_{\textrm{var}}\cup V_\textrm{con}\cup E \longrightarrow \R$ such that $w(v_{\textrm{var},j}) = c_j$, $w(v_{\textrm{con},i}) = b_i$, and $w(e_{i,j}=(v_{\textrm{con},i},v_{\textrm{var},j})) = A_{i,j}$, renders the weighted graph $(G,w)$ a complete representation of any instance of the LP, i.e., the original LP instance can be reconstructed using solely the information in such weighted graph.
 
 The extension to MILP problems requires solely the distinction between continuous and integer variables.
 This can be done, for example, by extending the weight function to a vector-valued function such that $w(v_{\textrm{var},j}) = (c_j,0)$ if the $j$-th variable is continuous or $w(v_{\textrm{var},j}) = (c_j,1)$ if $x_j$ is an integer variable.
-In practice, however, the graph fed to a GNN is usually "weighted" with feature vectors $\bm{h}_v^{(0)}, \forall v\in V$ of arbitrary size, as seen in Sec.~\ref{sec:gnns}.
-In other words, the information contained in the weights (feature vectors) provided to the network is a design choice.
-It can contain the weights described above, but many other features might also help the model learn the graph-related task (see, for example, \citeonline{gasseExactCombinatorialOptimization2019} and \citeonline{nairSolvingMixedInteger2021}).
+In practice, however, the graph fed to a GNN is usually ``weighted'' with feature vectors $\bm{h}_v^{(0)}, \forall v\in V$ of arbitrary size, as seen in Sec.~\ref{sec:gnns}.
+In other words, the information contained in the weights (feature vectors) provided to the network is a design choice: it can contain the weights described above, but many other features might also help the model learn the graph-related task (see, for example, \citeonline{gasseExactCombinatorialOptimization2019} and \citeonline{nairSolvingMixedInteger2021}).
 
 The graph embedding is perfectly suitable for GNNs.
 In comparison to the feature engineering approach, the graph embedding requires no effort from an human expert, and provides an effective result in terms of representation power and scalability.
 First, because the resulting graph contains all of the information present in the instance while being invariant to constraint and variable permutations.
-On top of that, the size of the GNN does no scale with the size of the graph, but solely with the dimension of the weight (feature vector) associated to each node.
+On top of that, the size of the GNN does no scale with the size of the graph, but solely with the number of weights (dimension of the feature vector) associated to each node.
 
 
 \section{Training Under Supervision}
@@ -97,14 +96,14 @@ Therefore, the focus of solution prediction models for MILP is usually the integ
 
 More precisely, let $I\in \mathcal{I}$ be an instance of an MILP problem as in \eqref{eq:general-milp}.
 The \emph{bias} of variable $y_j$ towards value $k\in \Z$ in the optimal solution will be denoted $p(y_j^*=k|I)$, in an allusion to its \emph{probability} of taking said value in an optimal solution $\bm{y}^*$, which also implies that it is expected that $\sum_{k} p(y_j^*=k|I) = 1$, $\forall j$.
-Therefore, given an embedding $x\in \mathcal{X}$\footnote{Here, $\mathcal{X}$ is used to denote a more general embedding space, that can that of feature vectors or of graph embeddings.} associated to an instance of an optimization problem, a solution prediction deep learning model $f_{\theta}: \mathcal{X} \longrightarrow \mathcal{P}$ will ideally be such that, for $\hat{\bm{p}}=f(x)$, it is expected that $\hat{p}_{j,k}\approx p(y_j^*=k|I)$.
+Therefore, given an embedding $x\in \mathcal{X}$\footnote{Here, $\mathcal{X}$ is used to denote a more general embedding space, that can that of feature vectors or of graph embeddings.} associated to an instance of an optimization problem, a solution prediction deep learning model $f_{\theta}: \mathcal{X} \longrightarrow \mathcal{P}$ will ideally be such that, for $\hat{\bm{p}}=f_\theta(x)$, it is expected that, $\forall j$, $\hat{p}_{j,k}\approx p(y_j^*=k|I)$.
 
-Given an embedding function and a suitable deep learning model (e.g., naïve embedding or engineered features and a NN, graph embedding and GNN), the usual training algorithms for supervised learning apply.
+Given an embedding function and a suitable deep learning model (e.g., naïve embedding or engineered features and a NN, or graph embedding and GNN), the usual training algorithms for supervised learning apply.
 In other words, following a match between instance embedding and model architectures, the algorithmic approach presented in Sec.~\ref{sec:supervised-learning} applies.
 Therefore, the dataset required for training is composed of embeddings of instances associated to optimal solutions.
 Let $\bm{y}^{*}_I$ denote an optimal solution for instance $I\in \mathcal{I}$ of the MILP problem at hand, and let $g: \mathcal{I} \longrightarrow \mathcal{X}$ be a suitable embedding function.
 Then, the dataset necessary for training can be written as a set \[
-    \mathcal{D} = \left\{ (x_I, \bm{y}^{*}_I) : x_I = g(I), \bm{y}^*_I\text{ is an optimal solution of }I \right\} 
+    \mathcal{D} = \left\{ (x_I, \bm{y}^{*}_I) : I \in \mathcal{I}, x_I = g(I) \text{, and } \bm{y}^*_I\text{ is an optimal solution of }I \right\} 
 .\] 
 
 Given such dataset, the training algorithm can be defined by picking any loss function that penalizes the distance between the predicted bias and the actual value.
@@ -121,13 +120,15 @@ Instead of approximating the bias of the optimal solution, \citeonline{nairSolvi
 Intuitively, this approach provides the model with more information on the feasible region of the problem, and empirical results suggest that it has improved performance in the construction of heuristics~\cite{khalilMIPGNNDataDrivenFramework2022,hanGNNGuidedPredictandSearchFramework2023}.
 A proper definition of what will be referred to as a \emph{multiple targets} training follows.
 
-Given an instance of an optimization problem $I\in \mathcal{I}$\footnote{In the following, the reference to $I$ is omitted to ease the notation, but the definitions are specific to an instance.}, let $Y_\varepsilon = \left\{ \bm{y} \in Y: \bm{c}^T\bm{y} \le (1+\varepsilon) \bm{c}^T\bm{y}^*_{I} \right\}$ be the set of $\varepsilon$-optimal solutions, that is, the set of feasible solutions that are within $\varepsilon$ distance (in relative terms of the cost) of the optimal solution $\bm{y}^*$.
+Given an instance of an optimization problem $I\in \mathcal{I}$\footnote{In the following, the reference to $I$ is omitted to ease the notation, but the definitions are specific to an instance.}, let \[
+Y_\varepsilon = \left\{ \bm{y} \in Y: \bm{c}^T\bm{y} \le \allowbreak (1+\varepsilon) \bm{c}^T\bm{y}^*_{I} \right\}
+\] be the set of $\varepsilon$-optimal solutions, that is, the set of feasible solutions that are within $\varepsilon$ distance (in relative terms of the cost) of the optimal solution $\bm{y}^*$.
 The multiple-targets approach implies that the output of a solution prediction deep learning model $f_{\theta}$ approximates the bias of the variables in the solutions in a set $Y_\varepsilon$, i.e., $\hat{p}_{j,k} \approx p(y_j = k | \bm{y} \in Y_\varepsilon)$.
 For that, \citeonline{nairSolvingMixedInteger2021} propose to weight a loss function such as \eqref{eq:bce-loss} by the cost associated to each solution in $Y_\varepsilon$.
-Therefore, the dataset $\mathcal{D}$ necessary for training will contain pairs of the form $(x,Y_\varepsilon)$ associated to instances of an MILP problem.
+Therefore, the dataset $\mathcal{D}$ necessary for training will contain pairs of the form $(x,Y_\varepsilon)$, where $x$ is an embedding of an instance of an MILP problem, and $Y_\varepsilon$ is a set of $\varepsilon$-optimal solutions of the same instance.
 In other words, the cost function becomes \[
     \mathcal{L}(\theta) = \frac{1}{|\mathcal{D}|} \sum_{(x,Y_\varepsilon)\in \mathcal{D}} \sum_{\bm{y}\in Y_\varepsilon}  \frac{e^{-\bm{c}^T \bm{y}}}{\sum_{\bm{y}'\in Y_\varepsilon} e^{-\bm{c}^T \bm{y}'}} \ell(\bm{y},f_\theta(x))
-.\] Note that multiple feasible solutions are taken into consideration for each instance of the MILP problem in our dataset, hence the name "multiple targets".
+.\] Note that multiple feasible solutions are taken into consideration for each instance of the MILP problem in our dataset, hence the name ``multiple targets.''
 
 \section{Learning-based Heuristics}\label{sec:learning-based-heuristics}
 
@@ -137,7 +138,7 @@ However, it is very unlikely that, even for models trained extensively on large 
 That is so because the characteristics of the feasible region usually make so that a single deviation (i.e., a single bit flip) can render an optimal solution infeasible.
 Therefore, the probabilistic nature of deep learning makes it very difficult to achieve a reasonable feasibility rate on problems with many variables, as ensuring output constraints on deep learning models is a difficult challenge (see, e.g., \citeonline{chamonConstrainedLearningInference2020}).
 
-An alternative to balance the speed of solution prediction models with better feasibility (and optimality) expectations is to explore matheuristics.
+An alternative to balance the speed of solution prediction models with better feasibility (and optimality) expectations is to explore matheuristics (see Sec.~\ref{sec:matheuristics}).
 In this section, three structures of matheuristics that use solution prediction models are presented.
 
 \subsection{Warm-starting MILP Solvers}
@@ -154,10 +155,10 @@ The model's predicted solution is a vector $\hat{\bm{y}}$ such that \[
 .\] 
 A partial solution based on the model's confidence is a set
 \begin{equation}\label{eq:partial-solution}
-    \overline{\bm{y}}^{(\alpha)} = \left\{ (j,\hat{y}_j) : \hat{p}_{j,k} \ge  \alpha \right\}
+    \overline{\bm{y}}^{(\alpha)} = \left\{ (j,\hat{y}_j) : \hat{y}_j = \arg\max_{k} \hat{p}_{j,k}\text{ and } \hat{p}_{j,\hat{y}_j} \ge  \alpha \right\}
 ,\end{equation}
 in which $\alpha \in [0,1]$ is the \emph{confidence threshold}.
-The diagram of Fig.~\ref{fig:warm-starting-diagram} illustrate the building blocks of a warm-start based on a solution prediction deep learning model.
+The diagram of Figure~\ref{fig:warm-starting-diagram} illustrates the building blocks of a warm-start based on a solution prediction deep learning model.
 
 \begin{figure}[h]
     \centering
@@ -179,7 +180,7 @@ The diagram of Fig.~\ref{fig:warm-starting-diagram} illustrate the building bloc
 	\draw [-latex] (I.south) -- ++(0,-0.6cm) -| (solver.south);
 
     \end{tikzpicture}
-    \caption{Warm-starting an MILP solver with the output of a solution prediction deep learning model. In the diagram,  $I$ is an instance of an MILP problem for which the model was trained. $g$ is an adequate embedding function. The "Confidence" block indicates the construction of a partial solution as described in Equation \eqref{eq:partial-solution}.}
+    \caption{Warm-starting an MILP solver with the output of a solution prediction deep learning model. In the diagram,  $I$ is an instance of an MILP problem for which the model was trained. $g$ is an adequate embedding function. The ``Confidence'' block indicates the construction of a partial solution as described in Equation \eqref{eq:partial-solution}.}
     \label{fig:warm-starting-diagram}
 \end{figure}
 
@@ -221,12 +222,12 @@ The diagram of Figure~\ref{fig:early-fixing-diagram} illustrates this process.
 	\draw [-latex] (I.south) -- ++(0,-0.6cm) -| (ef.south);
 
     \end{tikzpicture}
-    \caption{Early-fixing integer variables based on the output of a solution prediction deep learning model. In the diagram,  $I$ is an instance of an MILP problem for which the model was trained. $g$ is an adequate embedding function. The "Confidence" block indicates the construction of a partial solution as described in Equation \eqref{eq:partial-solution}. The "Early Fixing" block indicates the addition of constraints \eqref{eq:early-fixing-constraints}, resulting in the early-fixed instance $\overline{I}$. The solver output is written $\hat{\bm{y}}^*$ to indicate it is an heuristic solution.}
+    \caption{Early-fixing integer variables based on the output of a solution prediction deep learning model. In the diagram,  $I$ is an instance of an MILP problem for which the model was trained. $g$ is an adequate embedding function. The ``Confidence'' block indicates the construction of a partial solution as described in Equation \eqref{eq:partial-solution}. The ``Early Fixing'' block indicates the addition of constraints \eqref{eq:early-fixing-constraints}, resulting in the early-fixed instance $\overline{I}$. The solver output is written $\hat{\bm{y}}^*$ to indicate it as being a heuristic solution.}
     \label{fig:early-fixing-diagram}
 \end{figure}
 
 Naturally, the addition of the early-fixed constraints implies that there are no guarantees that the solution found is optimal.
-In fact, the resulting problem instance (denoted $\overline{I}$, as in Fig.~\ref{fig:early-fixing-diagram}) might be infeasible, if the added constraints come from an infeasible assignment.
+In fact, the resulting problem instance (denoted $\overline{I}$, as in Figure~\ref{fig:early-fixing-diagram}) might be infeasible, if the added constraints come from an infeasible assignment.
 However, by adjusting the parameter $\alpha$, which controls the size of the partial solution, it is possible to indirectly adjust the size of the resulting branch-and-bound tree, as a smaller value of $\alpha$ implies in more variables in the partial solution, thus, more fixing constraints, which result in a smaller tree. 
 In fact, $\alpha\to 0$ reduces the early-fixing matheuristic to the naïve use of the solution predicted by the deep learning model.
 Furthermore, it is easy to see that, instead of a fixed threshold $\alpha$, one can build partial solutions by picking the $n-n'$ ($n' < n$) variables that the model is most confident of, such that the resulting problem instance always has $n'$ variables and, thus, can be solved in a tractable manner.
@@ -242,7 +243,7 @@ Instead of constraints like in Equation~\eqref{eq:early-fixing-constraints}, the
 ,\end{equation}
 where $\Delta \in \R_+$ defines the size of the trust region.
 Note how the above equation limits the space of feasible solutions to a neighborhood of the partial solution derived from the model's output.
-The diagram in Fig.~\ref{fig:trust-region-diagram} illustrates the trust region heuristic approach.
+The diagram in Figure~\ref{fig:trust-region-diagram} illustrates the trust region heuristic approach.
 
 \begin{figure}[h]
     \centering
@@ -266,7 +267,7 @@ The diagram in Fig.~\ref{fig:trust-region-diagram} illustrates the trust region 
 	\draw [-latex] (I.south) -- ++(0,-0.6cm) -| (ef.south);
 
     \end{tikzpicture}
-    \caption{Solving an instance of an MILP problem on a trust region based on the output of a solution prediction deep learning model. In the diagram,  $I$ is an instance of an MILP problem for which the model was trained. $g$ is an adequate embedding function. The "Confidence" block indicates the construction of a partial solution as described in Equation \eqref{eq:partial-solution}. The "Trust Region" block indicates the addition of the constraint \eqref{eq:trust-region-constraint}, resulting in the instance $\overline{I}^{(\Delta)}$ with limited solution space. The solver output is written $\hat{\bm{y}}^*$ to indicate it is an heuristic solution.}
+    \caption{Solving an instance of an MILP problem within a trust region based on the output of a solution prediction deep learning model. In the diagram,  $I$ is an instance of an MILP problem for which the model was trained. $g$ is an adequate embedding function. The ``Confidence'' block indicates the construction of a partial solution as described in Equation \eqref{eq:partial-solution}. The ``Trust Region'' block indicates the addition of the constraint \eqref{eq:trust-region-constraint}, resulting in the instance $\overline{I}^{(\Delta)}$ with limited solution space. The solver output is written $\hat{\bm{y}}^*$ to indicate it as being a heuristic solution.}
     \label{fig:trust-region-diagram}
 \end{figure}
 

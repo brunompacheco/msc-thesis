@@ -240,8 +240,8 @@ The Adam optimizer~\cite{kingma2014adam} combines both momentum and adaptive lea
 
 Graph Neural Networks (GNNs) are a particular kind of DNN that is optimized for taking graphs as inputs~\cite{sanchez-lengelingGentleIntroductionGraph2021}.
 Note that this is not trivial.
-For example, NNs are usually defined over real-valued vector spaces, which would require a vector encoding of a graph to be able to represent them.
-Such an encoding could be achieved through the adjacency matrix, but that would not account for graph symmetries, as distinct adjacency matrices can represent the same graph\footnote{In fact, any permutation (row- or column-wise) of an adjacency matrix results in the same graph}.
+For example, NNs are usually defined over real-valued vector spaces, which would require a vector encoding of a graph for their representation.
+Such an encoding could be achieved through the adjacency matrix, but that would not account for graph symmetries, as distinct adjacency matrices can represent the same graph\footnote{In fact, any permutation (row- or column-wise) of an adjacency matrix results in the same graph.}.
 
 A GNN takes as input a graph with feature vectors associated to each node.
 GNNs are also feedforward networks, i.e., they can be represented by a stacking of layers.
@@ -258,7 +258,7 @@ Putting it into terms, each layer $f^{(l)}_\theta$, $l=1,\ldots,L$, of the GNN t
 \[
 % Eduardo Camponogara: Will each layer (l) have an entry (neuron) for each "v"? Does it mean that a  node "v" appears multiple times in the NN, once in each layer?
      h^{(l)}_v = U^{(l)}\left( h^{(l-1)}_v , \left\{ M^{(l)}(h^{(l-1)}_u):u\in \mathcal{N}(v) \right\}  \right) , \forall v \in V
-,\] where $\mathcal{N}(v)$ denotes the set of neighbors of $v$.
+,\] where $\mathcal{N}(v)$ denotes the set of neighbors of $v$, excluding $v$ itself, unless a self-loop edge is present.
 Note that each layer maps feature vectors into features vectors, i.e., $f_\theta^{(l)}: H^{(l-1)} \mapsto H^{(l)}$.
 The structure of the graph is embedded into this computation by the neighbors function $\mathcal{N}(\cdot)$.
 
