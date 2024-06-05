@@ -6,7 +6,7 @@
 
 \chapter{Offline Nanosatellite Task Scheduling}\label{chap:onts}
 
-This chapter delves on the application area of the experiments conducted for this dissertation, specifically focusing on the Offline Nanosatellite Task Scheduling (ONTS) problem.
+This chapter delves into the application area of the experiments conducted for this dissertation, specifically focusing on the Offline Nanosatellite Task Scheduling (ONTS) problem.
 Over the past decade, nanosatellites have gained significant attention from both industry and academia, primarily due to their cost-effective development and launch processes~\cite{shiromaCubeSatsBrightFuture2011,luciaComputationalNanosatelliteConstellations2021,nagelNanosatellitesAppliedOptical2020,saeedCubeSatCommunicationsRecent2020}.
 Despite these advantages, the limited computational and energy resources of nanosatellites present substantial challenges in mission planning.
 Effective task scheduling is essential to optimize resource utilization, enhance data quality, and ensure mission success, thereby securing a return on investment.
@@ -19,7 +19,7 @@ Mathematical formulations have been proposed for this problem, from Integer Prog
 However, the NP-hard nature of the problem renders multiple executions of the optimization algorithms (e.g., for different task configurations) within the timespan of a communication window an efficiency challenge.
 
 The following section will present the problem statement with a description of the factors that are taken into consideration.
-Then, the MILP formulation of the problem, proposed by \citeonline{rigoNanosatelliteTaskScheduling2021}, is presented, which will be the base for the experiments presented in Part~\ref{experiments-and-results}.
+Then, the MILP formulation of the problem, proposed by \citeonline{rigoNanosatelliteTaskScheduling2021}, is presented, which will be the basis for the experiments presented in Part~\ref{experiments-and-results}.
 
 % The instances to be solved share common features.
 % Beyond the problem structure, which remains unaltered, tasks, orbit information, and battery capacity can be understood as being randomly drawn from an unknown distribution at every communication window.
@@ -41,7 +41,7 @@ Figure \ref{fig:example-scheduling} illustrates an example of optimal scheduling
 \begin{figure}[h]
     \centering
     \includegraphics{schedule_example.pdf}
-    \caption{Illustration of an optimum scheduling for 9 tasks on a horizon of 125 time steps. Each color represents the executions of a different task.}
+    \caption{Illustration of an optimum schedule for 9 tasks on a horizon of 125 time steps. Each color represents the executions of a different task.}
     \label{fig:example-scheduling}
 \end{figure}
 
@@ -75,7 +75,7 @@ Every task $j$ has an associated priority $u_j > 0$, such that the mission's QoS
 .\end{equation}
 As mentioned previously, the goal of the optimization problem is to find a schedule that maximizes the QoS.
 
-Auxiliary variables $\phi_{j,t}$ are defined for every $j\in \mathcal{J}$ and $t\in \mathcal{T}$, which represent the startup of the task, i.e, $\phi_{j,t} = 1$ indicates that task $j$ is not running at time $t-1$ but its execution is started at time $t$.
+Auxiliary variables $\phi_{j,t}$ are defined for every $j\in \mathcal{J}$ and $t\in \mathcal{T}$, which represent the startup of the task, i.e., $\phi_{j,t} = 1$ indicates that task $j$ is not running at time $t-1$ but its execution is started at time $t$.
 The behavior of these auxiliary variables is ensured by
 \begin{equation}\label{eq:phi-constraints}
     \begin{aligned}
@@ -96,7 +96,7 @@ Each task $j$ may run only during a specified time window delimited by $w_{j}^{\
 \end{equation}
 Such constraints can be used to force a task to be executed when the nanosatellite is passing over a predetermined region.
 
-To limit continuous executions, a task $j$ is constrained to stop for at least $t_j^{\text{min}}$, and at most $t_j^{\text{max}}$ time steps by
+To limit continuous executions, a task $j$ is constrained to run without interruption for least $t_j^{\text{min}}$, and at most $t_j^{\text{max}}$ time steps, which is imposed by
 \begin{equation}\label{eq:execution-gap-constraints}
     \begin{aligned}
         &\sum_{l=t}^{t+{t}^{\min}_{j}-1} x_{j,l} \geq {t}^{\min}_{j} \phi_{j,t},  &\forall t \in \{1,...,T-{t}^{\min}_{j} + 1\}, \forall j\in\mathcal{J} \\
@@ -164,7 +164,7 @@ Finally, the ONTS problem is formulated as an MILP
 Note that the constraints \eqref{eq:exceeding-power-constraints} and \eqref{eq:SoC-constraints} imply that the continuous variables $\bm{b}$ and $\bm{\text{SoC}}$ are uniquely determined by a given assignment for the binary variables $\bm{x}$ and $\bm{\phi}$.
 Therefore, the problem can be reduced to finding an assignment $\bm{y}=(\bm{x},\bm{\phi}) \in \left\{ 0,1 \right\}^{n}$, where $n=2JT$.
 
-Let $\mathcal{I}$ be the space of all MILP problems of the form \eqref{onts-milp}.
+Let $\mathcal{I}$ be the space of all MILP problems of the form \eqref{eq:onts-milp}.
 Any instance $I\in \mathcal{I}$ is parameterized by $\pi_I = \left( \bm{u}, \bm{q}, \bm{y}^{\min}, \bm{y}^{\max}, \bm{t}^{\min}, \bm{t}^{\max}, \bm{p}^{\min}, \bm{p}^{\max}, \bm{w}^{\min}, \bm{w}^{\max}, \bm{r}, \rho, e, Q, \gamma, V_b \right) $, and, implicitly, by the number of tasks $J$ and the number of time units $T$.
 Let $\Pi^{J,T}$ denote the space of parameter vectors as above, such that any instance $I\in \mathcal{I}$ can be uniquely determined by a parameter vector $\pi_{I}$ (given adequate $J$ and $T$).
 

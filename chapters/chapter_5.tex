@@ -7,9 +7,9 @@
 \chapter{Evaluation of Primal Heuristics}\label{chap:evaluation}
 
 As discussed in Chapter\,\ref{chap:integer-programming}, Section\,\ref{sec:heuristics}, a primal heuristic abides from optimality guarantees to focus on a trade-off between solution quality and computational cost (speed).
-As a consequence, two primal heuristics for MILP problems can be compared with respect to how fast and how good they provide solutions, and whether the solutions are feasible or not.
+Consequently, two primal heuristics for MILP problems can be compared with respect to how fast they provide solutions and how good they are, and whether the solutions are feasible or not.
 In this chapter, two approaches are discussed to evaluate primal heuristics.
-The first (Sec.~\ref{sec:standard-evaluation-metrics}) is based on standard evaluation metrics, therefore, it uses multiple metrics, one for each perspective in which an heuristic can be said superior to another.
+The first (Sec.~\ref{sec:standard-evaluation-metrics}) is based on standard evaluation metrics. Therefore, it uses multiple metrics, one for each perspective in which a heuristic can be said superior to another.
 The second (Sec.\,\ref{sec:primal-integral}) is specific to primal heuristics that improve the candidate solution over time, such as matheuristics.
 By tracing the progress of the candidate solution, it provides a single metric that takes into account the characteristic trade-off of primal heuristics.
 
@@ -20,56 +20,56 @@ By tracing the progress of the candidate solution, it provides a single metric t
 
 \section{Standard Evaluation Metrics}\label{sec:standard-evaluation-metrics}
 
-The value of the cost and the time taken to provide a solution are natural evaluation metrics.
+The objective value and the time taken to provide a solution are natural evaluation metrics.
 However, they have significant shortcomings.
-The value of the cost function (supposing a minimization problem) is hard to interpret in the absence of bounds.
-For example, it is difficult to judge how better one heuristic approach is with respect to the other just by knowing that the first provided a solution with cost 10, while the second provided a solution with cost 15.
-If the optimal solution has cost -1000 and a trivial solution has cost 20, then it can be said that both heuristics performed poorly.
-On the other hand, if the optimal solution has cost 9 and a trivial solution has cost 15, then it can be said that the first heuristic performed much better than the second.
+The value of the cost function (supposing a minimization problem) is hard to interpret without bounds.
+For example, it is difficult to judge how better one heuristic approach is with respect to the other just by knowing that the first provided a solution with a cost of 10, while the second provided a solution with a cost of 15.
+If the optimal solution costs -1000 and a trivial solution costs 20, then it can be said that both heuristics performed poorly.
+On the other hand, if the optimal solution has a cost of 9 and a trivial solution has cost 15, then it can be said that the first heuristic performed much better than the second.
 
-Therefore, to make a fair judgment with respect to the solution quality of a set of heuristics being evaluated, one needs to know both the cost of the solutions as well as upper and lower bounds for the problem.
-Beyond the difficulty of determining such bounds, having a multidimensional metric for the solution quality perspective can make it more challenging to compare the performance across different optimization problems and even across different instances of the same problem.
-An alternative to summarize all these values is to compute the cost of the heuristic solution normalized between the cost of the objective (0~\%) and the cost of the trivial solution (100~\%).
-Let $\hat{\bm{y}}$ be a heuristic solution, $\bm{y}^*$ be the optimal solution, and $\overline{\bm{y}}$ be a trivial solution for an instance of an optimization problem \eqref{eq:general-milp}.
+Therefore, to make a fair judgment about the solution quality of a set of heuristics being evaluated, one needs to know both the cost of the solutions as well as upper and lower bounds for the problem.
+Beyond the difficulty of determining such bounds, having a multidimensional metric for judging solution quality can make it more challenging to compare the performance across different optimization problems and even across different instances of the same problem.
+An alternative to summarizing all these values is to compute the cost of the heuristic solution normalized between the optimal cost (0~\%) and the cost of the trivial solution (100~\%).
+Let $\hat{\bm{y}}$ be a heuristic solution, $\bm{y}^*$ be the optimal solution, and $\overline{\bm{y}}$ be a trivial solution for an instance of an optimization problem as in \eqref{eq:general-milp}.
 Then, \emph{relative cost} of $\hat{\bm{y}}$ can be defined as
 \begin{equation}
-    \text{RelCost}(\hat{\bm{y}}) = \frac{\bm{c}^{T} \hat{\bm{y}} - \bm{c}^{T} \bm{y}^*}{\overline{\bm{y}} - \bm{y}^*}
+    \text{RelCost}(\hat{\bm{y}}) = \frac{\bm{c}^{T} \hat{\bm{y}} - \bm{c}^{T} \bm{y}^*}{\bm{c}^{T}\overline{\bm{y}} - \\bm{c}^{T}bm{y}^*}
 .\end{equation}
 If solely the optimal solution is known, then it can be computed as
 \begin{equation}
-    \text{RelCost}(\hat{\bm{y}}) = \frac{\bm{c}^{T} \hat{\bm{y}} - \bm{c}^{T} \bm{y}^*}{\bm{y}^*}
+    \text{RelCost}(\hat{\bm{y}}) = \frac{\bm{c}^{T} \hat{\bm{y}} - \bm{c}^{T} \bm{y}^*}{\bm{c}^{T}\bm{y}^*}
 ,\end{equation}
-although the latter is not ideally suitable for comparisons across different optimization problems, as discussed above.
+although the latter is not ideal for comparisons across different optimization problems, as discussed above.
 
-With respect to evaluating the efficiency of an approach, certain conditions must be met to ensure that the time taken to compute a solution (runtime) is meaningful and fair.
-One way to do so is to ensure that the computational resource are fairly available to all approaches.
-Usually, this implies in allowing all approaches to have plain access to a common hardware, i.e., that there are no other process using the resources during the time of execution.
+Certain conditions must be met to evaluate an approach's efficiency, ensuring that the time taken to compute a solution (runtime) is meaningful and fair.
+One way to do so is to ensure that the computational resources are fairly available to all approaches.
+Usually, this implies in allowing all approaches to have plain access to a common hardware, i.e., that there are no other processes using the resources during the time of execution.
 
-Still, there are a few caveats in this performance metric, of which, parallelization abilities is probably the most prominent.
+Still, there are a few caveats in this performance metric, of which parallelization abilities are probably the most prominent.
 Comparing single-process with multi-process approaches is quite difficult, as a process that can compute its results in parallel uses more resources in the same runtime. 
 Furthermore, projecting empirical results to different setups is challenging when the processes being evaluated use parallel computation. 
 % An alternative would be to compute the total computational time, e.g., if a process is running 
-In this work, it is taken into consideration that parallelization is commonly supported in modern hardware configurations.
-Thus, the runtime is computed as the time between the heuristic receiving the instance and it providing a solution, in despite of whether parallelization was used or not.
+In this work, it is considered that parallelization is commonly supported in modern hardware configurations.
+Thus, the runtime is computed as the user-perceived real time (or wall time) for the heuristic to provide a solution given an instance of an optimization problem, regardless of whether parallelization was used or not.
 
 \section{The Primal integral}\label{sec:primal-integral}
 
 % see https://www.ecole.ai/2021/ml4co-competition/#metrics
 
-Although the relative cost can be used to compare heuristics given a fixed time budget, it does not suit properly the cases where the time taken by an heuristic has a variable cost.
+Although relative cost can be used to compare heuristics given a fixed time budget, it does not properly suit the cases where the time taken by a heuristic has a variable cost.
 For such cases, it is possible to use the integral of the relative cost over time, or the \emph{primal integral}, as used in \citeonline{gasseMachineLearningCombinatorial2022}.
-To see this, consider an heuristic that provides increasingly better solutions over time.
-One could define the cost at time $t$ as the cost associated to the best solution up to time $t$.
+To see this, consider a heuristic that provides increasingly better solutions over time.
+One could define the cost at time $t$ as the cost associated with the best solution up to time $t$.
 Figure~\ref{fig:primal-curve} illustrates the evolution of the cost over time (orange curve).
 The primal integral is precisely the integral of such cost over time, which can be written \[
     \int \bm{c}^T \hat{\bm{y}}(t) dt
 ,\] where $\hat{\bm{y}}(t)$ is the best solution known (or candidate solution) at time $t$.
-It is called the primal integral because it computes the integral of the cost associated to primal solutions.
+It is called the primal integral because it computes the integral of the cost associated with primal solutions.
 
 \begin{figure}[h]
     \centering
     \includegraphics{primal.pdf}
-    \caption{Example of primal integral computation. $y^*$ and $\overline{y}$ are (sub-)optimal and trivial solutions, respectively. The orange curve represents the evolution of the candidate solution's cost over time. Note that the orange curve it is not defined at the very beginning of the runtime, indicating that a candidate solution is not provided at $t=0$. The hatched area is the primal integral, bounded by the two references ($y^*$ and $\overline{y}$).}
+    \caption{Example of primal integral computation. $y^*$ and $\overline{y}$ are (sub-)optimal and trivial solutions, respectively. The orange curve represents the evolution of the candidate solution's cost over time. Note that the orange curve is not defined at the beginning of the runtime, indicating that a candidate solution is not provided at $t=0$. The hatched area is the primal integral, bounded by the two references ($y^*$ and $\overline{y}$).}
     \label{fig:primal-curve}
 \end{figure}
 
@@ -77,14 +77,14 @@ The straightforward integral of the primal curve, however, has two major limitat
 First, it is not properly defined at $t \to 0$, as it is not expected that a heuristic starts with a candidate solution, i.e., $\hat{y}(0)$ is not defined.
 Furthermore, the length of this undefined region varies from heuristic to heuristic, which hinders fair comparisons.
 One way to circumvent this problem is to assume that $\hat{\bm{y}}(t) = \infty$ before the first candidate solution is provided, and compute the integral of the minimum between $\bm{c}^T \hat{\bm{y}}$ and $\bm{c}^T\overline{\bm{y}}$ (the cost of a trivial solution).
-This way, an heuristic approach is penalized for taking longer to provide a candidate solution.
+This way, a heuristic approach is penalized for taking longer to provide a candidate solution.
 
 The second limitation is that the result is not comparable across different instances of a problem.
-This is because the cost of a candidate solution is meaningless, unless it is necessary to understand how close to the optimal and how far to the trivial that given solution is.
+This is because the cost of a candidate solution is meaningless, unless it is necessary to understand how close to the optimal and how far from trivial that given solution is.
 One way to attenuate this problem is to normalize the integral with respect to the difference between the cost of the trivial solution and the cost of the optimal solution.
 This approach can be interpreted as normalizing the integrals with respect to the integral of the naïve heuristic, which is simply to guess the trivial solution.
 
-In summary, the practical primal integral of an heuristic $H$ that can provide candidate solutions over time $\hat{\bm{y}}_H(t)$ is defined as
+In summary, the practical primal integral of a heuristic $H$ that can provide candidate solutions over time $\hat{\bm{y}}_H(t)$ is defined as
 \begin{equation}\label{eq:primal-integral}
     \text{PrimalIntegral}(H) = \frac{1}{T(\bm{c}^T \overline{\bm{y}} - \bm{c}^T \bm{y}^*)} \int_0^{T} \left( \min\left( \bm{c}^T \overline{\bm{y}}, \bm{c}^{T} \hat{\bm{y}}_H(t) \right)  - \bm{c}^{T} \bm{y}^* \right)  dt
 ,\end{equation}
