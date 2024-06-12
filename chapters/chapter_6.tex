@@ -6,9 +6,35 @@
 
 \chapter{Experiments}\label{chap:experiments}
 
-\section{Solution Prediction Models}
+- to address this dissertation's objective, experiments are carried to evaluate learning-based primal heuristics.
+- The ONTS is used as a realistic application to benchmark the selected techniques
+- this section presents the development necessary for the experiments, including model architecture, data acquisition, training, and experiment setup.
 
-\section{ONTS}
+\section{Data}
 
-\subsection{Ablation Study}
+Problem selected = ONTS problem
+
+\subsection{Instance space: the FloripaSat I mission}
+
+The instance space is defined based on the FloripaSat I mission
+    plug info
+
+Describe parameter space
+
+\subsection{Data acquisition}
+
+It is assumed that the instances that will be found in practice are uniformly distributed within the range defined by the parameters of FloripaSat I
+Therefore U ~ I
+
+As the history of instances solved is not available, we build our dataset...
+    continue from paper
+
+\section{Deep Learning Model Architectures}
+
+- GNNs are very promising, considered sota
+- FCNs are not suitable for our problem, because it must suit instances with varying number of jobs (and, thus, varying number of variables), while FCNs have a fixed output dimension.
+
+\section{Training}
+
+\section{Evaluation}
 
