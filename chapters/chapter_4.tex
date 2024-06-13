@@ -31,7 +31,7 @@ Then, the MILP formulation of the problem, proposed by \citeonline{rigoNanosatel
 % By solving the ONTS problem, we can significantly improve the operational efficiency and effectiveness of nanosatellite missions, ensuring their success and sustainability.
 
 
-\section{Problem Statement}
+\section{Problem Statement}\label{sec:onts-problem-statement}
 
 Nanosatellite scheduling problems involve making decisions regarding the start and finish times of each task.
 These tasks often require periodic execution and must be scheduled during specific moments along the satellite's orbit.
@@ -57,8 +57,13 @@ On top of that, the shared energy resources steps up the problem complexity, as 
     \label{fig:onts-orbit}
 \end{figure}
 
+Instances of the ONTS problem are solved during the mission design phase, before launching the nanosatellite into orbit, and during the mission execution, at every communication window. 
+During mission design, the instances are solved to evaluate the impact of the design choices in the nanosatellite capabilities.
+During mission execution, the schedule is updated whenever possible to account for unexpected events (e.g., possible execution failures, hardware faults, unexpected battery drainage) or new requirements (e.g., new tasks, software updates).
+More precisely, at every communication window, nanosatellite information (such as battery level, execution log, task results) is downloaded, the parameters of the ONTS problem are updated, a new schedule is generated, and the instructions are uploaded to the nanosatellite.
 
-\section{MILP Problem}
+
+\section{MILP Formulation}
 
 The formulation presented here was proposed by \citeonline{rigoTaskSchedulingOptimal2021} and the reader is advised to refer to the original work for further details.
 
@@ -158,7 +163,7 @@ Finally, the ONTS problem is formulated as an MILP
 \begin{aligned}
     \max_{\bm{x},\bm{\phi},\bm{\text{SoC}},\bm{b}} \quad & \eqref{eq:qos} \\
     \textrm{s.t.} \quad & (\ref{eq:phi-constraints} \text{--} \ref{eq:SoC-constraints}) \\
-	    & x_{j,t}, \phi_{j,t} \in \left\{ 0,1 \right\} ,\quad \forall j\in \mathcal{J}, t\in \mathcal{T} \\
+	    & x_{j,t}, \phi_{j,t} \in \left\{ 0,1 \right\} ,\quad \forall j\in \mathcal{J}, t\in \mathcal{T}
 .\end{aligned} \tag{ONTS}
 \end{equation}
 Note that the constraints \eqref{eq:exceeding-power-constraints} and \eqref{eq:SoC-constraints} imply that the continuous variables $\bm{b}$ and $\bm{\text{SoC}}$ are uniquely determined by a given assignment for the binary variables $\bm{x}$ and $\bm{\phi}$.
