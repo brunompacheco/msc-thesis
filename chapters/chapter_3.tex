@@ -184,9 +184,11 @@ The diagram of Figure~\ref{fig:warm-starting-diagram} illustrates the building b
     \label{fig:warm-starting-diagram}
 \end{figure}
 
-Note that warm-starting does not fit the definition of a heuristic solution, as there is no guarantee that the optimal solution will be computed in a tractable manner.
-More precisely, warm starting a solver will only (potentially) change the order in which the nodes of the branch-and-bound tree are explored.
+Note that warm-starting an MILP solver by itself does not configure a heuristic solution, as the optimality guarantees are maintained.
+More precisely, warm starting a solver will only (potentially) change the order in which the nodes of the branch-and-bound tree are explored, e.g., by influencing branching decisions.
 Because of that, it also maintains the optimality (and feasibility) guarantees of the MILP solver used, even if the solution prediction model provides an infeasible (partial) solution.
+However, under limited time, those guarantees are lost, as the solver may be interrupted before finding even a feasible solution.
+In fact, even without the warm-starting approach, the simplest matheuristic is to interrupt an MILP solver after a fixed amount of time.
 
 
 \subsection{Early-fixing Variable Assignments}
