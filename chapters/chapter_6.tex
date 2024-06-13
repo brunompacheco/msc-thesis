@@ -6,9 +6,19 @@
 
 \chapter{Experiments}\label{chap:experiments}
 
-- to address this dissertation's objective, experiments are carried to evaluate learning-based primal heuristics.
-- The ONTS is used as a realistic application to benchmark the selected techniques
-- this section presents the development necessary for the experiments, including model architecture, data acquisition, training, and experiment setup.
+To address the objective of this dissertation, experiments are conducted to evaluate learning-based primal heuristics for Mixed-Integer Linear Programming (MILP).
+The ONTS problem (see Chap.~\ref{chap:onts}) serves as a realistic application to benchmark the selected techniques.
+
+As discussed in Section~\ref{sec:onts-problem-statement}, during mission execution (with the nanosatellite in orbit), a new schedule must be generated during the communication window.
+This involves optimizing multiple instances of the ONTS problem, given varying sets of tasks and updated nanosatellite information.
+Each set of tasks is evaluated based on the resulting schedule, in an iterative process of including new tasks until scheduling becomes infeasible.
+Therefore, during the communication window, quickly finding a good solution to a problem instance is more crucial than finding an optimal solution.
+In other words, an efficient heuristic is crucial to allow for more iterations, which leads to a better set of tasks scheduled for execution.
+
+The remaining of this chapter details the development and the experiments with the proposed learning-based heuristics for the ONTS problem.
+This includes data acquisition, model architecture, training, and experiment setup.
+Furthermore, the performance of the proposed learning-based heuristics is assessed on realistic instances of the ONTS problem.
+
 
 \section{Data}
 
