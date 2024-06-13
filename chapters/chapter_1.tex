@@ -316,37 +316,39 @@ Note that all integer variables that assume the same value in the feasible solut
 As the RINS example above illustrates, a mathematical programming model plays a central role in a matheuristic~\cite{fischettiMatheuristics2016}.
 Because of their flexibility, matheuristics are also used within branch-and-bound algorithms, e.g., to find tighter bounds and accelerate the time to reach the first feasible solution~\cite{fischettiMatheuristics2016,maniezzoMatheuristicsAlgorithmsImplementations2021}.
 
-\subsubsection{Performance analysis}
-
-The performance analysis of heuristic algorithms depends on the instances of interest.
-To better formalize this idea, let us write
-\begin{align*}
-    P(I): \min_{\bm{y}} \quad & \bm{c}_I^{T}\bm{y} \\
-    \textrm{s.t.} \quad & A_I\bm{y} \le \bm{b}_I \\
-      & \bm{y}\in \Z^{n_I}\times \R^{p_I}
-,\end{align*}
-for all instances $I\in \mathcal{I}$.
-The set $\mathcal{I}$ contains all instances of the MILP problem of interest, e.g., all TSPs, TSPs within a given country with all possible edge weights, course scheduling for a given university for varying student interest, or energy system optimization problems for a multi-modal power plant under different weather conditions.
-Using this notation, it is possible to say that the performance of the heuristic can be analyzed from the set $\mathcal{I}$.
-
-A possible evaluation is to perform a worst-case analysis of the heuristic.
-The essential idea of a worst-case analysis is to determine the maximum deviation between the optimum objective value and the objective value of the heuristic solution. 
-Let $z(I)$ be the optimum objective value of instance $I\in \mathcal{I}$, and $z_H(I)$ be the objective value of the solution provided by a heuristic $H$.
-The worst-case performance is, then,
-\begin{equation}
-    \begin{split}
-	\max_{I\in \mathcal{I}} \quad& |z(I) - z_H(I)| \\
-	\textrm{s.t.} \quad& Y_I \neq \varnothing
-    ,\end{split}
-\end{equation}
-where $Y_I$ is the feasible region of instance $I$.
-
-Not always, however, the worst-case performance can be determined analytically.
-A performance estimate can be defined in such cases.
-Let $\mathcal{P}$ be a probability distribution over $\mathcal{I}$.
-The expected performance of a heuristic can be defined as \[
-    \mathbb{E}_{I\sim \mathcal{P}} |z(I) - z_H(I)|
-,\] which can be approximated by Monte Carlo sampling.
+% DROPPED THIS SECTION IN FAVOUR OF CHAP. 5
+%
+% \subsubsection{Performance analysis}
+% 
+% The performance analysis of heuristic algorithms depends on the instances of interest.
+% To better formalize this idea, let us write
+% \begin{align*}
+%     P(I): \min_{\bm{y}} \quad & \bm{c}_I^{T}\bm{y} \\
+%     \textrm{s.t.} \quad & A_I\bm{y} \le \bm{b}_I \\
+%       & \bm{y}\in \Z^{n_I}\times \R^{p_I}
+% ,\end{align*}
+% for all instances $I\in \mathcal{I}$.
+% The set $\mathcal{I}$ contains all instances of the MILP problem of interest, e.g., all TSPs, TSPs within a given country with all possible edge weights, course scheduling for a given university for varying student interest, or energy system optimization problems for a multi-modal power plant under different weather conditions.
+% Using this notation, it is possible to say that the performance of the heuristic can be analyzed from the set $\mathcal{I}$.
+% 
+% A possible evaluation is to perform a worst-case analysis of the heuristic.
+% The essential idea of a worst-case analysis is to determine the maximum deviation between the optimum objective value and the objective value of the heuristic solution. 
+% Let $z(I)$ be the optimum objective value of instance $I\in \mathcal{I}$, and $z_H(I)$ be the objective value of the solution provided by a heuristic $H$.
+% The worst-case performance is, then,
+% \begin{equation}
+%     \begin{split}
+% 	\max_{I\in \mathcal{I}} \quad& |z(I) - z_H(I)| \\
+% 	\textrm{s.t.} \quad& Y_I \neq \varnothing
+%     ,\end{split}
+% \end{equation}
+% where $Y_I$ is the feasible region of instance $I$.
+% 
+% Not always, however, the worst-case performance can be determined analytically.
+% A performance estimate can be defined in such cases.
+% Let $\mathcal{P}$ be a probability distribution over $\mathcal{I}$.
+% The expected performance of a heuristic can be defined as \[
+%     \mathbb{E}_{I\sim \mathcal{P}} |z(I) - z_H(I)|
+% ,\] which can be approximated by Monte Carlo sampling.
 
 
 
