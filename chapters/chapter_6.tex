@@ -16,28 +16,130 @@ Therefore, during the communication window, quickly finding a good solution to a
 In other words, an efficient heuristic is crucial to allow for more iterations, which leads to a better set of tasks scheduled for execution.
 
 The remaining of this chapter details the development and the experiments with the proposed learning-based heuristics for the ONTS problem.
-This includes data acquisition, model architecture, training, and experiment setup.
+This includes data acquisition, solution prediction model architecture, model training, and experiment setup.
 Furthermore, the performance of the proposed learning-based heuristics is assessed on realistic instances of the ONTS problem.
 
 
 \section{Data}
 
-Problem selected = ONTS problem
+High-quality data is necessary both to train solution prediction models and to evaluate the proposed learning-based heuristics for the ONTS problem.
+The datasets for both training and evaluation must be composed of instance-solution pairs, as discussed in Sec.~\ref{sec:training-solution-prediction}.
+The quality of these instance-solution pairs is measured through their faithfulness, both the instance with respect to the true data distribution, and the solution with respect to the optimal.
 
 \subsection{Instance space: the FloripaSat I mission}
 
-The instance space is defined based on the FloripaSat I mission
-    plug info
+The instance space is defined from the parameters of the FloripaSat-I mission~\cite{marcelinoCriticalEmbeddedSystem2020}.
+Their nanosatellite is in orbit at an altitude of 628 kilometers and an orbital period of 97.2 minutes.
+The planning horizon is fixed at $T=125$ time slots, with one slot per minute, to account for a continuous scheduling, allowing for task executions that extend the communication window.
+Any instance $I\in \mathcal{I}$ has either 9, 13, 18, 20, 22, or 24 tasks.
 
-Describe parameter space
+Once the orbit of the FloripaSat-I is stable and its received solar flux is constant, the power input vector $\bm{r}$ can be calculated deterministically from solar irradiance measurements as in \citeonline{morschfilhoComprehensiveAttitudeFormulation2020}.
+2 years of solar irradiance data is used as a basis for the power input vectors of the instances in the instance space.
+The set $R$ is used to denote all possible values of $\bm{r}$ from the historical data.
+The other battery-related parameters (see Sec.~\ref{sec:onts-milp-formulation}) are fixed as 
+\begin{align*}
+    e &= 0.9 \\
+    Q &= 5 \\
+    \gamma &= 5 \\
+    V_b &= 3.6 \\
+    \rho &= 0.0
+\end{align*}
+
+The remaining parameters are constrained to ranges that match previous works in the area~\cite{rigoBranchandpriceAlgorithmNanosatellite2022,semanEnergyAwareTaskScheduling2022,rigoTaskSchedulingOptimal2021}.
+Therefore, following the notation established in Sec.~\ref{sec:onts-milp-formulation}, the parameter space is defined as \[
+\Pi = \bigcup_{\substack{J \in \left\{ 9,13,18,20,22,24 \right\} \\ T \in \left\{ 125 \right\} }} \Pi^{J,T}
+,\] where each $\Pi^{J,T}$ is such that a parameter vector \[
+\pi_I= \left( \bm{u}, \bm{q}, \bm{y}^{\min}, \bm{y}^{\max}, \bm{t}^{\min}, \bm{t}^{\max}, \bm{p}^{\min}, \bm{p}^{\max}, \bm{w}^{\min}, \bm{w}^{\max}, \bm{r}, \rho, e, Q, \gamma, V_b \right)
+\] belongs to $\Pi^{J,T}$ if, and only if,
+\begin{equation*}
+\begin{aligned}
+&\begin{rcases}
+    & u_j \in [1, J] \\
+	 & q_j \in [0.3, 2.5] \\
+    	 & y_j^{\min} \in [1, \lceil T/45 \rceil] \\
+    	 & y_j^{\max} \in [y_j^{\min}, \lceil T/15 \rceil] \\
+    	 & t_j^{\min} \in [1, \lceil T/10 \rceil] \\
+    	 & t_j^{\max} \in [t_j^{\min}, \lceil T/4 \rceil] \\
+    	 & p_j^{\min} \in [t_j^{\min}, \lceil T/4 \rceil] \\
+    	 & p_j^{\max} \in [p_j^{\min}, T] \\
+    	 & w_j^{\min} \in [0, \lceil T/5 \rceil] \\
+    	 & w_j^{\max} \in [\lfloor T-\lceil T/5 \rceil \rfloor, T]
+\end{rcases} \forall j =1,\ldots,J \\
+    &\quad \bm{r} \in R \\
+    &\quad e = 0.9 \\
+    &\quad Q = 5 \\
+    &\quad \gamma = 5 \\
+    &\quad V_b = 3.6 \\
+    &\quad \rho = 0.0
+.\end{aligned}
+\end{equation*}
+Finally, the input space is then define from the parameter space, such that \[
+    I\in \mathcal{I} \iff \pi_I \in \Pi 
+.\] 
+
 
 \subsection{Data acquisition}
 
-It is assumed that the instances that will be found in practice are uniformly distributed within the range defined by the parameters of FloripaSat I
-Therefore U ~ I
+As historical data is not available for the ONTS problem, the dataset is built from randomly generated instances sampled uniformly from the instance space of the FloripaSat-I mission.
+More precisely, the dataset is built with instances drawn uniformly from the instance space defined above.
 
-As the history of instances solved is not available, we build our dataset...
-    continue from paper
+As the addition of an element to the dataset requires a solution to the ONTS problem, the computational cost of building a large dataset with hard instances is very high.
+To alleviate this cost, the training set is built solely with instances with fewer tasks, which are, on average, faster to solve than instances with many tasks.
+However, the instances of interest are those with plenty of tasks, which are harder to solve in practice, and, thus, motivate the use of heuristics.
+Therefore, the validation and test datasets are built from instances with many tasks, which are, on average, significantly harder to solve.
+Table~\ref{tab:dataset} details the number of instances by size (number of tasks) in each dataset generated.
+
+\begin{table}[h]
+    \centering
+    \caption{Number of instances by size in each dataset. The datasets were generated through Algorithm~\ref{alg:dataset-generation}.}
+    \label{tab:dataset}
+    \begin{tabular}{l | c | c | c}
+    \toprule
+    & Training & Validation & Test \\
+    \midrule
+    $J = 9$ & 200 & 0 & 0 \\
+    $J = 13$ & 200 & 0 & 0 \\
+    $J = 18$ & 200 & 0 & 0 \\
+    $J = 20$ & 0 & 20 & 20 \\
+    $J = 22$ & 0 & 20 & 20 \\
+    $J = 24$ & 0 & 20 & 20 \\
+    \midrule
+    Total & 600 & 60 & 60 \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+Distinguishing the size of the instances in each dataset allows for the construction of a large training set, which enables the models to properly learn the problem, while maintaining a challenging evaluation scenario.
+On top of that, this approach also enables the evaluation of the generalization capabilities of the proposed solution prediction models and the derived learning-based heuristics.
+
+The algorithm to generate the datasets is presented in Algorithm~\ref{alg:dataset-generation}.
+As the time horizon is fixed, the algorithm is executed once for each number of tasks possible.
+Every new instance $I$ is solved using the SCIP solver~\cite{bestuzhevaSCIPOptimizationSuite2021} with a limited time budget of 5 minutes.
+An instance is rejected if no feasible solution is found during the time budget or if the solver proves infeasibility.
+For each instance $I$ in the resulting dataset, the set $Z^*_I$ contains the best 500 solutions found by the solver.
+
+\begin{algorithm}[h]
+    \NoCaptionOfAlgo
+    \SetAlgoLined
+    \KwData{Time horizon $T$, number of jobs $J$, number of instances (final dataset size) $n$.}
+    \KwResult{Dataset $\mathcal{D} = \{(I,Z_I^\star): Z_I^\star\subset Z_I\}$.}
+    
+    \While{$|\mathcal{D}| < n$}{
+        $\pi \sim \mathcal{U}\left( \Pi^{J,T} \right) $ \\
+        $I \gets {\tt ONTS}(\pi)$ \\
+        $Z_I^\star \gets {\tt Solver}(I)$
+        
+        \If{$|Z_I^\star| > 0$}{%
+            $\mathcal{D}$.add$(I, Z_I^\star)$
+        }
+    }
+    \caption{\textbf{Algorithm 1:} Dataset generation algorithm. $\pi$ is the parameter vector and $\Pi^{J,T}$ is the parameter space (see Sec. \ref{sec:onts-milp-formulation}), $Z_I$ represents the set of all feasible solutions of instance $I$, and $Z_I^\star \subset Z_I$ the set of feasible solutions the solver finds.
+    ${\tt ONTS}$ represents a function that takes as input a parameter vector and constructs an instance of the ONTS problem.
+    ${\tt Solver}$ is any MILP solver.
+    Note that the parameters are drawn uniformly from the parameter space.
+    }\label{alg:dataset-generation}
+\end{algorithm}
+
 
 \section{Deep Learning Model Architectures}
 
