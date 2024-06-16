@@ -26,7 +26,7 @@ High-quality data is necessary both to train solution prediction models and to e
 The datasets for both training and evaluation must be composed of instance-solution pairs, as discussed in Sec.~\ref{sec:training-solution-prediction}.
 The quality of these instance-solution pairs is measured through their faithfulness, both the instance with respect to the true data distribution, and the solution with respect to the optimal.
 
-\subsection{Instance space: the FloripaSat I mission}
+\subsection{Instance space: the FloripaSat I mission}\label{sec:instance-space}
 
 The instance space is defined from the parameters of the FloripaSat-I mission~\cite{marcelinoCriticalEmbeddedSystem2020}.
 Their nanosatellite is in orbit at an altitude of 628 kilometers and an orbital period of 97.2 minutes.
@@ -141,10 +141,85 @@ For each instance $I$ in the resulting dataset, the set $Z^*_I$ contains the bes
 \end{algorithm}
 
 
-\section{Deep Learning Model Architectures}
+\section{Solution Prediction Model}
 
-- GNNs are very promising, considered sota
-- FCNs are not suitable for our problem, because it must suit instances with varying number of jobs (and, thus, varying number of variables), while FCNs have a fixed output dimension.
+The instance space of the ONTS problem, as defined in Sec.~\ref{sec:instance-space}, imposes specific architectural requirements for solution prediction models.
+The variable number of tasks over the instances of interest leads to parameter vectors of variable length, which is a natural embedding (feature vector) for the instances.
+At the same time, the uneven number of tasks in the instance space implies that instances have different number of binary variables.
+Therefore, models must predict a different number of variable assignments for each instance.
+
+Graph Neural Networks (GNNs) are particularly promising in this context and are considered state-of-the-art for such applications~\cite{cappartCombinatorialOptimizationReasoning2022}.
+As discussed in Sec.~\ref{sec:gnns}, GNNs naturally handle variable input and output sizes due to their convolutional nature.
+Therefore, the deep learning models trained for the ONTS problem are built with GNNs at their core.
+
+\subsection{Instance embedding}
+
+Because GNNs are at the core of the solution prediction models, the instances are embedded as bipartite graphs, following the approach presented in~\ref{sec:graph-embedding}.
+Many authors have presented different approaches for defining node features when applying GNNs for optimization problems.
+% TODO: review literature on node features
+
+The resulting features used in the embeddings of instances of the ONTS problem are presented in Table~\ref{tab:feature-desc}.
+Note that, following XXX, instead of describing all constraints as inequality constraints (following the normal form), the constraint type (inequality or equality) is informed through the constraint node features, reducing the graph size. % TODO: replace XXX by author that proposed this approach
+Furthermore, this feature design is problem agnostic, i.e., it does not use any information particular to the ONTS problem.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{p{7cm}|p{7cm}}
+    \toprule
+        Features of constraint nodes ($\bm{f}_{v_{\rm con}}$) & Features of variable nodes ($\bm{f}_{v_{\rm var}}$) \\
+    \midrule
+         Constraint's upper bound ($\bm{b}$)                     &  Variable's coefficient in the objective ($\bm{c}$)\\
+         Constraint's average coefficient (mean of $A_{i*}$)     &  Variable's average coefficient in the constraints (mean of $A_{*j}$) \\
+         Number of neighbors/non-null coefficients ($|\mathcal{N}(v_{\rm con})|$)    &  Number of neighbors/non-null coefficients ($|\mathcal{N}(v_{\rm var})|$) \\
+         Whether it is an equality or an inequality constraint &  Largest coefficient in the constraints ($\max(A_{*j})$) \\
+                                                                    &  Smallest coefficient in the constraints ($\min(A_{*j})$) \\
+                                                                    &  Whether it is a continuous or binary variable \\
+    \bottomrule
+    \end{tabular}
+    \caption{Description of node features for the graph embedding of instances of the ONTS problem.}
+    \label{tab:feature-desc}
+\end{table}
+
+\subsection{Architecture}
+
+An architectural overview of the solution prediction models is illustrated in Fig.~XXX.
+
+- illustration
+- recall notation from 2.2.2
+- the feature vectors are first encoded into a common hidden feature space using FCNs
+- each layer of our model contains two passes, exploiting the bipartite nature of the input graph, following Gasse, which was also replicated by XXX
+- finally, after L layers, the resulting hidden features are transformed in the predicted bias by another FCN
+
+- describe hyperparameters that define the architecture
+
+
+The architecture of the solution prediction model is illustrated in Figure \ref{fig:model-architecture}. As recalled from Sec.~2.2.2, the feature vectors are initially encoded into a common hidden feature space using Fully Connected Networks (FCNs). Each layer of our model comprises two passes that exploit the bipartite nature of the input graph, following the approach by Gasse et al., which was also replicated by subsequent studies.
+
+%\begin{figure}[h]
+%\centering
+%\includegraphics[width=\textwidth]{model_architecture.png}
+%\caption{Architecture of the solution prediction model.}
+%\label{fig:model-architecture}
+%\end{figure}
+
+After \(L\) layers, the resulting hidden features are transformed into the predicted bias by another FCN. The model's hyperparameters, including the number of layers \(L\), the size of the hidden layers, and learning rates, are tuned to optimize performance on the ONTS problem.
+
+% \begin{table}[h]
+% \centering
+% \begin{tabular}{|c|c|}
+% \hline
+% Hyperparameter & Value \\
+% \hline
+% Number of layers (L) & X \\
+% Size of hidden layers & Y \\
+% Learning rate & Z \\
+% Batch size & W \\
+% ... & ... \\
+% \hline
+% \end{tabular}
+% \caption{Hyperparameters of the solution prediction model.}
+% \label{tab:hyperparameters}
+% \end{table}
 
 \section{Training}
 
