@@ -17,9 +17,7 @@ Moving forward, the methodologies employed in training deep learning models fed 
 The chapter ends with the approaches one can use to create primal (mat)heuristics from solution prediction models.
 
 
-\section{Embedding Optimization Problems}
-
-% TODO: see SatGNN paper
+\section{Embedding Optimization Problems}\label{sec:embedding}
 
 The first requirement that needs to be satisfied for training deep learning models to predict solutions to MILP problems is to be able to feed instances of MILP problems to such models.
 For this, it is necessary to convert an instance to a numerical format that the model can handle.
@@ -61,7 +59,7 @@ If in the TSP example above the underlying graph changes over the instance space
 In the naïve embedding, this translates directly to vectors of varying size, which are not directly suitable for NNs.
 To generate features that are suitable for NNs even when the instances have varying size, the feature engineer must be able to translate the process that changes the size of the instances into a fixed number of features, which is not always easy or even feasible.
 
-\subsection{Graph Embedding}
+\subsection{Graph Embedding}\label{sec:graph-embedding}
 
 A well-used approach in the intersection between deep learning and combinatorial optimization is to embed MILP problem instances is through bipartite graphs~\cite{gasseExactCombinatorialOptimization2019,nairSolvingMixedInteger2021,dingAcceleratingPrimalSolution2020,khalilMIPGNNDataDrivenFramework2022,hanGNNGuidedPredictandSearchFramework2023}.
 Any instance of an LP problem can be represented as a weighted bipartite graph.
