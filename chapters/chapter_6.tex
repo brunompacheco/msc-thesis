@@ -211,7 +211,7 @@ More precisely, the first layer of hidden features of the GNN $H^{(0)}=\left\{ \
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{SatGNN.pdf}
-    \caption{Architectural components of the solution prediction models trained for the ONTS problem.} % TODO: describe GraphConv, NNs sets F and H
+    \caption{Architectural components of the solution prediction models trained for the ONTS problem. \emph{GraphConv} indicates the graph convolution operators as described in Sec.~\ref{sec:gnns}. $F$ and $H$ indicate sets of feature vectors. ${\rm NN}_{\star}$ are FCNs applied to each vector in the respective input set.}
     \label{fig:satgnn}
 \end{figure}
 
@@ -231,7 +231,44 @@ While the first layer has ReLU activation, the last layer has a sigmoid activati
 
 \section{Training}
 
+- two training paradigms: OS and MS
+- see what has been discussed previously
+- define the two datasets?
+
+- our ideal metric, the quality of the predicted solution, is not-differentiable for infeasible solutions, which renders it impossible for gradient-based optimization 
+- loss function is the BCE, due to the proximity of our task and the classification task, and also following the literature
+- Adam is used to minimize the BCE loss
+- the validation set is used to perform early-stopping (describe early-stopping and its impacts)
+
 \subsection{Hyperparameter Optimization}
 
-\section{Evaluation}
+- hyperparameter space as a tree?
+%         'lr': [1e-2, 1e-3, 1e-4],
+%         'n_h_feats': [2**5, 2**6, 2**7, 2**8],
+%         'batch_size': [2**2, 2**3, 2**4, 2**5],
+%         'single_conv_for_both_passes': [True, False],
+%         'n_passes': [1, 2, 3],
+%         'conv1': ['GraphConv', 'SAGEConv'],
+- hps optimized through random search
+- more details in the github repo and wandb
+
+\subsection{Final solution prediction models}
+
+- the best hp configuration for both 
+
+\section{Learning-based heuristics}
+
+- the two solution prediction models (the one with OS and the one with MS) are used to build primal matheuristics
+- two goals: finding a feasible solution the fastest and finding the best solution in 2 minutes
+
+\subsection{Tuning}
+
+- adjustment of partial solution size (and trust region size) given the two goals
+- grid search
+- tuning results
+
+\subsection{Evaluation}
+
+- both performances
+- both critical difference diagrams
 
