@@ -187,27 +187,26 @@ Furthermore, this feature design is problem agnostic, i.e., it does not use any 
 
 \subsection{Architecture}
 
-An architectural overview of the solution prediction models is illustrated in Fig.~\ref{fig:satgnn}.
-The model inputs are the embedding described in the previous section, i.e., the bipartite graph representation of the instance and sets of feature vectors $F_\textrm{con}$ and $F_\textrm{var}$.
-
-- illustration
-- recall notation from 2.2.2
-- the feature vectors are first encoded into a common hidden feature space using FCNs
-- each layer of our model contains two passes, exploiting the bipartite nature of the input graph, following Gasse, which was also replicated by XXX
-- finally, after L layers, the resulting hidden features are transformed in the predicted bias by another FCN
-
-- describe hyperparameters that define the architecture
-
-The architecture of the solution prediction model is illustrated in Figure \ref{fig:model-architecture}. As recalled from Sec.~2.2.2, the feature vectors are initially encoded into a common hidden feature space using Fully Connected Networks (FCNs). Each layer of our model comprises two passes that exploit the bipartite nature of the input graph, following the approach by Gasse et al., which was also replicated by subsequent studies.
-
-%\begin{figure}[h]
-%\centering
-%\includegraphics[width=\textwidth]{model_architecture.png}
-%\caption{Architecture of the solution prediction model.}
-%\label{fig:model-architecture}
-%\end{figure}
-
-After \(L\) layers, the resulting hidden features are transformed into the predicted bias by another FCN. The model's hyperparameters, including the number of layers \(L\), the size of the hidden layers, and learning rates, are tuned to optimize performance on the ONTS problem.
+The structure of the solution prediction models is illustrated in Fig.~\ref{fig:satgnn}.
+The model inputs are the embedding described in the previous section, i.e., the bipartite graph representation of the instance and the sets of feature vectors $F_\textrm{con}$ and $F_\textrm{var}$.
+Each feature vector $\bm{f}_v$ is encoded into a hidden feature vector $\bm{h}^{(0)}_v$ by FCNs
+\begin{align*}
+    {\rm NN}_{\rm var}:\mathbb{R}^6& \longrightarrow\mathbb{R}^{d}_+ \\
+    \bm{f}_{v_{\rm var}} &\longmapsto \bm{h}^{(0)}_{v_{\rm var}} = {\rm NN}_{\rm var}(\bm{f}_{v_{\rm var}})
+\end{align*}
+and
+\begin{align*}
+    {\rm NN}_{\rm con}:\mathbb{R}^4& \longrightarrow\mathbb{R}^{d}_+ \\
+    \bm{f}_{v_{\rm con}} &\longmapsto \bm{h}^{(0)}_{v_{\rm con}} = {\rm NN}_{\rm con}(\bm{f}_{v_{\rm con}})
+,\end{align*}
+both with a single layer and ReLU (Rectified Linear Unit) activation~\cite{goodfellowQualitativelyCharacterizingNeural2015}.
+More precisely, the first layer of hidden features of the GNN $H^{(0)}=\left\{ \bm{h}^{(0)}_v \in \R^{d} : v \in V \right\} $ is such that \[
+\bm{h}^{(0)}_v = \begin{cases}
+    {\rm NN}_{\rm con}(\bm{f}_v) & v \in V_\textrm{con} \\
+    {\rm NN}_{\rm var}(\bm{f}_v) & v \in V_\textrm{var}
+\end{cases}
+.\] 
+% Note that this operation makes all initial hidden features have the same dimension $d$.
 
 \begin{figure}[h]
     \centering
@@ -216,24 +215,23 @@ After \(L\) layers, the resulting hidden features are transformed into the predi
     \label{fig:satgnn}
 \end{figure}
 
-% \begin{table}[h]
-% \centering
-% \begin{tabular}{|c|c|}
-% \hline
-% Hyperparameter & Value \\
-% \hline
-% Number of layers (L) & X \\
-% Size of hidden layers & Y \\
-% Learning rate & Z \\
-% Batch size & W \\
-% ... & ... \\
-% \hline
-% \end{tabular}
-% \caption{Hyperparameters of the solution prediction model.}
-% \label{tab:hyperparameters}
-% \end{table}
+Each layer of the proposed model performs the graph convolution in the form of two interleaved half-convolutions, as proposed by \citeonline{gasseExactCombinatorialOptimization2019} and widely adopted by similar applications~\cite{hanGNNGuidedPredictandSearchFramework2023,khalilMIPGNNDataDrivenFramework2022,dingAcceleratingPrimalSolution2020}.
+The half-convolutions are applied to each partition of the graph, such that first the hidden feature vectors of the constraint nodes are updated using the hidden features of the variable nodes, and then the hidden features of the variable nodes are updated with the new hidden features of the constraint nodes.
+These two operations are illustrated by the \emph{GraphConv} blocks in Fig.~\ref{fig:satgnn}.
+The choice for the convolution operator is left as a hyperparameter, being either the FCN convolution proposed by \citeonline{kipfSemiSupervisedClassificationGraph2017} or the SAGE model proposed by \citeonline{hamiltonInductiveRepresentationLearning2017}, as discussed in Sec.~\ref{sec:gnns}.
+
+After $L$ layers, the resulting hidden features are transformed into the predicted bias by another FCN.
+The 2-layer network
+\begin{align*}
+    {\rm NN}_{\rm out}:\mathbb{R}^d_+& \longrightarrow \left( 0,1 \right)  \\
+    \bm{h}^{(L)}_{v_{\rm var}} &\longmapsto \hat{p}_{v_{\rm var}} = {\rm NN}_{\rm out}(\bm{h}^{(L)}_{v_{\rm var}})
+\end{align*}
+combines each variable's output hidden features into a single value.
+While the first layer has ReLU activation, the last layer has a sigmoid activation, constraining the output to the unit interval, which is adequate to the target range.
 
 \section{Training}
+
+\subsection{Hyperparameter Optimization}
 
 \section{Evaluation}
 
