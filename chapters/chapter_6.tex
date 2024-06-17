@@ -78,7 +78,7 @@ Finally, the input space is then define from the parameter space, such that \[
 .\] 
 
 
-\subsection{Data acquisition}
+\subsection{Data acquisition}\label{sec:data-acquisition}
 
 As historical data is not available for the ONTS problem, the dataset is built from randomly generated instances sampled uniformly from the instance space of the FloripaSat-I mission.
 More precisely, the dataset is built with instances drawn uniformly from the instance space defined above.
@@ -150,16 +150,21 @@ Therefore, models must predict a different number of variable assignments for ea
 
 Graph Neural Networks (GNNs) are particularly promising in this context and are considered state-of-the-art for such applications~\cite{cappartCombinatorialOptimizationReasoning2022}.
 As discussed in Sec.~\ref{sec:gnns}, GNNs naturally handle variable input and output sizes due to their convolutional nature.
-Therefore, the deep learning models trained for the ONTS problem are built with GNNs at their core.
+On top of that, results shown by \citeonline{gasseExactCombinatorialOptimization2019} point that GNNs are capable of generalizing to instances larger than those seen during training, which alleviates data acquisition costs, as discussed in Sec.~\ref{sec:data-acquisition}.
+Therefore, the deep learning models trained for the ONTS problem are all built with GNNs at their core.
 
 \subsection{Instance embedding}
 
 Because GNNs are at the core of the solution prediction models, the instances are embedded as bipartite graphs, following the approach presented in~\ref{sec:graph-embedding}.
-Many authors have presented different approaches for defining node features when applying GNNs for optimization problems.
-% TODO: review literature on node features
+Many authors have presented different approaches for defining node features when applying GNNs to MILP problems.
+\citeonline{khalilMIPGNNDataDrivenFramework2022} add variable and constraint degrees\footnote{A variable's degree is the number of constraints in which it has a nonzero coefficient. On the other hand, a constraint's degree is the number of variables in it with non-zero coefficient.} to the baseline (the one presented in Sec.~\ref{sec:graph-embedding}) embedding.
+\citeonline{chenRepresentingMixedIntegerLinear2022} embeds variables' upper and lower bounds as well as constraint set (inequality or equality).
+Works that applied GNNs to generate branch-and-bound heuristics (e.g., for branching), such as \citeonline{dingAcceleratingPrimalSolution2020} and \citeonline{gasseExactCombinatorialOptimization2019}, have captured features usually available at the nodes of the branch-and-bound tree, directly collecting solver-computed features.
+As the focus of the present work is on primal heuristics, the features should be solver-independent, i.e., they must be computed prior to the branch-and-bound application.
 
-The resulting features used in the embeddings of instances of the ONTS problem are presented in Table~\ref{tab:feature-desc}.
-Note that, following XXX, instead of describing all constraints as inequality constraints (following the normal form), the constraint type (inequality or equality) is informed through the constraint node features, reducing the graph size. % TODO: replace XXX by author that proposed this approach
+The resulting features used are based on the set proposed by \citeonline{hanGNNGuidedPredictandSearchFramework2023}, which extends both \citeonline{khalilMIPGNNDataDrivenFramework2022} and \citeonline{chenRepresentingMixedIntegerLinear2022} with simple features (solver-independent) that are also present in \citeonline{gasseExactCombinatorialOptimization2019}.
+A summary is presented in Table~\ref{tab:feature-desc}.
+Note that, following the literature, instead of describing all constraints as inequality constraints (i.e., in the normal form), the constraint type (inequality or equality) is informed through the constraint node features, reducing the graph size.
 Furthermore, this feature design is problem agnostic, i.e., it does not use any information particular to the ONTS problem.
 
 \begin{table}[h]
@@ -168,11 +173,11 @@ Furthermore, this feature design is problem agnostic, i.e., it does not use any 
     \toprule
         Features of constraint nodes ($\bm{f}_{v_{\rm con}}$) & Features of variable nodes ($\bm{f}_{v_{\rm var}}$) \\
     \midrule
-         Constraint's upper bound ($\bm{b}$)                     &  Variable's coefficient in the objective ($\bm{c}$)\\
-         Constraint's average coefficient (mean of $A_{i*}$)     &  Variable's average coefficient in the constraints (mean of $A_{*j}$) \\
-         Number of neighbors/non-null coefficients ($|\mathcal{N}(v_{\rm con})|$)    &  Number of neighbors/non-null coefficients ($|\mathcal{N}(v_{\rm var})|$) \\
-         Whether it is an equality or an inequality constraint &  Largest coefficient in the constraints ($\max(A_{*j})$) \\
-                                                                    &  Smallest coefficient in the constraints ($\min(A_{*j})$) \\
+	Constraint's upper bound ($\bm{b}$)                     &  Variable's coefficient in the objective ($\bm{c}$)\\[0.8cm]
+         Constraint's average coefficient (mean of $A_{i*}$)     &  Variable's average coefficient in the constraints (mean of $A_{*j}$) \\[0.8cm]
+         Number of neighbors/non-null coefficients ($|\mathcal{N}(v_{\rm con})|$)    &  Number of neighbors/non-null coefficients ($|\mathcal{N}(v_{\rm var})|$) \\[0.8cm]
+         Whether it is an equality or an inequality constraint &  Largest coefficient in the constraints ($\max(A_{*j})$) \\[0.8cm]
+                                                                    &  Smallest coefficient in the constraints ($\min(A_{*j})$) \\[0.8cm]
                                                                     &  Whether it is a continuous or binary variable \\
     \bottomrule
     \end{tabular}
@@ -182,7 +187,8 @@ Furthermore, this feature design is problem agnostic, i.e., it does not use any 
 
 \subsection{Architecture}
 
-An architectural overview of the solution prediction models is illustrated in Fig.~XXX.
+An architectural overview of the solution prediction models is illustrated in Fig.~\ref{fig:satgnn}.
+The model inputs are the embedding described in the previous section, i.e., the bipartite graph representation of the instance and sets of feature vectors $F_\textrm{con}$ and $F_\textrm{var}$.
 
 - illustration
 - recall notation from 2.2.2
@@ -191,7 +197,6 @@ An architectural overview of the solution prediction models is illustrated in Fi
 - finally, after L layers, the resulting hidden features are transformed in the predicted bias by another FCN
 
 - describe hyperparameters that define the architecture
-
 
 The architecture of the solution prediction model is illustrated in Figure \ref{fig:model-architecture}. As recalled from Sec.~2.2.2, the feature vectors are initially encoded into a common hidden feature space using Fully Connected Networks (FCNs). Each layer of our model comprises two passes that exploit the bipartite nature of the input graph, following the approach by Gasse et al., which was also replicated by subsequent studies.
 
@@ -203,6 +208,13 @@ The architecture of the solution prediction model is illustrated in Figure \ref{
 %\end{figure}
 
 After \(L\) layers, the resulting hidden features are transformed into the predicted bias by another FCN. The model's hyperparameters, including the number of layers \(L\), the size of the hidden layers, and learning rates, are tuned to optimize performance on the ONTS problem.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{SatGNN.pdf}
+    \caption{Architectural components of the solution prediction models trained for the ONTS problem.} % TODO: describe GraphConv, NNs sets F and H
+    \label{fig:satgnn}
+\end{figure}
 
 % \begin{table}[h]
 % \centering
