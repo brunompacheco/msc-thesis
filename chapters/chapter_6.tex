@@ -46,9 +46,11 @@ The other battery-related parameters (see Sec.~\ref{sec:onts-milp-formulation}) 
 \end{align*}
 
 The remaining parameters are constrained to ranges that match previous works in the area~\cite{rigoBranchandpriceAlgorithmNanosatellite2022,semanEnergyAwareTaskScheduling2022,rigoTaskSchedulingOptimal2021}.
-Therefore, following the notation established in Sec.~\ref{sec:onts-milp-formulation}, the parameter space is defined as \[
+Therefore, following the notation established in Sec.~\ref{sec:onts-milp-formulation}, the parameter space is defined as
+\begin{equation}\label{eq:parameter-space}
 \Pi = \bigcup_{\substack{J \in \left\{ 9,13,18,20,22,24 \right\} \\ T \in \left\{ 125 \right\} }} \Pi^{J,T}
-,\] where each $\Pi^{J,T}$ is such that a parameter vector \[
+,\end{equation}
+where each $\Pi^{J,T}$ is such that a parameter vector \[
 \pi_I= \left( \bm{u}, \bm{q}, \bm{y}^{\min}, \bm{y}^{\max}, \bm{t}^{\min}, \bm{t}^{\max}, \bm{p}^{\min}, \bm{p}^{\max}, \bm{w}^{\min}, \bm{w}^{\max}, \bm{r}, \rho, e, Q, \gamma, V_b \right)
 \] belongs to $\Pi^{J,T}$ if, and only if,
 \begin{equation*}
@@ -65,15 +67,10 @@ Therefore, following the notation established in Sec.~\ref{sec:onts-milp-formula
     	 & w_j^{\min} \in [0, \lceil T/5 \rceil] \\
     	 & w_j^{\max} \in [\lfloor T-\lceil T/5 \rceil \rfloor, T]
 \end{rcases} \forall j =1,\ldots,J \\
-    &\quad \bm{r} \in R \\
-    &\quad e = 0.9 \\
-    &\quad Q = 5 \\
-    &\quad \gamma = 5 \\
-    &\quad V_b = 3.6 \\
-    &\quad \rho = 0.0
+    &\quad \bm{r} \in R ,\, e = 0.9 ,\, Q = 5 ,\, \gamma = 5 ,\, V_b = 3.6 ,\, \rho = 0.0
 .\end{aligned}
 \end{equation*}
-Finally, the input space is then define from the parameter space, such that \[
+Finally, the input space is then defined from the parameter space, such that \[
     I\in \mathcal{I} \iff \pi_I \in \Pi 
 .\] 
 
@@ -113,24 +110,30 @@ Distinguishing the size of the instances in each dataset allows for the construc
 On top of that, this approach also enables the evaluation of the generalization capabilities of the proposed solution prediction models and the derived learning-based heuristics.
 
 The algorithm to generate the datasets is presented in Algorithm~\ref{alg:dataset-generation}.
-As the time horizon is fixed, the algorithm is executed once for each number of tasks possible.
-Every new instance $I$ is solved using the SCIP solver~\cite{bestuzhevaSCIPOptimizationSuite2021} with a limited time budget of 5 minutes.
-An instance is rejected if no feasible solution is found during the time budget or if the solver proves infeasibility.
-For each instance $I$ in the resulting dataset, the set $Z^*_I$ contains the best 500 solutions found by the solver.
+Note that an instance is rejected if no feasible solution is found during the time budget or if the solver proves infeasibility.
+As the time horizon is fixed, the algorithm is executed once for each number of tasks.
+Similar to the parameter space definition \eqref{eq:parameter-space}, the resulting dataset can be described as
+\begin{equation}\label{eq:dataset}
+    \mathcal{D} = \bigcup_{\substack{J \in \left\{ 9,13,18,20,22,24 \right\} \\ T \in \left\{ 125 \right\} }}  \mathcal{D}^{(J,T)}
+,\end{equation}
+where each $\mathcal{D}^{(J,T)}$ is obtained through Algorithm~\ref{alg:dataset-generation}.
+The algorithm was executed such that every new instance $I$ was solved using the SCIP solver~\cite{bestuzhevaSCIPOptimizationSuite2021} with a limited time budget of 5 minutes.
+The best 500 solutions were captured, and, in fact, for every $(I,Z^{*}) \in \mathcal{D}$, $|Z^{*}| = 500$.
+Finally, the dataset is divided as $\mathcal{D} = \mathcal{D}_\textrm{train} \cup \mathcal{D}_{\textrm{val}} \cup \mathcal{D}_\textrm{test}$ following Table~\ref{tab:dataset}.
 
 \begin{algorithm}[h]
     \NoCaptionOfAlgo
     \SetAlgoLined
     \KwData{Time horizon $T$, number of jobs $J$, number of instances (final dataset size) $n$.}
-    \KwResult{Dataset $\mathcal{D} = \{(I,Z_I^\star): Z_I^\star\subset Z_I\}$.}
+    \KwResult{Dataset $\mathcal{D}^{(J,T)} = \{(I,Z_I^\star): Z_I^\star\subset Z_I\}$.}
     
-    \While{$|\mathcal{D}| < n$}{
+    \While{$|\mathcal{D}^{(J,T)}| < n$}{
         $\pi \sim \mathcal{U}\left( \Pi^{J,T} \right) $ \\
         $I \gets {\tt ONTS}(\pi)$ \\
         $Z_I^\star \gets {\tt Solver}(I)$
         
         \If{$|Z_I^\star| > 0$}{%
-            $\mathcal{D}$.add$(I, Z_I^\star)$
+            $\mathcal{D}^{(J,T)}$.add$(I, Z_I^\star)$
         }
     }
     \caption{\textbf{Algorithm 1:} Dataset generation algorithm. $\pi$ is the parameter vector and $\Pi^{J,T}$ is the parameter space (see Sec. \ref{sec:onts-milp-formulation}), $Z_I$ represents the set of all feasible solutions of instance $I$, and $Z_I^\star \subset Z_I$ the set of feasible solutions the solver finds.
@@ -139,7 +142,6 @@ For each instance $I$ in the resulting dataset, the set $Z^*_I$ contains the bes
     Note that the parameters are drawn uniformly from the parameter space.
     }\label{alg:dataset-generation}
 \end{algorithm}
-
 
 \section{Solution Prediction Model}
 
@@ -231,14 +233,19 @@ While the first layer has ReLU activation, the last layer has a sigmoid activati
 
 \section{Training}
 
-- two training paradigms: OS and MS
-- see what has been discussed previously
-- define the two datasets?
+The solution prediction models for the ONTS problem are trained with supervision to approximate the variable bias in the optimal solutions (see
+Sec.~\ref{sec:training-solution-prediction}).
+This approach is based on having a single (quasi-)optimal solution for each problem instance, and will be referred to in the following as \emph{OS} (Optimal Solution training).
+Another approach is to exploit multiple near-optimal solutions, as discussed in Sec.~\ref{sec:multiple-targets}, training the model to approximate the variable bias of the solutions near optimal solutions.
+This latter approach will be referred to as \emph{MS} (Multiple Solution training).
+The dataset $\mathcal{D}$ built as described in Sec.~\ref{sec:data-acquisition} is used for both approaches, the only difference being that in OS the best solution is retrieved from $Z^{*}$, while in MS all solutions are used along with their objective value. 
 
-- our ideal metric, the quality of the predicted solution, is not-differentiable for infeasible solutions, which renders it impossible for gradient-based optimization 
-- loss function is the BCE, due to the proximity of our task and the classification task, and also following the literature
-- Adam is used to minimize the BCE loss
-- the validation set is used to perform early-stopping (describe early-stopping and its impacts)
+As the ideal performance metric, i.e., the quality of the predicted solution, is not computable\footnote{In fact, it is not even defined over infeasible solutions.} for a vector of variable biases, the Binary Cross-Entropy (BCE) loss is used, as it is the loss of choice of the majority of works with similar applications~\cite{nairSolvingMixedInteger2021,hanGNNGuidedPredictandSearchFramework2023,khalilMIPGNNDataDrivenFramework2022,gasseExactCombinatorialOptimization2019}.
+In MS, the BCE loss is weighed by a normalized value, which, as \citeonline{nairSolvingMixedInteger2021} has shown, is equivalent to the Kullback-Leibler divergence between the predicted variable biases and the actual variable biases of the near-optimal solutions.
+
+For all experiments, Adam~\cite{kingmaAdamMethodStochastic2015} was used to minimize the cost function.
+The validation set $\mathcal{D}_{\textrm val}$ was used to perform early-stopping, i.e., to interrupt the training once the cost computed at the validation set achieves a minimum (over the epochs).
+Early-stopping allows us to avoid overfitting without the need to tune the training budget.
 
 \subsection{Hyperparameter Optimization}
 

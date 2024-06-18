@@ -109,7 +109,7 @@
   doi = {10.48550/arXiv.2102.09544},
   urldate = {2023-05-17},
   abstract = {Combinatorial optimization is a well-established area in operations research and computer science. Until recently, its methods have focused on solving problem instances in isolation, ignoring that they often stem from related data distributions in practice. However, recent years have seen a surge of interest in using machine learning, especially graph neural networks (GNNs), as a key building block for combinatorial tasks, either directly as solvers or by enhancing exact solvers. The inductive bias of GNNs effectively encodes combinatorial and relational input due to their invariance to permutations and awareness of input sparsity. This paper presents a conceptual review of recent key advancements in this emerging field, aiming at optimization and machine learning researchers.},
-  archiveprefix = {arxiv},
+  archiveprefix = {arXiv},
   keywords = {*,Computer Science - Data Structures and Algorithms,Computer Science - Machine Learning,Computer Science - Neural and Evolutionary Computing,GNN,Mathematics - Optimization and Control,Optimization,Statistics - Machine Learning,SURVEY},
   file = {/home/bruno/Zotero/storage/EKEZT8KR/Cappart et al. - 2022 - Combinatorial optimization and reasoning with grap.pdf;/home/bruno/Zotero/storage/4NIR2HK6/2102.html}
 }
@@ -164,7 +164,7 @@
   doi = {10.48550/arXiv.2210.10759},
   urldate = {2023-04-27},
   abstract = {While Mixed-integer linear programming (MILP) is NP-hard in general, practical MILP has received roughly 100--fold speedup in the past twenty years. Still, many classes of MILPs quickly become unsolvable as their sizes increase, motivating researchers to seek new acceleration techniques for MILPs. With deep learning, they have obtained strong empirical results, and many results were obtained by applying graph neural networks (GNNs) to making decisions in various stages of MILP solution processes. This work discovers a fundamental limitation: there exist feasible and infeasible MILPs that all GNNs will, however, treat equally, indicating GNN's lacking power to express general MILPs. Then, we show that, by restricting the MILPs to unfoldable ones or by adding random features, there exist GNNs that can reliably predict MILP feasibility, optimal objective values, and optimal solutions up to prescribed precision. We conducted small-scale numerical experiments to validate our theoretical findings.},
-  archiveprefix = {arxiv},
+  archiveprefix = {arXiv},
   keywords = {*,Computer Science - Machine Learning,end-to-end,GNN,imitation learning,Mathematics - Optimization and Control},
   file = {/home/bruno/Zotero/storage/GR8JMPDF/Chen et al. - 2022 - On Representing Mixed-Integer Linear Programs by G.pdf;/home/bruno/Zotero/storage/6TXX9PND/2210.html}
 }
@@ -288,7 +288,7 @@
   doi = {10.48550/arXiv.1906.01629},
   urldate = {2023-04-27},
   abstract = {Combinatorial optimization problems are typically tackled by the branch-and-bound paradigm. We propose a new graph convolutional neural network model for learning branch-and-bound variable selection policies, which leverages the natural variable-constraint bipartite graph representation of mixed-integer linear programs. We train our model via imitation learning from the strong branching expert rule, and demonstrate on a series of hard problems that our approach produces policies that improve upon state-of-the-art machine-learning methods for branching and generalize to instances significantly larger than seen during training. Moreover, we improve for the first time over expert-designed branching rules implemented in a state-of-the-art solver on large problems. Code for reproducing all the experiments can be found at https://github.com/ds4dm/learn2branch.},
-  archiveprefix = {arxiv},
+  archiveprefix = {arXiv},
   keywords = {*,background,Computer Science - Machine Learning,GNN,imitation learning,Mathematics - Optimization and Control,Statistics - Machine Learning},
   annotation = {[A]},
   file = {/home/bruno/Zotero/storage/YRTHDXWT/Gasse et al. - 2019 - Exact Combinatorial Optimization with Graph Convol.pdf;/home/bruno/Zotero/storage/8NIYE484/1906.html}
@@ -378,7 +378,7 @@
   doi = {10.48550/arXiv.1412.6544},
   urldate = {2024-05-01},
   abstract = {Training neural networks involves solving large-scale non-convex optimization problems. This task has long been believed to be extremely difficult, with fear of local minima and other obstacles motivating a variety of schemes to improve optimization, such as unsupervised pretraining. However, modern neural networks are able to achieve negligible training error on complex tasks, using only direct training with stochastic gradient descent. We introduce a simple analysis technique to look for evidence that such networks are overcoming local optima. We find that, in fact, on a straight path from initialization to solution, a variety of state of the art neural networks never encounter any significant obstacles.},
-  archiveprefix = {arxiv},
+  archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning,Computer Science - Neural and Evolutionary Computing,Statistics - Machine Learning},
   file = {/home/bruno/Zotero/storage/EJ8I37L9/1412.html}
 }
@@ -403,7 +403,7 @@
   doi = {10.48550/arXiv.2302.05636},
   urldate = {2023-04-27},
   abstract = {Mixed-integer linear programming (MILP) is widely employed for modeling combinatorial optimization problems. In practice, similar MILP instances with only coefficient variations are routinely solved, and machine learning (ML) algorithms are capable of capturing common patterns across these MILP instances. In this work, we combine ML with optimization and propose a novel predict-and-search framework for efficiently identifying high-quality feasible solutions. Specifically, we first utilize graph neural networks to predict the marginal probability of each variable, and then search for the best feasible solution within a properly defined ball around the predicted solution. We conduct extensive experiments on public datasets, and computational results demonstrate that our proposed framework achieves 51.1\% and 9.9\% performance improvements to MILP solvers SCIP and Gurobi on primal gaps, respectively.},
-  archiveprefix = {arxiv},
+  archiveprefix = {arXiv},
   keywords = {end-to-end,GNN,imitation learning,Mathematics - Optimization and Control,Pred-and-opt},
   file = {/home/bruno/Zotero/storage/CYLS7UJ4/Han et al. - 2023 - A GNN-Guided Predict-and-Search Framework for Mixe.pdf;/home/bruno/Zotero/storage/QJDR4L2K/2302.html}
 }
@@ -473,13 +473,12 @@
   file = {/home/bruno/Zotero/storage/QZTXDMDS/Khalil et al. - 2022 - MIP-GNN A Data-Driven Framework for Guiding Combi.pdf}
 }
 
-@article{kingma2014adam,
-  title = {Adam: {{A}} Method for Stochastic Optimization},
-  author = {Kingma, Diederik P and Ba, Jimmy},
-  year = {2014},
-  journal = {arXiv preprint arXiv:1412.6980},
-  eprint = {1412.6980},
-  archiveprefix = {arxiv}
+@inproceedings{kingmaAdamMethodStochastic2015,
+  title = {Adam: {{A Method}} for {{Stochastic Optimization}}},
+  booktitle = {3rd {{International Conference}} on {{Learning Representations}}, {{ICLR}} 2015, {{San Diego}}, {{CA}}, {{USA}}, {{May}} 7-9, 2015, {{Conference Track Proceedings}}},
+  author = {Kingma, Diederik P. and Ba, Jimmy},
+  editor = {Bengio, Yoshua and LeCun, Yann},
+  year = {2015}
 }
 
 @misc{kipfSemiSupervisedClassificationGraph2017,
@@ -632,7 +631,7 @@
   doi = {10.48550/arXiv.2012.13349},
   urldate = {2023-05-08},
   abstract = {Mixed Integer Programming (MIP) solvers rely on an array of sophisticated heuristics developed with decades of research to solve large-scale MIP instances encountered in practice. Machine learning offers to automatically construct better heuristics from data by exploiting shared structure among instances in the data. This paper applies learning to the two key sub-tasks of a MIP solver, generating a high-quality joint variable assignment, and bounding the gap in objective value between that assignment and an optimal one. Our approach constructs two corresponding neural network-based components, Neural Diving and Neural Branching, to use in a base MIP solver such as SCIP. Neural Diving learns a deep neural network to generate multiple partial assignments for its integer variables, and the resulting smaller MIPs for un-assigned variables are solved with SCIP to construct high quality joint assignments. Neural Branching learns a deep neural network to make variable selection decisions in branch-and-bound to bound the objective value gap with a small tree. This is done by imitating a new variant of Full Strong Branching we propose that scales to large instances using GPUs. We evaluate our approach on six diverse real-world datasets, including two Google production datasets and MIPLIB, by training separate neural networks on each. Most instances in all the datasets combined have \$10{\textasciicircum}3-10{\textasciicircum}6\$ variables and constraints after presolve, which is significantly larger than previous learning approaches. Comparing solvers with respect to primal-dual gap averaged over a held-out set of instances, the learning-augmented SCIP is 2x to 10x better on all datasets except one on which it is \$10{\textasciicircum}5\$x better, at large time limits. To the best of our knowledge, ours is the first learning approach to demonstrate such large improvements over SCIP on both large-scale real-world application datasets and MIPLIB.},
-  archiveprefix = {arxiv},
+  archiveprefix = {arXiv},
   keywords = {*,Computer Science - Artificial Intelligence,Computer Science - Discrete Mathematics,Computer Science - Machine Learning,Computer Science - Neural and Evolutionary Computing,end-to-end,imitation learning,Mathematics - Optimization and Control},
   file = {/home/bruno/Zotero/storage/84IBM572/Nair et al. - 2021 - Solving Mixed Integer Programs Using Neural Networ.pdf;/home/bruno/Zotero/storage/7NQQJVA5/2012.html}
 }
