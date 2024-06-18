@@ -243,25 +243,103 @@ The dataset $\mathcal{D}$ built as described in Sec.~\ref{sec:data-acquisition} 
 As the ideal performance metric, i.e., the quality of the predicted solution, is not computable\footnote{In fact, it is not even defined over infeasible solutions.} for a vector of variable biases, the Binary Cross-Entropy (BCE) loss is used, as it is the loss of choice of the majority of works with similar applications~\cite{nairSolvingMixedInteger2021,hanGNNGuidedPredictandSearchFramework2023,khalilMIPGNNDataDrivenFramework2022,gasseExactCombinatorialOptimization2019}.
 In MS, the BCE loss is weighed by a normalized value, which, as \citeonline{nairSolvingMixedInteger2021} has shown, is equivalent to the Kullback-Leibler divergence between the predicted variable biases and the actual variable biases of the near-optimal solutions.
 
-For all experiments, Adam~\cite{kingmaAdamMethodStochastic2015} was used to minimize the cost function.
-The validation set $\mathcal{D}_{\textrm val}$ was used to perform early-stopping, i.e., to interrupt the training once the cost computed at the validation set achieves a minimum (over the epochs).
-Early-stopping allows us to avoid overfitting without the need to tune the training budget.
+For all experiments, Adam~\cite{kingmaAdamMethodStochastic2015} was used to perform stochastic gradient descent on the cost function (average BCE loss) over the training set.
 
-\subsection{Hyperparameter Optimization}
+\subsection{Hyperparameter Tuning}
 
-- hyperparameter space as a tree?
-%         'lr': [1e-2, 1e-3, 1e-4],
-%         'n_h_feats': [2**5, 2**6, 2**7, 2**8],
-%         'batch_size': [2**2, 2**3, 2**4, 2**5],
-%         'single_conv_for_both_passes': [True, False],
-%         'n_passes': [1, 2, 3],
-%         'conv1': ['GraphConv', 'SAGEConv'],
-- hps optimized through random search
-- more details in the github repo and wandb
+Beyond usual hyperparameters from deep learning, such as learning rate and number of layers, the solution prediction model built for the ONTS problem has several hyperparameters that do not have well-established values in the literature.
+Several experiments were performed to search for hyperparameter configurations that lead to the best solution prediction model for the ONTS problem.
+The validation set was used for such experiments and the BCE loss was defined as the metric to be minimized.
+
+The choice between the graph convolution operator proposed by \citeonline{kipfSemiSupervisedClassificationGraph2017} (henceforth referred to GCN) and the SAGE model is treated as a hyperparameter.
+Early experiments with the SAGE model showed no benefits from complex aggregation functions such as an LSTM, as was proposed by \citeonline{hamiltonInductiveRepresentationLearning2017}.
+In fact, from the aggregation functions proposed by the authors, the one that performed the best was the element-wise max-pooling.
+The GCN graph convolution was implemented as proposed originally.
+
+Considering the choice for graph convolution to apply to both half-convolutions (from variable nodes to constraint nodes, and from constraint nodes to variable nodes), it becomes possible to evaluate the effects of parameter sharing.
+When parameter sharing is enabled, both half-convolutions are performed using the same parameters, instead of parameter vectors specific for that function.
+Parameter sharing, also called weight tying, has been successfully applied to transformers (deep learning models based on the attention mechanism)~\cite{inan2017tying,press-wolf-2017-using}.
+Due to the proximity between GNNs and transformers \cite{joshiTransformersAreGraph2020}, parameter sharing is evaluated in the context of the ONTS problem.
+
+Beyond the choice for the graph convolution operator and whether or not to share the parameters, hyperparameters related to the model structure and the training are also taken into consideration.
+Table~\ref{tab:hyperparameters} summarizes all hyperparameters considered for tuning along with value ranges, which were determined in early experiments on the validation set.
+A random search was performed to select the best hyperparmeter configuration for OS and MS.
+The configurations were used to train a model for 10 epochs on $\mathcal{D}_\textrm{train}$, after which the model was evaluated on the validation set.
+Further implementation details and hyperparameter search results can be seen in this project's code repository\footnote{\url{https://github.com/gos-ufsc/sat-gnn}}.
+
+\begin{table}[h]
+    \centering
+    \caption{Hyperparameters adjusted for the solution prediction models trained with either OS and MS for the ONTS problem. The columns  \emph{OS} and \emph{MS} present the best hyperparameter configuration found through random search for both training types.}
+    \label{tab:hyperparameters}
+    \begin{tabular}{l|c|c|c}
+	\toprule
+	Hyperparameter & Ranges & OS & MS \\
+	\midrule
+	Training & & & \\
+	\quad Learning rate & $\left\{ 10^{-2}, 10^{-3}, 10^{-4} \right\} $   & $10^{-2}$ & $10^{-3}$ \\
+	Architecture &  & & \\
+	\quad Number of hidden features ($d$) & $\left\{ 2^{5},2^{6},2^{7},2^{8} \right\} $   & $2^{6}$ & $2^{8}$ \\
+	\quad Number of layers ($L$)  & $\left\{ 1, 2, 3 \right\} $   & $2$ & $3$ \\
+	\emph{GraphConv} &  & & \\
+	\quad Operator & $\left\{ \text{GCN}, \text{SAGE} \right\} $   & SAGE & SAGE \\
+	\quad Parameter sharing & $\left\{ \text{Yes}, \text{No} \right\} $   & Yes & Yes \\
+	\bottomrule
+    \end{tabular}
+\end{table}
+
+The hyperparameter configuration that resulted in the best model for both OS and MS is presented in Table~\ref{tab:hyperparameters}.
+For both cases, the best model uses the SAGE function instead of GCN, although the best model found for MS is considerably bigger, with more layers and hidden features.
+Note that both models also perform parameter sharing, suggesting that the proposed approach is effective.
 
 \subsection{Final solution prediction models}
 
-- the best hp configuration for both 
+The best hyperparameter configuration found through random search for both OS and MS is used to train new models with a training budget of 100 epochs.
+However, early-stopping is performed using the validation set, i.e., during the training, the model that performs the best on the validation set (over the epochs) is selected.
+% Putting it into terms, the performance of the models on the validation set is evaluated during training.
+% Then, the model with the lowest validation set cost is returned, which is effectively the same as stopping the training once the model achieves a minimum on the validation set over the epochs.
+Early-stopping allows to avoid overfitting without the need to tune the training budget.
+The training curves can be seen in Fig.~
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{training_curve_optimal.pdf}
+        \caption{Optimal Solution}\label{fig:training-bs}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{training_curve_multi.pdf}
+        \caption{Multiple Solutions}\label{fig:training-ms}
+    \end{subfigure}
+    \caption{Training curves for the best solution prediction models trained through OS (a) or MS (b). The average BCE on the validation set is used for early-stopping the training (highlighted in red).}
+    \label{fig:opt-training-curves}
+\end{figure}
+
+The model trained with OS achieved an validation cost of 0.2887 and a test cost of 0.2873, whereas the model trained with MS achieved a validation cost of 0.2451 and a test cost of 0.2482.
+These values cannot be used to compare the training approaches, once the cost functions are different, but they indicate an absence of overfitting in both models, as the validation and test values are very close.
+However, a comparison across training approaches can be performed when analyzing the confidence of the models on the test set.
+A model's confidence is the predicted bias of the most likely assignment, i.e., in a binary problem, a model's confidence on the predicted value for the $j$-th variable is $\hat{p}_j$, if $\hat{y} = 1$, and $1-\hat{p}_j$ if $\hat{y}=0$.
+To consider the entire test set, the confidence is measured at each time step, averaging over all tasks of all instances.
+The result can be seen in Fig.~\ref{fig:prediction-confidences}.
+It is possible to note that the MS model was, on average, much more confident of its predictions than the OS model.
+Furthermore, both models provide significantly more confident predictions for the $\bm{\phi}$ variables than the $\bm{x}$ variables.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{X_confidences.pdf}
+        \caption{$x_{j,t}$}\label{fig:conf-x}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Phi_confidences.pdf}
+        \caption{$\phi_{j,t}$}\label{fig:conf-phi}
+    \end{subfigure}
+    \caption{Average confidence of predicted values for (a) $\bm{x}$ and (b) $\bm{\phi}$ variables of the models trained via OS and MS. Each bar is the average confidence over the predictions for all tasks $j$ of all instances $I$ in the test set.}
+    \label{fig:prediction-confidences}
+\end{figure}
 
 \section{Learning-based heuristics}
 
