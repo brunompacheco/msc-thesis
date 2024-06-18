@@ -228,7 +228,7 @@ In fact, local optima can be a source of overfitted parameter vectors.
 A prominent problem of SGD is that it can become very slow in face of flat regions, saddle points, and noisy gradients, all of which are abundant in deep learning~\cite{goodfellowQualitativelyCharacterizingNeural2015,Goodfellow-et-al-2016}.
 To counter-act such effects, one can add a \emph{momentum} to the computation of the gradient estimate, akin to the physical intuition~\cite{nesterovMethodSolvingConvex1983,polyakAccelerationStochasticApproximation1992}.
 Another approach is to use an \emph{adaptive learning rate}, which is dynamically adjusted based on the values of the computed gradient~\cite{jacobsIncreasedRatesConvergence1988}.
-The Adam optimizer~\cite{kingma2014adam} combines both momentum and adaptive learning rates, with its name actually deriving from ``adaptive moments.''
+The Adam optimizer~\cite{kingmaAdamMethodStochastic2015} combines both momentum and adaptive learning rates, with its name actually deriving from ``adaptive moments.''
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
