@@ -112,7 +112,7 @@ For example, following a maximum likelihood estimation approach~\cite{goodfellow
 Note that, because there are only binary variables, the model is designed with output only for the bias towards $k=1$, as $\hat{p}_j\approx p(y_j^*=1|I) \iff 1-\hat{p}_j\approx p(y_j^*=0|I)$.
 
 
-\subsection{Multiple Targets}
+\subsection{Multiple Targets}\label{sec:multiple-targets}
 
 Instead of approximating the bias of the optimal solution, \citeonline{nairSolvingMixedInteger2021} proposed to approximate the bias of the \emph{near}-optimal solutions.
 Intuitively, this approach provides the model with more information on the feasible region of the problem, and empirical results suggest that it has improved performance in the construction of heuristics~\cite{khalilMIPGNNDataDrivenFramework2022,hanGNNGuidedPredictandSearchFramework2023}.
