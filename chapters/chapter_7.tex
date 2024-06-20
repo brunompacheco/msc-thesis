@@ -19,6 +19,39 @@ More specifically, the general problem setup is that of repeatedly solving insta
 This setup appears, e.g., in the management of energy distribution networks, vehicle routing under varying traffic conditions, workload apportioning across workers, and maritime inventory routing~\cite{gasseMachineLearningCombinatorial2022,papageorgiouMIRPLibLibraryMaritime2014}.
 In other words, the solution approach evaluated in the presented experiments is of interest by many different application areas.
 
+\section{Solution prediction models}
+
+Two approaches were evaluated: training solely with the optimal solution for each instance (OS) and training with multiple solutions for each instance (MS).
+Both approaches were successful in training solution prediction models, with no signs of overfitting.
+Although a direct comparison between solution prediction models was not possible, the MS approach generated a more confident model, as Fig~\ref{fig:prediction-confidences} illustrates.
+Further experiments demonstrated that, indeed, the models trained via MS resulted in better primal heuristics.
+
+GNNs were used as the core of the solution prediction models, as they are perfectly suitable for instances with varying number of variables, as is the case of the ONTS problem based on the FloripaSat-I mission.
+but the experiments on the validation set indicated
+Key architectural features of the mode were adjusted through hyperparameter tuning using the validation set.
+These tuning experiments indicate that the SAGE operator is a better graph convolution than the GCN (by \citeonline{kipfSemiSupervisedClassificationGraph2017}) for solution prediction models trained through either MS or OS.
+These experiments also indicate that MS may profit from larger models, as the best hyperparameter configuration found for MS has a larger number of layers and a significantly larger number of hidden features than the best for OS.
+Finally, the proposed parameter sharing approach was also beneficial for both training strategies. 
+
+\section{Matheuristics}
+
+The solution prediction models were used to build three distinct matheuristics: warm-starting, early-fixing and trust-region.
+All matheuristics are based on partial solutions generated with the deep learning models.
+The partial solution size, along with the trust-region radius, was adjusted using the validation set twice for each matheuristic and each solution prediction model.
+Once with the goal of reducing the time to find a feasible solution, and then another aiming to maximize solution quality given 2 minutes.
+
+Warmstarting provided, at best, marginal gains in comparison to the baseline approach.
+However, a careful inspection of the performance of the heuristic over time (right-side plots in Fig~\ref{fig:heuristics-test-results}) shows that there is a "sweet-spot" in terms of time budget (around 60 seconds) for which using the MS model for warmstarting an MILP solver might provide significant improvements.
+Although the trust-region approach can be seen as a generalization of early-fixing, the results do not back its use.
+Solving through the trust-region method only marginally outperformed the early-fixing when using the MS model \emph{and} when adjusted for maximizing the normalized objective value.
+Even then, it is not a statistically significant result and the candidate solutions found over time (right-side plot in Fig~\ref{fig:heuristics-test-results-obj}) show, on average, an advantage of the early-fixing approach for almost the entirety of the time budget.
+
+The results show that early-fixing consistently provided significant improvements over the baseline, as the statistical tests illustrated in Fig.~\ref{fig:cdds} show.
+In particular, the early-fixing matheuristic using the MS model achieved, on one hand, a 35\,\% reduction in the time to find a feasible solution, and, on the other hand, a 43\,\% gain in the normalized objective value for the candidate solution found within 2 minutes.
+These results are not only statistically significant, but impactful with respect to the ONTS problem perspective.
+
+\section{Data acquisition and generalization}
+
 A shared challenge across applications of learning-based heuristics is that of data acquisition.
 Historical data is seldom available in the volume necessary to compose a training set suitable for modern deep learning techniques, which leads practitioners to resort to data generation~\cite{bengioMachineLearningCombinatorial2021}.
 Generating instances, by itself, is not usually a problem, as parameter ranges can be defined with enough margin to encompass values encountered in practice.
@@ -26,8 +59,7 @@ However, the solution to these randomly sampled instances is needed.
 On top of that, the interest in learning-based heuristic solutions is directly related to the problem difficulty, which, in turn, increases the cost for data generation.
 In other words, the bigger the potential for learning-based heuristics, the more expensive it is to acquire training data.
 
-- the "trick" of limiting the time to find an optimal solution, as was done here, is known to impose limits in the generalization of the results.
-- As discussed in Yehuda et al., sampling instances from NP-hard problems that are solvable in tractable time is actually equivalent to sampling from an easier sub-problem (cite Cappart's review on GNNs for CO). 
-- This, however, highlights the generalization capabilities of GNNs as shown in this work's results, indicating that easier instances can be used to develop solution predictions models capable of tackling hard instances.
-- Gasse, 2019, has already shown this generalization capacity to instances larger than seen during training
+A notable limitation of generating instances with a limited time to find an optimal solution, as done in the experiments, is that it restricts the generalization of the results.
+As discussed by \citeonline{pmlr-v119-yehuda20a}, sampling instances from NP-hard problems solvable in tractable time essentially means sampling from an easier sub-problem (see also \citeonline{cappartCombinatorialOptimizationReasoning2022}).
+This, however, underscores the generalization capabilities of GNNs demonstrated in this work, indicating that such models can effectively tackle instances harder than those seen during training, reinforcing the results of \citeonline{gasseExactCombinatorialOptimization2019}.
 
