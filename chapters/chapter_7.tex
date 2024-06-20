@@ -5,10 +5,21 @@
 \phantomsection
 
 % ---
-\chapter{Discussion}
+\chapter{Discussion}\label{chap:discussion}
 \phantomsection
 
-Data acquisition for learning-based heuristics is a particularly challenging task. 
+The experiments described in Chapter~\ref{chap:experiments} aimed at evaluating the effectiveness of learning-based heuristics in a realistic application, namely, the ONTS problem.
+The problem setup involves finding the best set of tasks that results in a high-quality, feasible schedule, at every communication window.
+This translates into solving multiple instances of MILP problems in a small window of time.
+As a consequence, the NP-hard nature of MILP makes the algorithmic approach to solving such instances impossible.
+In this case, the baseline is to run an MILP solver with limited time, which has no guarantees of finding feasible or optimal solutions\footnote{And, thus, can be said a heuristic solution approach.}.
+
+Although all experiments were performed using data from the ONTS problem, the setup is very general, which renders the results relevant to many different applications.
+More specifically, the general problem setup is that of repeatedly solving instances of an optimization that follow an unknown distribution, under limited time.
+This setup appears, e.g., in the management of energy distribution networks, vehicle routing under varying traffic conditions, workload apportioning across workers, and maritime inventory routing~\cite{gasseMachineLearningCombinatorial2022,papageorgiouMIRPLibLibraryMaritime2014}.
+In other words, the solution approach evaluated in the presented experiments is of interest by many different application areas.
+
+A shared challenge across applications of learning-based heuristics is that of data acquisition.
 Historical data is seldom available in the volume necessary to compose a training set suitable for modern deep learning techniques, which leads practitioners to resort to data generation~\cite{bengioMachineLearningCombinatorial2021}.
 Generating instances, by itself, is not usually a problem, as parameter ranges can be defined with enough margin to encompass values encountered in practice.
 However, the solution to these randomly sampled instances is needed.
