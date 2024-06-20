@@ -18,3 +18,82 @@
 - outlook
     - instance generation, following last paragraph of discussion in SatGNN paper
 
+
+This dissertation set out to evaluate the effectiveness of learning-based primal heuristics for Mixed-Integer Linear Programming (MILP) when such heuristics are built with solution prediction models.
+The research goal was to contribute towards answering the three questions posed in the \nameref{chap:intro}.
+% The literature on solution prediction models and learning based heuristics was reviewed and the most promising techniques were selected.
+The major contributions of the present work towards answering these questions are present in Chapters~\ref{chap:solution-prediction}, \ref{chap:experiments}, and \ref{chap:discussion}.
+The realistic application of choice was the Offline Nanosatellite Task Scheduling (ONTS) problem, for which the most promising techniques for developing learning-based primal heuristics, identified during the literature review, were implemented and evaluated.
+
+The design of solution prediction models was analyzed in terms of architectural choices.
+The basic architecture was defined from the graph neural network (GNN) architecture built with layers with two half-convolutions, which is widely used in similar applications for optimization problems~\cite{gasseExactCombinatorialOptimization2019,nairSolvingMixedInteger2021,khalilMIPGNNDataDrivenFramework2022,cappartCombinatorialOptimizationReasoning2022}.
+The experimental results indicate that the SAGE operator is a superior graph convolution to the original operator proposed by \citeonline{kipfSemiSupervisedClassificationGraph2017}.
+Furthermore, using the proposed approach of sharing parameters between the two half-convolutions resulted in the best performing models.
+
+Two training approaches were implemented and evaluated for training solution prediction models with supervision.
+Beyond generating more confident models, the results with the resulting learning-based heuristics also indicate that using multiple solutions from a given instance as targets during training, as proposed by \citeonline{nairSolvingMixedInteger2021}, is better than using solely the (quasi-)optimal solution.
+
+Another aspect of training solution prediction models evaluated during the experiments is data acquisition.
+In the absence of enough historical data, a common challenge to be overcome is the high cost for generating enough data for training solution prediction models~\cite{bengioMachineLearningCombinatorial2021,cappartCombinatorialOptimizationReasoning2022,pmlr-v119-yehuda20a}.
+The significant performance gains showed by the solution prediction models on instances \emph{harder} than those seen during training highlight the generalization capacity of the architecture of choice (GNN) and its impact in alleviating the data acquisition cost, corroborating with the results by \citeonline{gasseExactCombinatorialOptimization2019}.
+
+Finally, three primal matheuristic approaches were implemented and evaluated...
+
+
+
+The results indicate that 
+and loss function design for graph neural networks (GNNs).
+The experiments indicate that taking into consideration more than one solution for each instance (multiple solution training) generates better solution prediction models.
+Furthermore, the proposed approach of sharing parameters between the two half-convolutions that compose the usual GNN architecture for optimization problems showed promising results as well, resulting in the best performing models in both training approaches.
+
+The experiments, detailed in Chapter~\ref{chap:experiments}, show that the selected techniques can provide
+
+% THIS LOOKS MORE LIKE A DISCUSSION THAN CONCLUSION
+% Although training machine learning models to predict solutions to optimization problems is not a new idea, it has received a lot of attention from the research community in recent years, mostly due to the advent of geometric architectures such as Graph Neural Networks.
+% However, the freshness in this area of research combined with the surge in contributions results in a multitude of tools with few 
+
+Focusing on the Offline Nanosatellite Task Scheduling (ONTS) problem as a realistic application, the research sought to answer three pivotal questions: designing deep learning models for MILP candidate solutions, determining the most effective supervised learning techniques for training these models, and incorporating these models into primal heuristics.
+
+
+% FIRST ANSWER
+
+The experiments detailed in Chapter~\ref{chap:experiments} demonstrated the viability of using deep learning-based heuristics to address MILP challenges, particularly in dynamic and time-constrained environments like nanosatellite scheduling.
+The problem setup, which involves generating high-quality schedules during limited communication windows, exemplified the necessity for quick, feasible solutions rather than guaranteed optimal ones.
+This real-world application underscored the impracticality of traditional algorithmic approaches due to the NP-hard nature of MILP, thereby highlighting the value of heuristic methods.
+
+The study evaluated two solution prediction approaches: One-Shot (OS) and Multi-Step (MS).
+The results indicated that the MS approach generated more confident and generally superior models for learning-based heuristics.
+This approach's efficacy suggests its potential for broader applications where rapid and reliable solution prediction is critical.
+
+Further, the research compared three matheuristic strategies against a baseline MILP solver.
+While warmstarting did not yield significant improvements, the trust region approach proved competitive.
+However, the early-fixing method emerged as the most effective, demonstrating a clear advantage in terms of the progression of the objective value over time.
+
+A significant challenge identified was data acquisition for training the learning models.
+Historical data is often insufficient, necessitating the generation of synthetic data.
+The difficulty and cost of generating these instances increase with the complexity of the problem, highlighting a critical barrier to the widespread adoption of learning-based heuristics.
+Nevertheless, the study found that even models trained on easier instances could generalize well to more challenging scenarios, reinforcing the findings of previous research by Gasse et al.
+(2019).
+
+This dissertation contributes to the burgeoning field of deep learning applications for MILP by providing a comprehensive evaluation of supervised solution-prediction models and their integration into primal heuristics.
+The results affirm the potential of deep learning to enhance the efficiency and adaptability of heuristics for complex optimization problems. Future work could further explore the scalability of these models, the integration of unsupervised learning techniques, and the application of these methods to a broader array of MILP problems across different domains.
+
+In summary, this research has successfully demonstrated that deep learning-based primal heuristics offer a promising avenue for addressing the challenges of MILP.
+By providing a robust framework for evaluating and developing these heuristics, this dissertation paves the way for further advancements in the field, ultimately contributing to more efficient and adaptable optimization solutions in practice.
+
+
+% SECOND ANSWER
+The primary objectives of this dissertation were to evaluate primal heuristics for MILP problems based on solution prediction models trained with supervised learning techniques. These objectives were broken down into three specific aims: analyzing the literature on supervised learning solution prediction models for MILP problems, developing learning-based primal heuristics for a realistic application, and evaluating these techniques with respect to their empirical performance and theoretical guarantees.
+
+To achieve these objectives, the dissertation focused on the Offline Nanosatellite Task Scheduling (ONTS) problem as a realistic application. This choice provided a concrete and challenging context for developing and testing the proposed methodologies. The research involved designing and evaluating two solution prediction approaches—One-Shot (OS) and Multi-Step (MS)—as well as comparing three matheuristic strategies against a baseline MILP solver.
+
+The study found that the MS approach generated more confident and generally superior models for learning-based heuristics compared to the OS approach. This outcome indicates the potential of MS models to handle the complexities of MILP problems more effectively. Additionally, among the matheuristic strategies evaluated, the early-fixing method emerged as the most effective, outperforming warmstarting and trust region approaches.
+
+A significant challenge identified during the research was data acquisition for training the learning models. The scarcity of historical data often necessitates the generation of synthetic data, which becomes increasingly costly as the problem complexity rises. Nevertheless, the study demonstrated that models trained on easier instances could generalize well to more challenging scenarios, reinforcing the robustness and applicability of the proposed approaches.
+
+The conclusions drawn from this dissertation underscore the viability of using deep learning-based heuristics to enhance the efficiency and adaptability of MILP solutions. The research contributes to the field by providing a comprehensive evaluation framework and demonstrating the practical benefits of these heuristics in a realistic application.
+
+Looking ahead, further research should focus on improving instance generation techniques to better support the training of deep learning models. As suggested in the SatGNN paper, generating instances that accurately reflect the complexity and variability of real-world problems is crucial for advancing the effectiveness of learning-based heuristics. Additionally, exploring the integration of unsupervised learning techniques and applying these methods to a broader array of MILP problems across different domains will be essential for the continued development and refinement of these approaches.
+
+In summary, this dissertation successfully demonstrated that deep learning-based primal heuristics offer a promising solution to the challenges of MILP. By achieving its objectives and providing valuable insights into the development and application of these heuristics, this research paves the way for further advancements in the field, ultimately contributing to more efficient and adaptable optimization solutions in practice.
+
