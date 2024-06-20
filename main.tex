@@ -62,6 +62,15 @@ english				% o último idioma é o principal do documento
 \urlstyle{same}
 
 
+% Comando que simula a finalizacao de uma parte no bookmark e
+% adiciona espaco de \part no sumario
+\newcommand{\phantompart}{%
+    \bookmarksetup{startatroot}%
+    \phantomsection%
+    \addtocontents{toc}{\vspace{\cftbeforechapterskip}}
+}
+% -----
+
 %----------------------------------------------------------------------
 % Estilo de cores para códigos
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -238,6 +247,7 @@ chapters/chapter_3,
 chapters/chapter_4,
 chapters/chapter_5,
 chapters/chapter_6,
+chapters/chapter_7,
 chapters/conclusion,
 % aftertext/apendice_a,
 % aftertext/anexo_a,
@@ -409,10 +419,13 @@ chapters/conclusion,
 	\part{Experiments and Results}\label{experiments-and-results}
 
 	\include{chapters/chapter_6}
+	\include{chapters/chapter_7}
 
 	% \phantompart
 
 	\include{chapters/conclusion}
+
+	% \phantompart
 	
 	% ----------------------------------------------------------
 	% ELEMENTOS PÓS-TEXTUAIS

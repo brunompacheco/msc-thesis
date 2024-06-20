@@ -1,24 +1,19 @@
+% \phantomsection
+% 
+% % https://tex.stackexchange.com/questions/5076/is-it-possible-to-keep-my-translation-together-with-original-text
+% \chapter*{Conclusion}\label{chap:conclusion}
+% \addcontentsline{toc}{chapter}{Conclusion}
+% \phantomsection
 
-% The \phantomsection command is needed to create a link to a place in the document that is not a
-% figure, equation, table, section, subsection, chapter, etc.
-% https://tex.stackexchange.com/questions/44088/when-do-i-need-to-invoke-phantomsection
-\phantomsection
+\part*{Conclusion}\label{conclusion}
+\addcontentsline{toc}{part}{Conclusion}
+\phantompart
 
-% ---
-\chapter{Discussion}
-\phantomsection
+- recall objectives
 
-Data acquisition for learning-based heuristics is a particularly challenging task. 
-Historical data is seldom available in the volume necessary to compose a training set suitable for modern deep learning techniques, which leads practitioners to resort to data generation~\cite{bengioMachineLearningCombinatorial2021}.
-Generating instances, by itself, is not usually a problem, as parameter ranges can be defined with enough margin to encompass values encountered in practice.
-However, the solution to these randomly sampled instances is needed.
-On top of that, the interest in learning-based heuristic solutions is directly related to the problem difficulty, which, in turn, increases the cost for data generation.
-In other words, the bigger the potential for learning-based heuristics, the more expensive it is to acquire training data.
+- review what has been done to achieve them
 
-- the "trick" of limiting the time to find an optimal solution, as was done here, is known to impose limits in the generalization of the results.
-- As discussed in Yehuda et al., sampling instances from NP-hard problems that are solvable in tractable time is actually equivalent to sampling from an easier sub-problem (cite Cappart's review on GNNs for CO). 
-- This, however, highlights the generalization capabilities of GNNs as shown in this work's results, indicating that easier instances can be used to develop solution predictions models capable of tackling hard instances.
-- Gasse, 2019, has already shown this generalization capacity to instances larger than seen during training
+- evaluate conclusions
 
-\section{Conclusions}
+- outlook
 
