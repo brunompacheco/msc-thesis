@@ -34,7 +34,7 @@ The planning horizon is fixed at $T=125$ time slots, with one slot per minute, t
 Any instance $I\in \mathcal{I}$ has either 9, 13, 18, 20, 22, or 24 tasks.
 
 Once the orbit of the FloripaSat-I is stable and its received solar flux is constant, the power input vector $\bm{r}$ can be calculated deterministically from solar irradiance measurements as in \citeonline{morschfilhoComprehensiveAttitudeFormulation2020}.
-2 years of solar irradiance data is used as a basis for the power input vectors of the instances in the instance space.
+Two years of solar irradiance data are used as a basis for the power input vectors of the instances in the instance space.
 The set $R$ is used to denote all possible values of $\bm{r}$ from the historical data.
 The other battery-related parameters (see Sec.~\ref{sec:onts-milp-formulation}) are fixed as 
 \begin{align*}
@@ -50,9 +50,9 @@ Therefore, following the notation established in Sec.~\ref{sec:onts-milp-formula
 \begin{equation}\label{eq:parameter-space}
 \Pi = \bigcup_{\substack{J \in \left\{ 9,13,18,20,22,24 \right\} \\ T \in \left\{ 125 \right\} }} \Pi^{J,T}
 ,\end{equation}
-where each $\Pi^{J,T}$ is such that a parameter vector \[
-\pi_I= \left( \bm{u}, \bm{q}, \bm{y}^{\min}, \bm{y}^{\max}, \bm{t}^{\min}, \bm{t}^{\max}, \bm{p}^{\min}, \bm{p}^{\max}, \bm{w}^{\min}, \bm{w}^{\max}, \bm{r}, \rho, e, Q, \gamma, V_b \right)
-\] belongs to $\Pi^{J,T}$ if, and only if,
+where each $\Pi^{J,T}$ is a set of a parameter vectors \[
+\pi_I= \left( \bm{u}, \bm{q}, \bm{y}^{\min}, \bm{y}^{\max}, \bm{t}^{\min}, \bm{t}^{\max}, \bm{p}^{\min}, \bm{p}^{\max}, \bm{w}^{\min}, \bm{w}^{\max}, \bm{r}, \rho, e, Q, \gamma, V_b \right) \in \Pi^{J,T}
+\] such that
 \begin{equation*}
 \begin{aligned}
 &\begin{rcases}
@@ -117,8 +117,11 @@ Similar to the parameter space definition \eqref{eq:parameter-space}, the result
     \mathcal{D} = \bigcup_{\substack{J \in \left\{ 9,13,18,20,22,24 \right\} \\ T \in \left\{ 125 \right\} }}  \mathcal{D}^{(J,T)}
 ,\end{equation}
 where each $\mathcal{D}^{(J,T)}$ is obtained through Algorithm~\ref{alg:dataset-generation}.
-The algorithm was executed such that every new instance $I$ was solved using the SCIP solver~\cite{bestuzhevaSCIPOptimizationSuite2021} with a limited time budget of 5 minutes.
-The best 500 solutions were captured, and, in fact, for every $(I,Z^{*}) \in \mathcal{D}$, $|Z^{*}| = 500$.
+The algorithm is such that each element of the output dataset $(I,Z^\star_I) \in \mathcal{D}^{(J,T)}$ is composed of a \emph{feasible} instance $I$ sampled uniformly from the parameter space (see Eq.~\eqref{eq:parameter-space}) and deemed feasible by an MILP solver.
+Furthermore, the accompanying set $Z^\star_I$ contains the best solutions found by the solver, which are necessary for training the model with multiple solutions as a target (see Sec. \ref{sec:multiple-targets}).
+
+For our experiments, the algorithm was executed such that every new instance $I$ was solved using the SCIP solver~\cite{bestuzhevaSCIPOptimizationSuite2021} with a limited time budget of 5 minutes.
+The best 500 solutions of each instance $I$ were recorded, i.e., for every $(I,Z^{*}) \in \mathcal{D}$, $|Z^{*}_I| = 500$.
 Finally, the dataset is divided as $\mathcal{D} = \mathcal{D}_\textrm{train} \cup \mathcal{D}_{\textrm{val}} \cup \mathcal{D}_\textrm{test}$ following Table~\ref{tab:dataset}.
 
 \begin{algorithm}[h]
@@ -157,10 +160,10 @@ Therefore, the deep learning models trained for the ONTS problem are all built w
 
 \subsection{Instance embedding}
 
-Because GNNs are at the core of the solution prediction models, the instances are embedded as bipartite graphs, following the approach presented in~\ref{sec:graph-embedding}.
+Because GNNs are at the core of the solution prediction models, the instances are embedded as bipartite graphs, following the approach presented in~Sec.~\ref{sec:graph-embedding}.
 Many authors have presented different approaches for defining node features when applying GNNs to MILP problems.
 \citeonline{khalilMIPGNNDataDrivenFramework2022} add variable and constraint degrees\footnote{A variable's degree is the number of constraints in which it has a nonzero coefficient. On the other hand, a constraint's degree is the number of variables in it with non-zero coefficient.} to the baseline (the one presented in Sec.~\ref{sec:graph-embedding}) embedding.
-\citeonline{chenRepresentingMixedIntegerLinear2022} embeds variables' upper and lower bounds as well as constraint set (inequality or equality).
+\citeonline{chenRepresentingMixedIntegerLinear2022} embeds variables' upper and lower bounds as well as constraint type (inequality or equality).
 Works that applied GNNs to generate branch-and-bound heuristics (e.g., for branching), such as \citeonline{dingAcceleratingPrimalSolution2020} and \citeonline{gasseExactCombinatorialOptimization2019}, have captured features usually available at the nodes of the branch-and-bound tree, directly collecting solver-computed features.
 As the focus of the present work is on primal heuristics, the features should be solver-independent, i.e., they must be computed prior to the branch-and-bound application.
 
@@ -191,7 +194,7 @@ Furthermore, this feature design is problem agnostic, i.e., it does not use any 
 
 The structure of the solution prediction models is illustrated in Fig.~\ref{fig:satgnn}.
 The model inputs are the embedding described in the previous section, i.e., the bipartite graph representation of the instance and the sets of feature vectors $F_\textrm{con}$ and $F_\textrm{var}$.
-Each feature vector $\bm{f}_v$ is encoded into a hidden feature vector $\bm{h}^{(0)}_v$ by FCNs
+Each feature vector $\bm{f}_v$ is encoded into a hidden feature vector $\bm{h}^{(0)}_v$ with size $d$ by neural networks
 \begin{align*}
     {\rm NN}_{\rm var}:\mathbb{R}^6& \longrightarrow\mathbb{R}^{d}_+ \\
     \bm{f}_{v_{\rm var}} &\longmapsto \bm{h}^{(0)}_{v_{\rm var}} = {\rm NN}_{\rm var}(\bm{f}_{v_{\rm var}})
@@ -297,8 +300,8 @@ The best hyperparameter configuration found through random search for both OS an
 However, early-stopping is performed using the validation set, i.e., during the training, the model that performs the best on the validation set (over the epochs) is selected.
 % Putting it into terms, the performance of the models on the validation set is evaluated during training.
 % Then, the model with the lowest validation set cost is returned, which is effectively the same as stopping the training once the model achieves a minimum on the validation set over the epochs.
-Early-stopping allows to avoid overfitting without the need to tune the training budget.
-The training curves can be seen in Fig.~
+Early-stopping allows avoiding overfitting without the need to tune the training budget.
+The training curves can be seen in Fig.~\ref{fig:opt-training-curves}.
 
 \begin{figure}[h]
     \centering
@@ -316,7 +319,7 @@ The training curves can be seen in Fig.~
     \label{fig:opt-training-curves}
 \end{figure}
 
-The model trained with OS achieved an validation cost of 0.2887 and a test cost of 0.2873, whereas the model trained with MS achieved a validation cost of 0.2451 and a test cost of 0.2482.
+The model trained with OS achieved a validation cost of 0.2887 and a test cost of 0.2873, whereas the model trained with MS achieved a validation cost of 0.2451 and a test cost of 0.2482.
 These values cannot be used to compare the training approaches, once the cost functions are different, but they indicate an absence of overfitting in both models, as the validation and test values are very close.
 However, a comparison across training approaches can be performed when analyzing the confidence of the models on the test set.
 A model's confidence is the predicted bias of the most likely assignment, i.e., in a binary problem, a model's confidence on the predicted value for the $j$-th variable is $\hat{p}_j$, if $\hat{y} = 1$, and $1-\hat{p}_j$ if $\hat{y}=0$.
@@ -358,8 +361,8 @@ On top of that, the trust-region method also has the radius $\Delta\in \mathbb{N
 
 Two sets of experiments are performed for each model using the validation set.
 For once, the hyperparameters are adjusted with the goal of reducing the average time to find a feasible solution.
-In parallel, the hyperparameters are adjusted to maximize the average normalized objective value (QoS) during a 2 minute time budget.
-For each instance, resulting objective values are normalize by the known maximum.
+In parallel, the hyperparameters are adjusted to maximize the average normalized objective value (QoS) during a 2-minute time budget.
+For each instance, the resulting objective values are normalized by the known maximum.
 This ensures all instances have equal influence in the aggregated value.
 Because there are few hyperparameters to be tuned, the experiments were performed manually, ensuring equal effort was dedicated to all models and resulting heuristics.
 The best values found are reported in Table~\ref{tab:best-N-delta}.
@@ -368,7 +371,7 @@ The best values found are reported in Table~\ref{tab:best-N-delta}.
     \centering
     \caption{%
 	Best values for partial solution size $N$ and trust-region radius $\Delta$ (when applicable) for each heuristic resulting from both solution prediction models (either trained via OS or MS).
-	Columns \emph{Objective} indicate to the values that maximize the normalized objective value in the validation set, while columns \emph{Feasibility} indicate the values tuned to minimize the time taken to find a feasible solution.
+	Columns \emph{Objective} indicates the values that maximize the normalized objective value in the validation set, while columns \emph{Feasibility} indicate the values tuned to minimize the time taken to find a feasible solution.
  }
     \label{tab:best-N-delta}
     \begin{tabular}{ll|cc|cc}
@@ -411,7 +414,8 @@ The performance of each heuristic in the test set is presented in Figure~\ref{fi
     \end{subfigure}
     \caption{%
     Test performance of the learning-based heuristics for the ONTS problem.
-    In (a), the values correspond to the heuristics adjusted to minimize the average time to find a feasible solution (on the validation set).
+    In (a), the boxplots show the quartiles and outliers (circles) of the values that correspond to the heuristics adjusted to minimize the average time to find a feasible solution (on the validation set).
+    The vertical blue lines indicate the medians, while the triangle icons indicate the average values.
     In (b), the heuristics used were those adjusted to maximize the average normalized objective value (also on the validation set).
     The box plots show the distribution of the metric of interest (time to find a feasible solution in (a), and normalized objective value in (b)) over the test set, with the small triangle indicating the average value.
     The plots on the right show the progress of the normalized lower bound (normalized objective value of the candidate solution) during the 2 minutes time budget, averaged over all instances of the test set.
@@ -444,7 +448,7 @@ The results of the statistical significance test are summarized in Figure~\ref{f
     Critical difference diagram of the test set performance of the learning-based heuristics for the ONTS problem.
     Figures (a) and (b) show the performance of heuristics adjusted for minimizing the time to find a feasible solution and maximizing the normalized objective value within a 2 minute budget, respectively.
     The round marker in the axes indicates the heuristic's average performance.
-    A crossbar between two approaches indicates that their performance (distribution on the test set) was not significantly different ($p$-value $>0.05$) in the paired Wilcoxon signed-rank test.
+    A crossbar connecting multiple approaches indicates that their performance (distribution on the test set) was not significantly different ($p$-value $>0.05$) in the paired Wilcoxon signed-rank test.
 %presenting the average test set performance of the SatGNN-based matheuristics (round marker in the axis). A crossbar between two (or more) approaches indicates that their performance (distribution on the test set) was not deemed significantly different ($p$-value$>0.05$) through the paired Wilcoxon signed-rank test~\citep{wilcoxon_1945}.
     }
     \label{fig:cdds}
