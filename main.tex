@@ -62,15 +62,6 @@ english				% o último idioma é o principal do documento
 \urlstyle{same}
 
 
-% Comando que simula a finalizacao de uma parte no bookmark e
-% adiciona espaco de \part no sumario
-\newcommand{\phantompart}{%
-    \bookmarksetup{startatroot}%
-    \phantomsection%
-    \addtocontents{toc}{\vspace{\cftbeforechapterskip}}
-}
-% -----
-
 %----------------------------------------------------------------------
 % Estilo de cores para códigos
 \definecolor{codegreen}{rgb}{0,0.6,0}
