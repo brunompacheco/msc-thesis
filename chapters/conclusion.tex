@@ -5,31 +5,30 @@
 % \addcontentsline{toc}{chapter}{Conclusion}
 % \phantomsection
 
-\phantompart
 \chapter*{Conclusion}\label{conclusion}
 \addcontentsline{toc}{part}{Conclusion}
 \markboth{Conclusion}{Conclusion}
 
 
-This dissertation set out to evaluate the effectiveness of primal heuristics for Mixed-Integer Linear Programming (MILP) that leverage deep learning-based solution prediction models.
+This dissertation evaluates the effectiveness of primal heuristics for Mixed-Integer Linear Programming (MILP) that leverage deep learning-based solution prediction models.
 The overarching goal was to contribute towards answering the three foundational questions posed in the \nameref{chap:intro} regarding the design, training, and integration of these models in primal heuristics.
 
-The key contributions of this work are presented in Chapters~\ref{chap:solution-prediction}, \ref{chap:experiments}, and \ref{chap:discussion}.
-The Offline Nanosatellite Task Scheduling (ONTS) problem served as the realistic application context, providing a challenging and practical benchmark for evaluating the techniques of interest.
+The key contributions of this work were presented in Chapters~\ref{chap:solution-prediction}, \ref{chap:experiments}, and \ref{chap:discussion}.
+The Offline Nanosatellite Task Scheduling (ONTS) problem served as the application context, providing a challenging benchmark for evaluating the techniques of interest.
 
 First, the architectural components of solution prediction models were analyzed.
 The selected architecture was based on graph neural networks (GNNs) with layers featuring two half-convolutions, a structure commonly employed in similar optimization problems~\cite{gasseExactCombinatorialOptimization2019,nairSolvingMixedInteger2021,khalilMIPGNNDataDrivenFramework2022,cappartCombinatorialOptimizationReasoning2022}.
-Experiments demonstrated that the SAGE operator outperformed the original operator proposed by \citeonline{kipfSemiSupervisedClassificationGraph2017}.
+Experiments demonstrated that the SAGE operator~\cite{hamiltonInductiveRepresentationLearning2017} outperformed the original operator proposed by \citeonline{kipfSemiSupervisedClassificationGraph2017}.
 Additionally, the approach of sharing parameters between the two half-convolutions yielded the best-performing models.
 
 Two distinct approaches for training solution prediction models were implemented and evaluated.
 The results indicated that using multiple solutions from a given instance as targets during training, as suggested by \citeonline{nairSolvingMixedInteger2021}, produced more confident and effective models compared to using only a (quasi-)optimal solution.
 
 Another aspect of training solution prediction models evaluated during the experiments is data acquisition.
-In the absence of enough historical data, a common challenge to be overcome is the high cost for generating enough data for training solution prediction models~\cite{bengioMachineLearningCombinatorial2021,cappartCombinatorialOptimizationReasoning2022,pmlr-v119-yehuda20a}.
+In the absence of enough historical data, a common challenge to be overcome is the high cost of generating enough data for training solution prediction models~\cite{bengioMachineLearningCombinatorial2021,cappartCombinatorialOptimizationReasoning2022,pmlr-v119-yehuda20a}.
 
 Data acquisition emerged as a significant challenge, particularly in the absence of sufficient historical data, due to its high computational cost~\cite{bengioMachineLearningCombinatorial2021,cappartCombinatorialOptimizationReasoning2022,pmlr-v119-yehuda20a}.
-However, the experiments demonstrated that the GNN architecture could generalize well to instances \emph{harder}\footnote{In terms of computational cost.} than those seen during training, thereby alleviating some of the data acquisition costs.
+However, the experiments demonstrated that the GNN architecture could generalize well to instances \emph{harder}\footnote{In terms of computational cost.} than those seen during training, alleviating some of the data acquisition costs.
 This finding aligns with the results of \citeonline{gasseExactCombinatorialOptimization2019}, underscoring the robustness and versatility of GNNs in this context.
 
 Finally, the incorporation of solution prediction models into primal heuristics was investigated through experiments with three matheuristic strategies compared to a baseline MILP solver with limited time.
@@ -37,7 +36,7 @@ The approach of early-fixing integer variables based on model predictions consis
 This strategy not only provided the best solutions within limited time frames but also found feasible solutions more rapidly.
 
 In summary, this dissertation demonstrated that deep learning-based primal heuristics offer a promising avenue for addressing the challenges of MILP.
-The research contributes to the growing field of machine learning for combinatorial optimization by providing a thorough evaluation of these heuristics' practical benefits in a realistic application.
+The research contributes to the growing field of machine learning for combinatorial optimization by providing a thorough evaluation of these heuristics' practical benefits in a representative application.
 By achieving its objectives and offering valuable insights into the development and application of these heuristics, this work lays the groundwork for further advancements, ultimately contributing to more efficient and adaptable optimization solutions in practice.
 
 Looking ahead, future research should explore the limits of the generalization capacity of GNNs in combinatorial optimization contexts.
