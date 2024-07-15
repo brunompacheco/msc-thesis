@@ -1,60 +1,115 @@
 
 % resumo em português
 \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
-\begin{resumo}
-    % TODO
-\noindent
-% Redes de distribuição de água (RDA) potável são responsáveis por levar a água das estações de tratamento ou poços para os consumidores finais. São redes compostas por dutos, bombas, tanques e válvulas, cujo custo de operação predominante é a energia elétrica de bombeamento \cite{article:denig-chakroff-2008}. As bombas elevam a água ou pressurizam a rede de forma a atender as demandas dos consumidores dentro de certos parâmetros como pressão hidráulica na entrega. Se esta pressão é alta, gasta-se energia elétrica e há mais perda com vazamentos \cite{article:vieira-2020}; se a pressão é baixa o consumidor é prejudicado e pode haver infiltração nos dutos. Configura-se assim um problema mono-objetivo de redução de custo de energia elétrica de bombeio restrito pelas características físicas da rede, parâmetros de entrega como pressões hidráulicas e inventário nos tanques. Este trabalho propõe um modelo MINLP (Programação Inteira Mista Não Linear) baseado no software de simulação hidráulica de RDAs EPANET 2.2 \cite{inbook:epanet-2}. A literatura da área detalhada em \citeonline{article:mala-jetmarova-2017} é estendida pelo presente trabalho com a inclusão de elementos que até então não eram considerados nos modelos de programação matemática: bombas com velocidade variável e válvulas de alívio de pressão PRV e sustentação de pressão PSV. Para validação deste modelo, realizou-se uma comparação entre os resultados do MINLP contra o EPANET em vários cenários especialmente desenhados para estressar as diversas equações de hidráulica e energia elétrica da RDA. Para viabilizar a solução computacional de instâncias maiores, o MILNLP foi linearizado por partes formando um MILP que passou pelo mesmo processo de validação. O modelo proposto apresentou as características de acurácia esperadas, ainda que com elevado custo computacional. Trabalhos futuros que viabilizem a solução para instâncias maiores teriam o potencial de transformá-lo em uma ferramenta de otimização para operadores de RDAs.
-
-\vspace{\onelineskip}
-	
-% TODO
-\noindent\textbf{Palavras-chaves}: Redes de Distribuição de Água, Economia de Energia, Otimização de Pressão, MILP, EPANET. 
-\end{resumo}
-
-\begin{resumo}[Resumo Expandido]
-% TODO
-
-\noindent\textbf{\large Introdução}\newline
-{\noindent}
-% Redes de distribuição de água (RDA) potável são responsáveis por levar a água das estações de tratamento ou poços para os consumidores finais. São redes compostas por dutos, bombas, tanques e válvulas. A pesquisa em otimização de operação de RDAs divide-se em duas grandes áreas: operação das bombas e qualidade química e biológica da água. Este trabalho é focado na primeira área. Se por um lado a otimização da operação das RDAs é complicada porque as redes são extensas e formadas por elementos não-lineares, a quantidade de restrições impostas pelas características físicas e legislação é muito numerosa; por outro lado os ganhos podem ser enormes, estima-se que 4\% da energia elétrica dos Estados Unidos seja usado para suprir, transportar e tratar água e esgoto. Deste montante, uma RDA típica consume entre 80\% e 85\% com bombeamento \cite{article:denig-chakroff-2008}. A formulação do problema de otimização tem como objetivo minimizar o custo de bombeamento. Qualquer possível redução de bombeamento, no entanto, tem impacto no inventário, ou seja, nos níveis dos tanques da RDA que devem se manter ao longo do tempo; outro fator é a pressão hidráulica de entrega nos consumidores que devem respeitar um limite mínimo estipulado pela legislação; a pressão nos pontos intermediários da RDA também obdece limites, pois se esta for demasiadamente alta, gasta-se energia elétrica e há mais perda com vazamentos \cite{article:vieira-2020}; se esta for baixa o consumidor é prejudicado e pode haver infiltração nos dutos. Configura-se assim um problema mono-objetivo de redução de custo de energia elétrica de bombeio restrito pelas características físicas da rede, parâmetros de entrega como pressões hidráulicas e inventário nos tanques.
-
-\noindent\textbf{\large Objetivos}\newline
-{\noindent}
-% Na vasta literatura da área encontra-se as mais diversas técnicas de modelagem e soluções para o problema de otimização de operação de bombas em RDAs \cite{article:mala-jetmarova-2017}. Neste trabalho optou-se por formulá-lo como um problema de programação matemática. Os trabalhos apresentados até então, que a usam, não modelam alguns equipamentos físicos que têm relação direta com o consumo de energia elétrica das RDAs. São eles: bombas com velocidade variável e válvulas de alívio de pressão (PRV) e sustentação de pressão (PSV). A redução de consumo de energia elétrica pela velocidade da bomba se dá pelo ajuste do ponto de maior eficiência da bomba dadas condições de pressão, inventário e consumo. PRVs e PSVs são elementos muito presentes nas RDAs. Elas contribuem com o gerenciamento de pressão da rede através de ajuste mecânico individual. Embora não tenham relação direta com o consumo, elas determinam a pressão da rede e por extensão todo seu estado. A desatenção dos trabalhos presentes na literatura à esses elementos impactam diretamente na tentativa de usá-los em RDAs reais.
-% Na linha de tornar o modelo o mais próximo possível de redes reais, o presente trabalho se dispôs a formular o problema MINLP (Programação Inteira Mista Não Linear) com rigor, validá-lo em RDAs especialmente projetadas para estressar as restrições e detalhes de cada equipamento. Uma vez validado o MINLP, o modelo é aproximado por um MILP (Programação Inteira Mista Linear) via funções lineares por partes, o que possibilita o uso do estado da arte em \emph{solvers}. Por se tratar de um problema complexo, o custo computacional de solução é elevado. Neste cenário, a dissertação apresenta uma decomposição MILP-NLP dentro de uma técnica de horizonte deslizante com o objetivo de resolver o problema mais conhecido da literatura proposto por \citeonline{article:vanzyl-2004}.
-
-\noindent\textbf{\large Metodologia}\newline
-{\noindent} 
-% EPANET 2.2 \cite{inbook:epanet-2} é uma ferramenta de simulação de RDAs desenvolvida pela Agência de Proteção Ambiental dos Estados Unidos (EPA). Com mais de 1500 citações em artigos científicos e centenas de milhares de downloads, o EPANET pode ser considerado o software de referência para análise e projeto de redes de distribuição de água pressurizadas, sobretudo na academia. A partir das equações de simulação do EPANET, o presente trabalho monta um problema matemático conceitual de otimização que, embora não seja solúvel pelos algoritmos presentes em \emph{solvers}, é etapa fundamental do processo de desenvolvimento que transforma conhecimento físico e de simulação em matemática. A formulação cobre muitas das funcionalidades do EPANET tais como: fonte de água como reservatórios, armazenamento em tanques, consumo variável ao longo do tempo em consumidores, perda de carga em dutos, válvulas de retenção, válvulas de alívio de pressão (PRV) e sustentação de pressão (PSV), bombas com velocidade variável e curva de eficiência. É a partir do problema conceitual que o problema MINLP é formulado. A função objetivo e restrições são reescritas em AMPL, uma linguagem algébrica para modelagem em programação matemática. O problema é então posto à prova em uma batelada de cenários teste especialmente projetados para estressar cada restrição e suas variantes definidas por variáveis binárias. Como o problema é complexo e com elevado grau de correlação entre as variáveis de decisão, dividiu-se os cenários por equipamento e por fim um cenário simples mas composto por muitos equipamentos demonstra a integração entre os equipamentos. Para RDAs maiores ou horizontes de tempo maior que uma ou duas horas, o MINLP mostrou-se custoso computacionalmente, por isso linearizamos-no através de funções lineares por partes de forma a obter um MILP que pode ser resolvido com \emph{solvers} mais poderosos. Para este o mesmo processo de validação por cenários de equipamentos foi aplicado. Para problemas ainda maiores, seja por número de bombas ou extensão do horizonte propôs-se o uso de um algoritmo de horizonte rolante usando decomposição MILP-NLP. Todos os objetivos específicos mencionados até então são partes de um objetivo geral que é desenvolver uma ferramenta capaz de extrair ganhos de consumo de energia elétrica em RDAs reais em horizontes de tempo representativos da operação da rede. A seção seguinte discute os resultados específicos e gerais alcançados.
-
-\noindent\textbf{\large Resultados e Discussão}\newline
-% Considerando os objetivos específicos da seção anterior, o trabalho tem um sucesso relativo. Não há como medir a adequação da formulação do problema conceitual, somente o reflexo no MINLP. Sobre este, é fácil demonstrar a sua adequação através da acurácia dos valores das variáveis de decisão obtidos do \emph{solver} contra o EPANET. Neste sentido, os resultados foram tão semelhantes que a medida do erro tem pouco significado do ponto de vista de modelagem, sobrando predominantemente erro numérico de computação. Alta acurácia foi desde sempre objetivada por dois motivos: primeiro, porque em modelos muito detalhados erros de modelagem são facilmente interpretados como erro numérico ou imprecisão do \emph{solver}; segundo, porque erros pequenos podem ter efeitos significativos em RDAs grandes, sobretudo porque erros de inventário em tanques se acumulam ao longo do horizonte de tempo. Com um MINLP preciso, a qualidade do MILP é determinada somente pelo número de \emph{breakpoints} das funções lineares por partes. Tal qual o MINLP, o MILP, ainda que com relativamente poucos \emph{breakpoints}, demonstrou-se muito acurado, o credenciando para uso em RDAs reais. Do ponto de vista de desempenho computacional, entretanto, ambas formulações demonstraram-se muito custosas. Um objetivo intermediário que objetivava demonstrar a utilidade do modelo em relação seus pares da literatura era resolver o problema proposto por \citeonline{article:vanzyl-2004}. Muitos trabalhos já usaram-no, e como o modelo desta dissertação é mais completo, esperava-se conseguir demonstrar os ganhos contra um \emph{benchmarking}. Contudo isso não foi possível até então por limites computacionais e técnica de solução. Um passo adiante no sentido de decomposição temporal com algoritmos de horizonte rolante (RHH) foi realizada sem sucesso. Algoritmos RHH resolvem subproblemas mais curtos que o original e colam os resultados de forma que a solução final faça sentido para o problema original. Eles podem ser eficientes em alguns tipos de problemas, mas neste caso as melhores soluções da literatura tiram proveito das 24 horas como um todo, de modo que combinar o resultado de 8 em 8 horas, por exemplo, deteriora a solução. Em suma, vemos que: primeiro, o resultado das formulações MINLP e MILP servem de base para uma ferramenta de otimização útil, mas que, segundo, é necessária mais pesquisa na direção de torná-los eficientes em instâncias maiores.
-
-\noindent\textbf{\large Considerações Finais}\newline
-% A maioria dos trabalhos da área propõe modelos tão simplificados, quanto se podem resolver, ou seja, o que determina a extensão do modelo é a capacidade de solução. Este trabalho, entretanto, segue na direção de formar um modelo otimizável muito completo para operações de RDAs. As soluções podem vir da continuidade das pesquisas, dos computadores e dos \emph{solvers}. O fato de se aproximar do que pode se chamar de completo, dispensa a necessidade de pesquisa na produção do modelo em si, efetivamente desacoplando o modelo de solução. Nesse sentido acreditamos que o trabalho é de contribuição significativa e precisa continuar com a colaboração da comunidade científica, haja vista o potencial de ganhos econômicos e sociais de uma solução final.
-
-\vspace{\onelineskip}
-
-% TODO
-\noindent\textbf{Palavras-chaves}: Redes de Distribuição de Água, Economia de Energia, MINLP, MILP, RHH, EPANET.
-\end{resumo}
 
 % resumo em inglês
 \begin{resumo}[Abstract]
-% TODO
-\begin{otherlanguage*}{english}
-	
-\noindent
-\noindent
-% Potable water distribution networks (WDN) transport water from the water treatment stations or wells to the final consumers. Their components are pipes, pumps, tanks, and valves, and the prevailing cost of operation comes from electric energy drawn by the pumps \cite{article:denig-chakroff-2008}. Pumps convey water from reservoirs and wells and pressurize the pipes so delivery pressure to the final customers is within regulatory parameters. If the pressure is too high, electric energy is wasted, and more water is lost in leaks \cite{article:vieira-2020}; if the pressure is too low, the consumers may be harmed, and there may be infiltration in pipes. Optimizing the operations of WDNs can be stated as a mono-objective electric energy pumping cost constrained by the physical behavior, delivery pressure, and tank inventory. This work proposes a MINLP (Mixed-integer nonlinear programming) model based on the WDN hydraulic simulation software EPANET 2.2 \cite{inbook:epanet-2}. The field literature detailed in \citeonline{article:mala-jetmarova-2017} is extended by the present work by the addition of elements that have not been considered yet in mathematical programming models, such as pumps with variable speed, pressure relief valves (PRV) and pressure sustain valves (PSV). In order to validate the formulation, the MINLP went through a batch of test scenarios specially designed to stress the individual equipment's hydraulic and energy constraints and to be comparable to EPANET. Aiming at turning the solution for larger instances viable, the MINLP is linearized, forming an MILP using piecewise-linear functions and validated likewise. The results in terms of accuracy were excellent despite the high computational cost. Future works that make possible the solution of real-life scale WDNs could turn it into an optimization tool usable by WDNs' operators.
 
+\noindent
+
+Mixed-Integer Linear Programming (MILP) is a crucial tool for solving complex decision-making problems due to its ability to model combinatorial optimization tasks and arbitrarily approximate nonlinear features.
+Deep-learning-based primal heuristics offer a promising solution for efficiently addressing MILP problems.
+Focusing on supervised solution prediction models, this dissertation investigates the design, training, and integration of deep learning models into primal heuristics using the Offline Nanosatellite Task Scheduling (ONTS) problem as a test case.
+Key findings are drawn on model architecture, loss functions, data acquisition, and meta-heuristic.
+On top of that, the proposed learning-based heuristic approaches were able to provide, on one hand, a 35\% reduction in the expected time to find a feasible solution to the ONTS problem, and on another, a 43\% expected gain in the normalized quality of the heuristic solutions.
+These results highlight the potential of deep learning approaches to enhance the adaptability and efficiency of optimization solutions, with future research needed to further explore Graph Neural Network (GNN) generalization and improve data generation techniques.
 
 \vspace{\onelineskip}
 
 \noindent 
-% TODO
-\textbf{Key-words}: Water Distribution Networks, Energy Saving, MINLP, MILP, RHH, EPANET.
+
+\textbf{Keywords}: MILP, Matheuristics, Deep Learning, Learning-based Heuristics, Graph Neural Networks, Nanosatellite Task Scheduling.
+
+\end{resumo}
+
+
+% resumo em português
+
+\begin{resumo}[Resumo]
+\begin{otherlanguage*}{portuguese}
+
+\noindent
+
+A programação linear inteira mista (\emph{Mixed-Integer Linear Programming}, MILP) é crucial no auxílio à tomada de decisão em cenários complexos devido à sua capacidade de modelar problemas de otimização combinatória e aproximar dinâmicas não-lineares.
+Heurísticas baseadas em modelos de aprendizagem profunda (\emph{deep learning}) oferecem uma solução promissora para resolver problemas MILP eficientemente.
+Tendo foco em modelos supervisionados para predição de soluções, esta dissertação investiga o projeto, o treinamento e a integração de modelos de aprendizagem profunda em heurísticas primais, usando o agendamento \emph{offline} de tarefas em nanossatélites (\emph{Offline Nanosatellite Task Scheduling}, ONTS) como um caso de teste.
+As principais conclusões deste trabalho se referem à arquitetura dos modelos, às funções de perda, à aquisição de dados e à meta-heurísticas.
+Além disso, as heurísticas baseadas em aprendizagem propostas para o ONTS foram capazes de reduzir, em média, 35\% do tempo necessário para encontrar uma solução factível, e um ganho médio de 43\% na qualidade das soluções encontradas.
+Esses resultados destacam o potencial da aprendizagem profunda em gerar heurísticas adaptáveis e eficientes para problemas de otimização, direcionando pesquisas futuras para a investigação da capacidade de generalização de redes neurais baseadas em grafos e de técnicas para geração de dados sintéticos.
+
+\vspace{\onelineskip}
+
+\noindent
+\textbf{Palavras-chaves}: MILP, Matheuristics, Deep Learning, Learning-based Heuristics, Graph Neural Networks, Nanosatellite Task Scheduling.
+
+\end{otherlanguage*}
+\end{resumo}
+
+
+% resumo expandido (obrigatório para trabalhos em inglês)
+\begin{resumo}[Resumo Expandido]
+\begin{otherlanguage*}{portuguese}
+
+\noindent\textbf{\large Introdução}\newline
+{\noindent}
+
+Esta dissertação explora a aplicação de heurísticas primais baseadas em modelos de aprendizagem profunda à programação linear inteira mista (\emph{Mixed-Integer Linear Programming}, MILP).
+MILP é uma ferramenta chave da pesquisa operacional devido a sua capacidade de modelar problemas combinatórios e de aproximar, com precisão arbitrária, dinâmicas não-lineares.
+Além disso, existência de \emph{softwares} bem-estabelecidos para resolver problemas de MILP facilita a sua aplicação fácil e a torna confiável.
+
+Encontrar soluções ótimas para problemas de MILP de forma eficiente é um desafio devido ao crescimento exponencial do espaço de busca em função do número de variáveis inteiras.
+Como consequência, heurísticas primais se tornam valiosas como uma forma tratável de encontrar soluções de boa qualidade em contextos de recursos limitados.
+Entretanto, projetar uma heurística primal efetiva é uma tarefa que requer um grande esforço de engenharia pois deve ser feita sob medida para o problema alvo.
+Recentemente, técnicas de aprendizagem profunda foram propostas para criar heurísticas especializadas de forma automática, explorando padrões existentes nos dados do problema alvo.
+
+
+\noindent\textbf{\large Objetivos}\newline
+{\noindent}
+
+O principal objetivo desta dissertação é avaliar heurísticas primais para problemas de MILP baseadas em modelos de predição de solução treinados com supervisão.
+Este objetivo é subdividido em três:
+\begin{itemize}
+    \item Analisar a literatura de aprendizado supervisionado para modelos de predição de solução de problemas de MILP, incluindo arquiteturas, algorithmos de aprendizagem e heurísticas primais baseadas em aprendizagem; 
+    \item Desenvolver heurísticas primais baseadas em aprendizagem para uma aplicação realista, incluindo as técnicas mais promissoras encontradas na literatura; e
+    \item Avaliar as técnicas para heurísticas baseadas em aprendizagem com respeito a performance empírica na aplicação selecionada e as garantias teóricas fornecidas por cada uma delas.
+\end{itemize}
+
+\noindent\textbf{\large Metodologia}\newline
+{\noindent} 
+
+Este trabalho avaliou diversas técnicas encontradas na literatura para os mais distintos componentes de modelos de solução de predição para problemas de MILP.
+Em relação à arquitetura dos modelos de predição de solução, foram investigados o uso de redes neurais baseadas em grafos (\emph{Graph Neural Networks}, GNNs) com convoluções baseadas no operador SAGE e o compartilhamento de parâmetros da rede entre as suas convoluções.
+Duas técnicas distintas de treinamento foram implementadas e avaliadas: a primeira utilizando uma solução (quasi-)ótima, e a segunda utilizando múltiplas soluções para cada instância disponível do problema de otimização.
+Técnicas para aquisição de dados também foram analisadas, em particular no contexto da ausência de dados históricos.
+
+Os experimentos foram projetados para analisar a efetividade das heurísticas propostas para o agendamento \emph{offline} de tarefas em nanossatélites (\emph{Offline Nanosatellite Task Scheduling}, ONTS).
+O cenário analisado do problema em questão é o agendamento durante a operação do satélite em órbita, que requer a solução de múltiplas instâncias do problema de MILP em uma janela de tempo limitada.
+Três diferentes heurísticas baseadas em modelos de solução de predição foram avaliadas tendo dois objetivos distintos: encontrar soluções factíveis no menor tempo possível, e encontrar a melhor solução em um tempo limitado.
+
+
+\noindent\textbf{\large Resultados e Discussão}\newline
+
+Os experimentos no problema de ONTS indicaram as melhores configurações para modelos de predição de solução.
+Em particular, eles apontam uma superioridade do operador SAGE~\cite{hamiltonInductiveRepresentationLearning2017} em relação à convolução original, proposta por \citeonline{kipfSemiSupervisedClassificationGraph2017}, além de um ganho de desempenho ao compartilhar os parâmetros entre as convoluções.
+Os melhores modelos de predição de solução foram treinados utilizando múltiplas soluções por instância do problema como supervisão.
+
+A construção de heurísticas primais com os modelos treinados se mostrou mais efetiva quando se dava através da fixação de variáveis binárias através da predição dos modelos (\emph{early-fixing}).
+Essa estratégia resultou em heurísticas que reduziram, em média, 35\% do tempo necessário para encontrar uma solução factível, e aumentaram em 43\% a qualidade da solução encontrada dado um tempo limitado de 2 minutos.
+
+A aquisição de dados se mostrou um desafio devido a ausência de dados históricos e ao alto custo para encontrar soluções para as instâncias sintéticas do problema.
+De toda forma, a capacidade de generalização dos modelos de predição de solução construídos com GNNs permitiu o treinamento com instâncias mais fáceis (e, portanto, menos custosas) do que aquelas utilizadas para avaliação.
+
+
+\noindent\textbf{\large Considerações Finais}\newline
+
+Esta dissertação demonstra que heurísticas primais baseadas em aprendizagem profunda são promissoras frente aos desafios da MILP.
+Os resultados contribuem para a área de pesquisa de aprendizado de máquina para otimização combinatória ao oferecer uma análise das técnicas mais relevantes encontradas na literatura e uma comparação empírica e não-enviesada em uma aplicação representativa.
+Além disso, esta dissertação aponta para uma investigação mais aprofundada sobre os limites da capacidade de generalização das GNNs em problemas de MILP, técnicas de geração de dados sintéticos para modelos de predição de solução, e um refinamento da eficiência desses mesmos modelos em relação aos dados necessário e o desempenho esperado.
+
+\vspace{\onelineskip}
+
+\textbf{Palavras-chaves}: MILP, Matheuristics, Deep Learning, Learning-based Heuristics, Graph Neural Networks, Nanosatellite Task Scheduling.
+
 \end{otherlanguage*}
 \end{resumo}
 
