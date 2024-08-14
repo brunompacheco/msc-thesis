@@ -82,7 +82,7 @@ In other words, the information contained in the weights (feature vectors) provi
 The graph embedding is perfectly suitable for GNNs.
 In comparison to the feature engineering approach, the graph embedding requires no effort from an human expert, and provides an effective result in terms of representation power and scalability.
 First, because the resulting graph contains all of the information present in the instance while being invariant to constraint and variable permutations.
-On top of that, the size of the GNN does no scale with the size of the graph, but solely with the number of weights (dimension of the feature vector) associated to each node.
+On top of that, the size of the GNN (number of parameters) does no scale with the size of the graph, but solely with the number of weights (dimension of the feature vector) associated to each node.
 
 
 \section{Training Under Supervision}\label{sec:training-solution-prediction}
@@ -153,9 +153,11 @@ The model's predicted solution is a vector $\hat{\bm{y}}$ such that \[
 .\] 
 A partial solution based on the model's confidence is a set
 \begin{equation}\label{eq:partial-solution}
-    \overline{\bm{y}}^{(\alpha)} = \left\{ (j,\hat{y}_j) : \hat{y}_j = \arg\max_{k} \hat{p}_{j,k}\text{ and } \hat{p}_{j,\hat{y}_j} \ge  \alpha \right\}
-,\end{equation}
-in which $\alpha \in [0,1]$ is the \emph{confidence threshold}.
+    \overline{\bm{y}}^{(N)} = \left\{ (j,\hat{y}_j) : \hat{y}_j = \arg\max_{k} \hat{p}_{j,k} \right\}
+\end{equation}
+with the $N$ most confident predictions of the model.
+More precisely, $\overline{\bm{y}}^{(N)}$ has size $N$, and for any $(j_1,\hat{y}_{j_1})\in \overline{\bm{y}}^{(N)}$ and any $(j_2,\hat{y}_{j_2}) \notin \overline{\bm{y}}^{(N)}$, then $\hat{p}_{j_1,\hat{y}_{j_1}} \ge \hat{p}_{j_2,\hat{y}_{j_2}}$.
+
 The diagram of Figure~\ref{fig:warm-starting-diagram} illustrates the building blocks of a warm-start based on a solution prediction deep learning model.
 
 \begin{figure}[h]
@@ -173,7 +175,7 @@ The diagram of Figure~\ref{fig:warm-starting-diagram} illustrates the building b
 	\path [-latex] (I) edge (g);
 	\path [-latex] (g) edge node [above] {$x$} (f);
 	\path [-latex] (f) edge node [above] {$\hat{\bm{p}}$} (conf);
-	\path [-latex] (conf) edge node [above] {$\overline{\bm{y}}^{(\alpha)}$} (solver);
+	\path [-latex] (conf) edge node [above] {$\overline{\bm{y}}^{(N)}$} (solver);
 	\path [-latex] (solver) edge (opt);
 	\draw [-latex] (I.south) -- ++(0,-0.6cm) -| (solver.south);
 
@@ -194,7 +196,7 @@ In fact, even without the warm-starting approach, the simplest matheuristic is t
 Beyond merely indicating to the solver the partial solution that the deep learning model provides, it is possible to constrain the problem with that partial solution.
 This early-fixing approach, also called neural diving by \citeonline{nairSolvingMixedInteger2021}, can be interpreted, given an instance $I\in \mathcal{I}$ and a partial solution as in Equation~\eqref{eq:partial-solution}, as the addition of constraints
 \begin{equation}\label{eq:early-fixing-constraints}
-    y_{j} = \hat{y}_j,\,\forall (j,\hat{y}_j) \in \overline{\bm{y}}^{(\alpha)}
+    y_{j} = \hat{y}_j,\,\forall (j,\hat{y}_j) \in \overline{\bm{y}}^{(N)}
 \end{equation}
 to the optimization problem.
 Because such constraints limit those variables to assuming a single value, which is effectively the same as removing them from the poll of decision variables and treating them as parameters of the problem, the branch-and-bound tree gets significantly pruned.
@@ -216,7 +218,7 @@ The diagram of Figure~\ref{fig:early-fixing-diagram} illustrates this process.
 	\path [-latex] (I) edge (g);
 	\path [-latex] (g) edge node [above] {$x$} (f);
 	\path [-latex] (f) edge node [above] {$\hat{\bm{p}}$} (conf);
-	\path [-latex] (conf) edge node [above] {$\overline{\bm{y}}^{(\alpha)}$} (ef);
+	\path [-latex] (conf) edge node [above] {$\overline{\bm{y}}^{(N)}$} (ef);
 	\path [-latex] (ef) edge node [above] {$\overline{I}$} (solver);
 	\path [-latex] (solver) edge (opt);
 	\draw [-latex] (I.south) -- ++(0,-0.6cm) -| (ef.south);
@@ -228,18 +230,18 @@ The diagram of Figure~\ref{fig:early-fixing-diagram} illustrates this process.
 
 Naturally, the addition of the early-fixed constraints implies that there are no guarantees that the solution found is optimal.
 In fact, the resulting problem instance (denoted $\overline{I}$, as in Figure~\ref{fig:early-fixing-diagram}) might be infeasible, if the added constraints come from an infeasible assignment.
-However, by adjusting the parameter $\alpha$, which controls the size of the partial solution, it is possible to indirectly adjust the size of the resulting branch-and-bound tree, as a smaller value of $\alpha$ implies in more variables in the partial solution, thus, more fixing constraints, which result in a smaller tree. 
-In fact, $\alpha\to 0$ reduces the early-fixing matheuristic to the naïve use of the solution predicted by the deep learning model.
-Furthermore, it is easy to see that, instead of a fixed threshold $\alpha$, one can build partial solutions by picking the $n-n'$ ($n' < n$) variables that the model is most confident of, such that the resulting problem instance always has $n'$ variables and, thus, can be solved in a tractable manner.
+However, by adjusting the size of the partial solution $N$, it is possible to indirectly adjust the size of the resulting branch-and-bound tree, as more variables in the partial solution, implies in more fixing constraints, which results in a smaller tree. 
+In fact, $N\to n$ reduces the early-fixing matheuristic to the naïve use of the solution predicted by the deep learning model.
+Furthermore, it is easy to see that, instead of a fixed $N$, one can build partial solutions by choosing $N=n-n'$ (where $n' \ll n$ is a fixed value), such that the resulting problem instance always has $n'$ variables and, thus, can be solved in a tractable manner.
 
 
 \subsection{Trust-region}
 
 Instead of strictly fixing the variables based on the model's output, \citeonline{hanGNNGuidedPredictandSearchFramework2023} have proposed to allow a small deviation from that value.
 In other words, the solution prediction model's output is used to define a \emph{trust region} in which an MILP solver can search for the optimal solution.
-Instead of constraints like in Equation~\eqref{eq:early-fixing-constraints}, the instance is modified with the addition of constraints of the form
+Instead of constraints like in Equation~\eqref{eq:early-fixing-constraints}, the instance is modified with the addition of constraints\footnote{Note that Equation \eqref{eq:trust-region-constratint} can be implemented in an MILP as multiple linear constraints.} of the form
 \begin{equation}\label{eq:trust-region-constraint}
-    \sum_{(j,\hat{y}_j) \in \overline{\bm{y}}^{(\alpha)}} |y_{j} - \hat{y}_j| \le \Delta
+    \sum_{(j,\hat{y}_j) \in \overline{\bm{y}}^{(N)}} |y_{j} - \hat{y}_j| \le \Delta
 ,\end{equation}
 where $\Delta \in \R_+$ defines the size of the trust region.
 Note how the above equation limits the space of feasible solutions to a neighborhood of the partial solution derived from the model's output.
@@ -261,7 +263,7 @@ The diagram in Figure~\ref{fig:trust-region-diagram} illustrates the trust regio
 	\path [-latex] (I) edge (g);
 	\path [-latex] (g) edge node [above] {$x$} (f);
 	\path [-latex] (f) edge node [above] {$\hat{\bm{p}}$} (conf);
-	\path [-latex] (conf) edge node [above] {$\overline{\bm{y}}^{(\alpha)}$} (tr);
+	\path [-latex] (conf) edge node [above] {$\overline{\bm{y}}^{(N)}$} (tr);
 	\path [-latex] (tr) edge node [above] {$\overline{I}^{(\Delta)}$} (solver);
 	\path [-latex] (solver) edge (opt);
 	\draw [-latex] (I.south) -- ++(0,-0.6cm) -| (ef.south);

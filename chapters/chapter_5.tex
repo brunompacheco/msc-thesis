@@ -9,7 +9,7 @@
 As discussed in Chapter\,\ref{chap:integer-programming}, Section\,\ref{sec:heuristics}, a primal heuristic abides from optimality guarantees to focus on a trade-off between solution quality and computational cost (speed).
 Consequently, two primal heuristics for MILP problems can be compared with respect to how fast they provide solutions and how good they are, and whether the solutions are feasible or not.
 % In this chapter, two approaches are discussed to evaluate primal heuristics.
-In the chapters, multiple metrics are presented to cover the two perspectives in which a heuristic can be said superior to another.
+In this chapter, multiple metrics are presented to cover the two perspectives in which a heuristic can be said superior to another.
 % The first (Sec.~\ref{sec:standard-evaluation-metrics}) is based on standard evaluation metrics. Therefore, it uses multiple metrics, one for each
 % The second (Sec.\,\ref{sec:primal-integral}) is specific to primal heuristics that improve the candidate solution over time, such as matheuristics.
 % By tracing the progress of the candidate solution, it provides a single metric that takes into account the characteristic trade-off of primal heuristics.
@@ -36,13 +36,13 @@ An alternative to summarizing all these values is to compute the cost of the heu
 Let $\hat{\bm{y}}$ be a heuristic solution, $\bm{y}^*$ be the optimal solution, and $\overline{\bm{y}}$ be a trivial solution for an instance of an optimization problem as in \eqref{eq:general-milp}.
 Then, \emph{relative cost} of $\hat{\bm{y}}$ can be defined as
 \begin{equation}
-    \text{RelCost}(\hat{\bm{y}}) = \frac{\bm{c}^{T} \hat{\bm{y}} - \bm{c}^{T} \bm{y}^*}{\bm{c}^{T}\overline{\bm{y}} - \\bm{c}^{T}bm{y}^*}
+    \text{RelCost}(\hat{\bm{y}}) = \frac{\bm{c}^{T} \hat{\bm{y}} - \bm{c}^{T} \bm{y}^*}{\bm{c}^{T}\overline{\bm{y}} - \bm{c}^{T}\bm{y}^*}
 .\end{equation}
-If solely the optimal solution is known, then it can be computed as
-\begin{equation}
-    \text{RelCost}(\hat{\bm{y}}) = \frac{\bm{c}^{T} \hat{\bm{y}} - \bm{c}^{T} \bm{y}^*}{\bm{c}^{T}\bm{y}^*}
-,\end{equation}
-although the latter is not ideal for comparisons across different optimization problems, as discussed above.
+
+Similarly, if the problem of interest is a maximization problem, then one can define the \emph{relative objective} of a candidate solution $\hat{\bm{y}}$ as
+\begin{equation}\label{eq:relobj}
+    \text{RelObj}(\hat{\bm{y}}) = \frac{\bm{c}^{T} \hat{\bm{y}}  - \bm{c}^{T}\overline{\bm{y}}}{\bm{c}^{T}\bm{y}^* - \bm{c}^{T}\overline{\bm{y}}}
+.\end{equation}
 
 Certain conditions must be met to evaluate an approach's efficiency, ensuring that the time taken to compute a solution (runtime) is meaningful and fair.
 One way to do so is to ensure that the computational resources are fairly available to all approaches.

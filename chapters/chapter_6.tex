@@ -272,7 +272,7 @@ Further implementation details and hyperparameter search results can be seen in 
 
 \begin{table}[h]
     \centering
-    \caption{Hyperparameters adjusted for the solution prediction models trained with either OS and MS for the ONTS problem. The columns  \emph{OS} and \emph{MS} present the best hyperparameter configuration found through random search for both training types.}
+    \caption{Hyperparameters adjusted for the solution prediction models trained with either OS or MS for the ONTS problem. The columns  \emph{OS} and \emph{MS} present the best hyperparameter configuration found through random search for both training types.}
     \label{tab:hyperparameters}
     \begin{tabular}{l|c|c|c}
 	\toprule
@@ -361,8 +361,8 @@ On top of that, the trust-region method also has the radius $\Delta\in \mathbb{N
 
 Two sets of experiments are performed for each model using the validation set.
 For once, the hyperparameters are adjusted with the goal of reducing the average time to find a feasible solution.
-In parallel, the hyperparameters are adjusted to maximize the average normalized objective value (QoS) during a 2-minute time budget.
-For each instance, the resulting objective values are normalized by the known maximum.
+In parallel, the hyperparameters are adjusted to maximize the average relative objective value (QoS) during a 2-minute time budget.
+For each instance, the resulting objective values are normalized by the known maximum, following Equation~\eqref{eq:relobj}, but assuming that the trivial solution has 0 objective.
 This ensures all instances have equal influence in the aggregated value.
 Because there are few hyperparameters to be tuned, the experiments were performed manually, ensuring equal effort was dedicated to all models and resulting heuristics.
 The best values found are reported in Table~\ref{tab:best-N-delta}.
@@ -371,7 +371,7 @@ The best values found are reported in Table~\ref{tab:best-N-delta}.
     \centering
     \caption{%
 	Best values for partial solution size $N$ and trust-region radius $\Delta$ (when applicable) for each heuristic resulting from both solution prediction models (either trained via OS or MS).
-	Columns \emph{Objective} indicates the values that maximize the normalized objective value in the validation set, while columns \emph{Feasibility} indicate the values tuned to minimize the time taken to find a feasible solution.
+	Columns \emph{Objective} indicates the values that maximized the relative objective value in the validation set, while columns \emph{Feasibility} indicate the values tuned to minimize the time taken to find a feasible solution.
  }
     \label{tab:best-N-delta}
     \begin{tabular}{ll|cc|cc}
@@ -393,9 +393,10 @@ The best values found are reported in Table~\ref{tab:best-N-delta}.
 \subsection{Evaluation}
 
 The heuristics with the best partial solution size and trust-region radius (Table~\ref{tab:best-N-delta}) are evaluated on the test set, which was not used in any tuning experiment.
-The models are evaluated with respect to both goals, following the same metrics as for the heuristic hyperparameter tuning experiments, namely, the average time to find a feasible solution and the average normalized objective value.
-Note that, as the objective values are normalized, the values are reported as percentages.
-The progress of the normalized lower bound (objective value of the candidate solution) is also measured within the time budget to evaluate how the heuristics perform for smaller budgets.
+The models are evaluated with respect to both goals, following the same metrics as for the heuristic hyperparameter tuning experiments, namely, the average time to find a feasible solution and the average relative objective value, under a 2-minute budget.
+Note that the objective values are normalized following Equation~\eqref{eq:relobj}, with the optimal solution being the best known solution of each instance, but with an "artificial" trivial solution that has null objective (i.e., $QoS=0$ ).
+A null objective is also assumed if the instance is deemed infeasible or as long as the solver cannot find a feasible solution.
+The progress of the relative lower bound (relative objective of the candidate solution over time) is also measured within the time budget to evaluate how the heuristics perform for smaller budgets.
 The performance of each heuristic in the test set is presented in Figure~\ref{fig:heuristics-test-results}.
 
 \begin{figure}[h]
@@ -416,9 +417,9 @@ The performance of each heuristic in the test set is presented in Figure~\ref{fi
     Test performance of the learning-based heuristics for the ONTS problem.
     In (a), the boxplots show the quartiles and outliers (circles) of the values that correspond to the heuristics adjusted to minimize the average time to find a feasible solution (on the validation set).
     The vertical blue lines indicate the medians, while the triangle icons indicate the average values.
-    In (b), the heuristics used were those adjusted to maximize the average normalized objective value (also on the validation set).
-    The box plots show the distribution of the metric of interest (time to find a feasible solution in (a), and normalized objective value in (b)) over the test set, with the small triangle indicating the average value.
-    The plots on the right show the progress of the normalized lower bound (normalized objective value of the candidate solution) during the 2 minutes time budget, averaged over all instances of the test set.
+    In (b), the heuristics used were those adjusted to maximize the average relative objective value (also on the validation set).
+    The box plots show the distribution of the metric of interest (time to find a feasible solution in (a), and relative objective value in (b)) over the test set, with the small triangle indicating the average value.
+    The plots on the right show the progress of the relative lower bound (relative objective value of the candidate solution) during the 2 minutes time budget, averaged over all instances of the test set.
     % On the left, we have the distribution of the evaluation metric of interest over the instances of the test set for the multiple approaches, in which the triangle indicates the mean value and the circles indicate outliers. \emph{MS} indicates that the SatGNN model trained with multiple solutions was used, whereas \emph{OS} indicates that the model trained solely with the optimal solution was used instead. On the right is the average progress of the lower bound on all test set instances. The objective value is considered relative to the known optimal value; thus it always lies in the unit interval. The heuristics' hyperparameters $N$ and $\Delta$ are defined upon experiments on the validation set, as presented in Table \ref{tab:best-N-delta}.
 }
     \label{fig:heuristics-test-results}
@@ -426,7 +427,7 @@ The performance of each heuristic in the test set is presented in Figure~\ref{fi
 
 The results indicate that most of the learning-based heuristics provide a clear improvement over the baseline approach of using the SCIP solver, given the limited time budget.
 To assess the statistical significance of the gains, the Wilcoxon signed-rank test~\cite{wilcoxon_1945} was applied to the test set results.
-The Wilcoxon signed-rank test is a non-parametric version of the Student's t-test for matched pairs, which implies that normality is not assumed for the distribution of the metrics\footnote{This is particularly important for the normalized objective value, which is highly skewed and limited to unit interval.}.
+The Wilcoxon signed-rank test is a non-parametric version of the Student's t-test for matched pairs, which implies that normality is not assumed for the distribution of the metrics\footnote{This is particularly important for the relative objective value, which is highly skewed and limited to unit interval.}.
 The test is applied in pairs, comparing each matheuristic to every other, including the baseline.
 The results of the statistical significance test are summarized in Figure~\ref{fig:cdds}.
 
@@ -446,7 +447,7 @@ The results of the statistical significance test are summarized in Figure~\ref{f
     \end{subfigure}
     \caption{%
     Critical difference diagram of the test set performance of the learning-based heuristics for the ONTS problem.
-    Figures (a) and (b) show the performance of heuristics adjusted for minimizing the time to find a feasible solution and maximizing the normalized objective value within a 2 minute budget, respectively.
+    Figures (a) and (b) show the performance of heuristics adjusted for minimizing the time to find a feasible solution and maximizing the relative objective value within a 2 minute budget, respectively.
     The round marker in the axes indicates the heuristic's average performance.
     A crossbar connecting multiple approaches indicates that their performance (distribution on the test set) was not significantly different ($p$-value $>0.05$) in the paired Wilcoxon signed-rank test.
 %presenting the average test set performance of the SatGNN-based matheuristics (round marker in the axis). A crossbar between two (or more) approaches indicates that their performance (distribution on the test set) was not deemed significantly different ($p$-value$>0.05$) through the paired Wilcoxon signed-rank test~\citep{wilcoxon_1945}.

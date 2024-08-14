@@ -14,7 +14,7 @@ Effective task scheduling is essential to optimize resource utilization, enhance
 The ONTS problem is critical for the efficient development, deployment, and operation of nanosatellites.
 From launch to disposal, the ONTS problem must be solved repeatedly.
 At every communication window, new schedules must be generated and deployed, and the optimal schedule is determined by an iterative procedure, exploring different sets of tasks to be performed in the schedule's timespan.
-Given a nanosatellite and a collection of tasks, determining the schedule with maximum QoS is a combinatorial problem.
+Given a nanosatellite and a collection of tasks, determining the schedule with maximum Quality of Service (QoS) is a combinatorial problem.
 Mathematical formulations have been proposed for this problem, from Integer Programming (IP)~\cite{rigoTaskSchedulingOptimal2021} to Mixed Integer Linear Programming (MILP)~\cite{rigoNanosatelliteTaskScheduling2021,semanEnergyAwareTaskScheduling2022} and Continuous-Time techniques~\cite{camponogaraContinuoustimeFormulationOptimal2022}.
 However, the NP-hard nature of the problem renders multiple executions of the optimization algorithms (e.g., for different task configurations) within the timespan of a communication window an efficiency challenge.
 
@@ -68,7 +68,7 @@ More precisely, at every communication window, nanosatellite information (such a
 The formulation presented here was proposed by \citeonline{rigoTaskSchedulingOptimal2021} and the reader is advised to refer to the original work for further details.
 
 Given a set $\mathcal{J}=\{1,...,J\}$ of tasks (or jobs), and a set $\mathcal{T}=\{1,...,T\}$ of time units of the scheduling horizon, let variables $x_{j,t}$ represent the allocation of task $j$ at time $t$, $\forall j\in \mathcal{J}, \forall t\in \mathcal{T}$.
-Naturally, each $x_{j,t}$ is a binary variables, in which value $1$ indicates that task $j$ is scheduled to be in execution at time $t$.
+Naturally, each $x_{j,t}$ is a binary variable, in which value $1$ indicates that task $j$ is scheduled to be in execution at time $t$.
 When convenient, these variables will be represented as a vector \[
     % \bm{x}=(x_{1,1},\ldots,x_{1,T},\ldots,x_{J,1},\ldots,x_{J,T})
     \bm{x} = \left( x_{j,t} \right)_{\substack{j=1,\ldots,J\\ t=1,\ldots,T}}

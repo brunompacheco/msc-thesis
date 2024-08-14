@@ -23,7 +23,7 @@ In other words, the solution approach evaluated in the presented experiments is 
 
 Two approaches were evaluated: training solely with the optimal solution for each instance (OS) and training with multiple solutions for each instance (MS).
 Both approaches were successful in training solution prediction models, with no signs of overfitting.
-Although a direct comparison between solution prediction models was not possible, the MS approach generated a more confident model, as Figure~\ref{fig:prediction-confidences} illustrates.
+Although a direct comparison between solution prediction models was not possible using their own (different) cost functions, the MS approach generated a more confident model, as Figure~\ref{fig:prediction-confidences} illustrates.
 Further experiments demonstrated that, indeed, the models trained via MS resulted in better primal heuristics.
 
 GNNs were used as the core of the solution prediction models, as they are perfectly suitable for instances with a varying number of variables, as is the case of the ONTS problem based on the FloripaSat-I mission.
