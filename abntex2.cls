@@ -180,8 +180,8 @@
   \renewcommand{\anexosname}{Annex}
   \renewcommand{\apendicename}{APPENDIX}
   \renewcommand{\apendicesname}{Appendix}
-  \renewcommand{\orientadorname}{Supervisor:}
-  \renewcommand{\coorientadorname}{Co-supervisor:}
+  \renewcommand{\orientadorname}{Orientador:}
+  \renewcommand{\coorientadorname}{Co-orientador:}
   \renewcommand{\folhadeaprovacaoname}{Approval}
   \renewcommand{\resumoname}{Abstract} 
   \renewcommand{\listadesiglasname}{List of abbreviations and acronyms}
