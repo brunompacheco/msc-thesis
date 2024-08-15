@@ -66,25 +66,25 @@ Recentemente, técnicas de aprendizagem profunda foram propostas para criar heur
 \noindent\textbf{\large Objetivos}\newline
 {\noindent}
 
-O principal objetivo desta dissertação é avaliar heurísticas primais para problemas de MILP baseadas em modelos de predição de solução treinados com supervisão.
+O principal objetivo desta dissertação é estudar e avaliar heurísticas primais para problemas de MILP baseadas em modelos de predição de solução treinados com supervisão.
 Este objetivo é subdividido em três:
 \begin{itemize}
-    \item Analisar a literatura de aprendizado supervisionado para modelos de predição de solução de problemas de MILP, incluindo arquiteturas, algorithmos de aprendizagem e heurísticas primais baseadas em aprendizagem; 
-    \item Desenvolver heurísticas primais baseadas em aprendizagem para uma aplicação realista, incluindo as técnicas mais promissoras encontradas na literatura; e
+    \item Analisar a literatura de aprendizado supervisionado para modelos de predição de solução de problemas de MILP, incluindo arquiteturas, algoritmos de aprendizagem e heurísticas primais baseadas em aprendizagem; 
+    \item Implementar heurísticas primais baseadas em aprendizagem para uma aplicação realista, incluindo as técnicas mais promissoras encontradas na literatura; e
     \item Avaliar as técnicas para heurísticas baseadas em aprendizagem com respeito a performance empírica na aplicação selecionada e as garantias teóricas fornecidas por cada uma delas.
 \end{itemize}
 
 \noindent\textbf{\large Metodologia}\newline
 {\noindent} 
 
-Este trabalho avaliou diversas técnicas encontradas na literatura para os mais distintos componentes de modelos de solução de predição para problemas de MILP.
+Este trabalho estudou e avaliou diversas técnicas encontradas na literatura para os mais distintos componentes de heurísticas primais baseadas em modelos de solução de predição para problemas de MILP.
 Em relação à arquitetura dos modelos de predição de solução, foram investigados o uso de redes neurais baseadas em grafos (\emph{Graph Neural Networks}, GNNs) com convoluções baseadas no operador SAGE e o compartilhamento de parâmetros da rede entre as suas convoluções.
 Duas técnicas distintas de treinamento foram implementadas e avaliadas: a primeira utilizando uma solução (quasi-)ótima, e a segunda utilizando múltiplas soluções para cada instância disponível do problema de otimização.
 Técnicas para aquisição de dados também foram analisadas, em particular no contexto da ausência de dados históricos.
+Três diferentes arquiteturas baseadas em modelos de solução de predição para a construção de heurísticas primais foram avaliadas a partir de dois objetivos distintos, mas complementares: encontrar soluções factíveis no menor tempo possível, e encontrar a melhor solução em um tempo limitado.
 
-Os experimentos foram projetados para analisar a efetividade das heurísticas propostas para o agendamento \emph{offline} de tarefas em nanossatélites (\emph{Offline Nanosatellite Task Scheduling}, ONTS).
+Os experimentos foram projetados para avaliar a efetividade das heurísticas propostas em um problem realista: o agendamento \emph{offline} de tarefas em nanossatélites (\emph{Offline Nanosatellite Task Scheduling}, ONTS).
 O cenário analisado do problema em questão é o agendamento durante a operação do satélite em órbita, que requer a solução de múltiplas instâncias do problema de MILP em uma janela de tempo limitada.
-Três diferentes heurísticas baseadas em modelos de solução de predição foram avaliadas tendo dois objetivos distintos: encontrar soluções factíveis no menor tempo possível, e encontrar a melhor solução em um tempo limitado.
 
 
 \noindent\textbf{\large Resultados e Discussão}\newline
