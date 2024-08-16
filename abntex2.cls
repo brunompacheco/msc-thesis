@@ -1039,17 +1039,24 @@
 \newcommand{\imprimircapa}{%
   \begin{capa}%
     \center
-    \ABNTEXchapterfont\large\imprimirautor
+    \begin{figure}
+        \centering
+        \includegraphics[scale=1]{pictures/ufsc-logo.png}
+    \end{figure}
+    UNIVERSIDADE FEDERAL DE SANTA CATARINA \\
+    CAMPUS FLORIAN\'OPOLIS \\
+    PROGRAMA DE P\'OS-GRADUA\c C\~AO EM ENGENHARIA DE AUTOMA\c C\~AO E SISTEMAS
 
-    \vfill
-    \begin{center}
-    \ABNTEXchapterfont\bfseries\LARGE\imprimirtitulo
-    \end{center}
-    \vfill
+    \vspace*{1cm}
+    {\ABNTEXchapterfont\large\imprimirautor}
+
+    \vspace*{4cm}
+    {\ABNTEXchapterfont\bfseries\LARGE\imprimirtitulo}
+    \vspace*{\fill}
     
-    \large\imprimirlocal
-
-    \large\imprimirdata
+    {\large\imprimirlocal}
+    \par
+    {\large\imprimirdata}
     
     \vspace*{1cm}
   \end{capa}
@@ -1074,29 +1081,32 @@
 
     %\vspace*{1cm}
     {\ABNTEXchapterfont\large\imprimirautor}
-	
+
     \vspace*{\fill}\vspace*{\fill}
-    \begin{center}
-      \ABNTEXchapterfont\bfseries\Large\imprimirtitulo
-    \end{center}
+    {\ABNTEXchapterfont\bfseries\Large\imprimirtitulo}
     \vspace*{\fill}
-	
+
     \abntex@ifnotempty{\imprimirpreambulo}{%
       \hspace{.45\textwidth}
       \begin{minipage}{.5\textwidth}
       	\SingleSpacing
-         \imprimirpreambulo
+         \imprimirpreambulo\par
+	    \vspace*{1cm}
+	 \imprimirorientadorRotulo~\imprimirorientador\par
+	 \abntex@ifnotempty{\imprimircoorientador}{%
+	       {\imprimircoorientadorRotulo~\imprimircoorientador}%
+	     }
        \end{minipage}%
        \vspace*{\fill}
     }%
 
-    {\abntex@ifnotempty{\imprimirinstituicao}{\imprimirinstituicao\vspace*{\fill}}}
+    % {\abntex@ifnotempty{\imprimirinstituicao}{\imprimirinstituicao\vspace*{\fill}}}
 
-    {\large\imprimirorientadorRotulo~\imprimirorientador\par}
-    \abntex@ifnotempty{\imprimircoorientador}{%
-       {\large\imprimircoorientadorRotulo~\imprimircoorientador}%
-    }%
-    \vspace*{\fill}
+     % {\large\imprimirorientadorRotulo~\imprimirorientador\par}
+     % \abntex@ifnotempty{\imprimircoorientador}{%
+     %   {\large\imprimircoorientadorRotulo~\imprimircoorientador}%
+     % }%
+     \vspace*{\fill}
 
     {\large\imprimirlocal}
     \par
